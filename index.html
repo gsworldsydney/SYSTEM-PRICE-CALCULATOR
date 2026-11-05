@@ -1,0 +1,3083 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>System Price Calculator</title>
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --primary-light: #eff6ff;
+      --primary-border: #bfdbfe;
+      --accent: #0f766e;
+      --accent-highlight: #ccfbf1;
+      --purple: #7c3aed;
+      --purple-highlight: #ede9fe;
+      --amber: #d97706;
+      --amber-highlight: #fef3c7;
+      --pink: #db2777;
+      --pink-highlight: #fce7f3;
+      --indigo: #4f46e5;
+      --indigo-highlight: #e0e7ff;
+      --cyan: #0284c7;
+      --cyan-highlight: #e0f2fe;
+      --emerald: #059669;
+      --emerald-highlight: #d1fae5;
+      --bg: #f1f5f9;
+      --card-bg: #ffffff;
+      --text: #0f172a;
+      --text-secondary: #334155;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --border-strong: #cbd5e1;
+      --danger: #ef4444;
+      --danger-bg: #fef2f2;
+      --highlight: #dbeafe;
+      --radius-lg: 16px;
+      --radius-md: 12px;
+      --radius-sm: 8px;
+      --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.06);
+      --shadow-md: 0 4px 12px -2px rgba(15, 23, 42, 0.08), 0 2px 6px -2px rgba(15, 23, 42, 0.04);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Inter", Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      padding: 1.75rem 1.25rem 3rem;
+      line-height: 1.5;
+    }
+
+    .container {
+      max-width: 1220px;
+      margin: 0 auto;
+    }
+
+    /* Top Header */
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      background: var(--card-bg);
+      padding: 1.25rem 1.75rem;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .header-left h1 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--text);
+      letter-spacing: -0.025em;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .header-left p {
+      color: var(--text-muted);
+      margin-top: 0.2rem;
+      font-size: 0.875rem;
+    }
+
+    .header-badge {
+      background: var(--primary-light);
+      color: var(--primary);
+      border: 1px solid var(--primary-border);
+      padding: 0.4rem 0.85rem;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+
+    /* Main 2-Column Layout */
+    .grid {
+      display: grid;
+      grid-template-columns: 1.22fr 0.78fr;
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+      align-items: start;
+    }
+
+    @media (max-width: 920px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: var(--radius-lg);
+      padding: 1.65rem;
+      box-shadow: var(--shadow-md);
+      border: 1px solid var(--border);
+    }
+
+    .sticky-card {
+      position: sticky;
+      top: 1.25rem;
+    }
+
+    .card-title {
+      font-size: 1.125rem;
+      font-weight: 800;
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      color: var(--text);
+    }
+
+    .card-title.collapsed {
+      margin-bottom: 0;
+    }
+
+    /* Top 4 Category Buttons (FAA / DROP A / OZTECH / LOUVRE) */
+    .category-tabs-label {
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 0.5rem;
+      display: block;
+    }
+
+    .category-tabs {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.65rem;
+      margin-bottom: 1.2rem;
+    }
+
+    @media (max-width: 560px) {
+      .category-tabs {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .cat-btn {
+      appearance: none;
+      border: 2px solid #bfdbfe;
+      background: #dbeafe;
+      color: #1e3a8a;
+      font-size: 0.98rem;
+      font-weight: 800;
+      letter-spacing: 0.03em;
+      padding: 0.75rem 0.5rem;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.18s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.15rem;
+      box-shadow: 0 1px 2px rgba(37, 99, 235, 0.08);
+    }
+
+    .cat-btn .cat-sub {
+      font-size: 0.65rem;
+      font-weight: 600;
+      opacity: 0.75;
+      letter-spacing: 0.01em;
+    }
+
+    .cat-btn:hover {
+      background: #bfdbfe;
+      border-color: #93c5fd;
+      transform: translateY(-1px);
+    }
+
+    .cat-btn.active {
+      background: var(--primary);
+      border-color: var(--primary-hover);
+      color: #ffffff;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.28);
+    }
+
+    .cat-btn.active .cat-sub {
+      opacity: 0.9;
+      color: #dbeafe;
+    }
+
+    /* Section Styling inside Configuration Card */
+    .config-section {
+      padding-top: 1.15rem;
+      margin-top: 1.15rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .config-section:first-of-type {
+      padding-top: 0;
+      margin-top: 0;
+      border-top: none;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.85rem;
+    }
+
+    .section-title {
+      font-size: 0.82rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+    }
+
+    .step-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      height: 22px;
+      border-radius: 6px;
+      background: var(--primary-light);
+      color: var(--primary);
+      font-size: 0.72rem;
+      font-weight: 800;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    @media (max-width: 560px) {
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .form-group {
+      margin-bottom: 0.9rem;
+    }
+
+    .form-group:last-child {
+      margin-bottom: 0;
+    }
+
+    label {
+      display: block;
+      font-size: 0.84rem;
+      font-weight: 600;
+      margin-bottom: 0.38rem;
+      color: var(--text);
+    }
+
+    .input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    select,
+    input[type="number"],
+    input[type="text"] {
+      width: 100%;
+      padding: 0.68rem 0.9rem;
+      font-size: 0.94rem;
+      font-weight: 500;
+      border: 1px solid var(--border-strong);
+      border-radius: 10px;
+      outline: none;
+      background-color: #fff;
+      color: var(--text);
+      transition: all 0.18s;
+    }
+
+    input[type="number"] {
+      padding-right: 3.25rem;
+    }
+
+    input[readonly] {
+      background-color: #f5f3ff;
+      border-color: #ddd6fe;
+      color: var(--indigo);
+      font-weight: 700;
+      cursor: default;
+    }
+
+    input[readonly].kit-disabled-display {
+      background-color: #f1f5f9;
+      border-color: var(--border);
+      color: var(--text-muted);
+    }
+
+    select:focus,
+    input[type="number"]:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+    }
+
+    select:disabled {
+      background-color: #f1f5f9;
+      border-color: var(--border);
+      color: var(--text-muted);
+      cursor: not-allowed;
+    }
+
+    .unit {
+      position: absolute;
+      right: 0.9rem;
+      color: var(--text-muted);
+      font-size: 0.82rem;
+      font-weight: 600;
+      pointer-events: none;
+    }
+
+    .hint {
+      font-size: 0.73rem;
+      color: var(--text-muted);
+      margin-top: 0.3rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .tier-pill {
+      display: inline-block;
+      background: #eff6ff;
+      color: var(--primary);
+      font-weight: 700;
+      padding: 0.08rem 0.45rem;
+      border-radius: 4px;
+      font-size: 0.7rem;
+    }
+
+    /* Accordion / Collapsible Header Bar */
+    .collapsible-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #f8fafc;
+      border: 1px solid var(--border-strong);
+      border-radius: 10px;
+      padding: 0.65rem 0.9rem;
+      cursor: pointer;
+      transition: all 0.15s;
+      user-select: none;
+    }
+
+    .collapsible-bar:hover {
+      background: #f1f5f9;
+      border-color: #94a3b8;
+    }
+
+    .collapsible-bar-left {
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+      font-size: 0.86rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .count-badge {
+      background: #e2e8f0;
+      color: #475569;
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 0.15rem 0.55rem;
+      border-radius: 999px;
+    }
+
+    .count-badge.has-items {
+      background: var(--emerald-highlight);
+      color: var(--emerald);
+    }
+
+    .toggle-btn {
+      background: #ffffff;
+      border: 1px solid var(--border-strong);
+      color: var(--text-secondary);
+      font-size: 0.76rem;
+      font-weight: 700;
+      padding: 0.35rem 0.75rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.15s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .toggle-btn:hover {
+      background: #f1f5f9;
+      border-color: #94a3b8;
+    }
+
+    /* Multi-Select Box Styles */
+    .option-box {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.75rem;
+      background-color: #f8fafc;
+      margin-top: 0.5rem;
+    }
+
+    .sensor-disabled-msg {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      text-align: center;
+      padding: 0.35rem 0;
+    }
+
+    .checkbox-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0.45rem;
+    }
+
+    .checkbox-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.52rem 0.75rem;
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.15s;
+      margin-bottom: 0;
+      gap: 0.5rem;
+    }
+
+    .checkbox-item:hover {
+      border-color: var(--cyan);
+      background: #f0f9ff;
+    }
+
+    .checkbox-item.checked {
+      border-color: var(--cyan);
+      background: var(--cyan-highlight);
+    }
+
+    .checkbox-item.bracket-item:hover {
+      border-color: var(--emerald);
+      background: #ecfdf5;
+    }
+
+    .checkbox-item.bracket-item.checked {
+      border-color: var(--emerald);
+      background: var(--emerald-highlight);
+    }
+
+    .checkbox-left {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 0.84rem;
+      font-weight: 600;
+      color: var(--text);
+      flex: 1;
+    }
+
+    .checkbox-left input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      accent-color: var(--cyan);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .bracket-item .checkbox-left input[type="checkbox"] {
+      accent-color: var(--emerald);
+    }
+
+    .checkbox-right {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      flex-shrink: 0;
+    }
+
+    .checkbox-price {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--cyan);
+      white-space: nowrap;
+    }
+
+    .bracket-item .checkbox-price {
+      color: var(--emerald);
+      min-width: 72px;
+      text-align: right;
+    }
+
+    .qty-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    input.qty-input {
+      width: 60px !important;
+      padding: 0.25rem 0.4rem !important;
+      font-size: 0.82rem !important;
+      text-align: center;
+      border-radius: 6px !important;
+      border: 1px solid var(--border-strong);
+    }
+
+    input.qty-input:disabled {
+      background-color: #f1f5f9;
+      color: #94a3b8;
+      cursor: not-allowed;
+    }
+
+    /* Action Buttons */
+    .action-row {
+      display: flex;
+      gap: 0.75rem;
+      margin-top: 1.25rem;
+    }
+
+    .btn {
+      flex: 1;
+      padding: 0.85rem 1rem;
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 0.96rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 2px 6px rgba(37, 99, 235, 0.25);
+    }
+
+    .btn:hover {
+      background-color: var(--primary-hover);
+    }
+
+    .btn-secondary {
+      padding: 0.85rem 1.1rem;
+      background-color: #f1f5f9;
+      color: var(--text-secondary);
+      border: 1px solid var(--border-strong);
+      border-radius: 10px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .btn-secondary:hover {
+      background-color: #e2e8f0;
+    }
+
+    /* Placeholder for DROP A / OZTECH / LOUVRE */
+    .coming-soon-box {
+      display: none;
+      text-align: center;
+      padding: 3rem 1.5rem;
+      background: #f8fafc;
+      border: 2px dashed var(--border-strong);
+      border-radius: var(--radius-md);
+      margin-top: 0.5rem;
+    }
+
+    .coming-soon-icon {
+      font-size: 2.4rem;
+      margin-bottom: 0.6rem;
+    }
+
+    .coming-soon-title {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 0.35rem;
+    }
+
+    .coming-soon-desc {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      max-width: 420px;
+      margin: 0 auto;
+    }
+
+    /* Result / Quote Summary Styles */
+    .result-box {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      border-radius: var(--radius-md);
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      padding: 1.35rem;
+      transition: all 0.25s;
+    }
+
+    .result-box.active {
+      background: linear-gradient(180deg, #eff6ff 0%, #f8fafc 100%);
+      border: 1px solid #bfdbfe;
+    }
+
+    .result-box.error {
+      background: var(--danger-bg);
+      border: 1px solid #fecaca;
+    }
+
+    .result-top {
+      text-align: center;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.25);
+      margin-bottom: 1rem;
+    }
+
+    .result-product-tag {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--primary);
+      background: #dbeafe;
+      padding: 0.28rem 0.7rem;
+      border-radius: 999px;
+      margin-bottom: 0.6rem;
+    }
+
+    .result-box.error .result-product-tag {
+      color: var(--danger);
+      background: #fee2e2;
+    }
+
+    .result-label {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+
+    .result-price {
+      font-size: 2.65rem;
+      font-weight: 900;
+      color: var(--primary);
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+    }
+
+    .result-box.error .result-price {
+      color: var(--danger);
+      font-size: 1.4rem;
+      margin-top: 0.35rem;
+    }
+
+    /* Quick Spec Chips inside Summary */
+    .spec-chips {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .spec-chip {
+      background: #ffffff;
+      border: 1px solid #dbeafe;
+      border-radius: 8px;
+      padding: 0.45rem 0.5rem;
+      text-align: center;
+    }
+
+    .spec-chip-label {
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      display: block;
+    }
+
+    .spec-chip-val {
+      font-size: 0.78rem;
+      font-weight: 800;
+      color: var(--text);
+    }
+
+    .breakdown-box {
+      width: 100%;
+      background: #ffffff;
+      border: 1px solid #dbeafe;
+      border-radius: 10px;
+      padding: 0.75rem 0.95rem;
+      margin-bottom: 0.85rem;
+      font-size: 0.81rem;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .breakdown-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding: 0.38rem 0;
+      color: var(--text);
+      gap: 0.75rem;
+    }
+
+    .breakdown-row + .breakdown-row {
+      border-top: 1px dashed #e2e8f0;
+    }
+
+    .breakdown-row span:first-child {
+      color: var(--text-secondary);
+      font-weight: 500;
+      text-align: left;
+      line-height: 1.35;
+    }
+
+    .breakdown-row span:last-child {
+      font-weight: 700;
+      white-space: nowrap;
+      color: var(--text);
+    }
+
+    .breakdown-row.is-active-addon span:last-child {
+      color: var(--primary);
+    }
+
+    .badge {
+      display: block;
+      text-align: center;
+      padding: 0.45rem 0.85rem;
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.76rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    /* Reference Tables Section */
+    .table-container {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+      text-align: center;
+    }
+
+    th, td {
+      padding: 0.55rem 0.45rem;
+      border: 1px solid var(--border);
+    }
+
+    th {
+      background-color: #f1f5f9;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    td.zero-cell {
+      color: #94a3b8;
+      background-color: #1e293b;
+      font-weight: 600;
+    }
+
+    td.caution-cell {
+      color: #ffffff;
+      background-color: #334155;
+      font-weight: 700;
+    }
+
+    .caution-banner {
+      display: none;
+      width: 100%;
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      color: #92400e;
+      border-radius: 8px;
+      padding: 0.55rem 0.75rem;
+      margin-bottom: 0.75rem;
+      font-size: 0.77rem;
+      font-weight: 600;
+      text-align: left;
+      line-height: 1.4;
+    }
+
+    td.na-cell {
+      color: #94a3b8;
+      background-color: #f8fafc;
+      font-weight: 600;
+    }
+
+    td.selected-cell {
+      background-color: var(--primary) !important;
+      color: white !important;
+      font-weight: 800;
+      position: relative;
+      box-shadow: inset 0 0 0 2px #1e40af;
+    }
+
+    td.selected-cell.zero-cell,
+    td.selected-led-cell.na-cell {
+      background-color: var(--danger) !important;
+      color: white !important;
+      box-shadow: inset 0 0 0 2px #991b1b;
+    }
+
+    td.selected-motor-cell {
+      background-color: var(--accent) !important;
+      color: white !important;
+      font-weight: 800;
+      box-shadow: inset 0 0 0 2px #115e59;
+    }
+
+    td.selected-pc-cell {
+      background-color: var(--purple) !important;
+      color: white !important;
+      font-weight: 800;
+      box-shadow: inset 0 0 0 2px #5b21b6;
+    }
+
+    td.selected-led-cell {
+      background-color: var(--amber) !important;
+      color: white !important;
+      font-weight: 800;
+      box-shadow: inset 0 0 0 2px #92400e;
+    }
+
+    td.selected-tray-cell {
+      background-color: var(--pink) !important;
+      color: white !important;
+      font-weight: 800;
+      box-shadow: inset 0 0 0 2px #9d174d;
+    }
+
+    tr.selected-row th {
+      background-color: var(--highlight);
+      color: var(--primary);
+    }
+
+    tr.selected-motor-row th {
+      background-color: var(--accent-highlight);
+      color: var(--accent);
+    }
+
+    tr.selected-pc-row th {
+      background-color: var(--purple-highlight);
+      color: var(--purple);
+    }
+
+    tr.selected-led-row th {
+      background-color: var(--amber-highlight);
+      color: var(--amber);
+    }
+
+    tr.selected-tray-row th {
+      background-color: var(--pink-highlight);
+      color: var(--pink);
+    }
+
+    th.selected-col {
+      background-color: var(--highlight);
+      color: var(--primary);
+    }
+
+    .section-divider th {
+      background-color: #e2e8f0;
+      color: #334155;
+      font-size: 0.74rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 0.45rem;
+      text-align: left;
+      padding-left: 0.85rem;
+    }
+
+    .motor-star {
+      color: #ef4444;
+      margin-left: 2px;
+    }
+
+    /* Reference Grids */
+    .ref-grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+    }
+
+    .ref-grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+    }
+
+    @media (max-width: 960px) {
+      .ref-grid-4, .ref-grid-2 {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 560px) {
+      .ref-grid-4, .ref-grid-2 {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .fabric-item-selected td {
+      background-color: var(--indigo) !important;
+      color: white !important;
+      font-weight: 700;
+    }
+
+    .sensor-item-selected td {
+      background-color: var(--cyan) !important;
+      color: white !important;
+      font-weight: 700;
+    }
+
+    .bracket-item-selected td {
+      background-color: var(--emerald) !important;
+      color: white !important;
+      font-weight: 700;
+    }
+
+    .ref-subcard {
+      margin-top: 1.25rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .ref-subtitle {
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin-bottom: 0.85rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <div class="header-left">
+        <h1>📐 SYSTEM PRICE CALCULATOR</h1>
+        <p>Configure your awning system, supply type (Complete vs KIT), dimensions, fabric, motorisation, and hardware options.</p>
+      </div>
+      <div class="header-badge" id="activeCategoryHeaderBadge">Active Lineup: FAA (Folding Arm Awning)</div>
+    </header>
+
+    <div class="grid">
+      <!-- Left Column: Configuration Card -->
+      <div class="card">
+        <div class="card-title">
+          <span>📏 Configuration</span>
+        </div>
+
+        <!-- 4 Top-Level Product Model Category Buttons -->
+        <span class="category-tabs-label">Product Lineup</span>
+        <div class="category-tabs" id="categoryTabs">
+          <button type="button" class="cat-btn active" data-category="FAA">
+            <span>FAA</span>
+            <span class="cat-sub">Folding Arm</span>
+          </button>
+          <button type="button" class="cat-btn" data-category="DROP A">
+            <span>DROP A</span>
+            <span class="cat-sub">Drop Awning</span>
+          </button>
+          <button type="button" class="cat-btn" data-category="OZTECH">
+            <span>OZTECH</span>
+            <span class="cat-sub">Retractable Roof</span>
+          </button>
+          <button type="button" class="cat-btn" data-category="LOUVRE">
+            <span>LOUVRE</span>
+            <span class="cat-sub">Louvre System</span>
+          </button>
+        </div>
+
+        <!-- Placeholder shown when DROP A / OZTECH / LOUVRE is selected -->
+        <div id="comingSoonSection" class="coming-soon-box">
+          <div class="coming-soon-icon">🛠️</div>
+          <div class="coming-soon-title" id="comingSoonTitle">DROP A Lineup Setup Ready</div>
+          <p class="coming-soon-desc" id="comingSoonDesc">
+            Please provide the price tables and option specifications for this product lineup to activate its calculator.
+          </p>
+        </div>
+
+        <!-- Main Configuration Form (Supports FAA & DROP A) -->
+        <form id="calcForm">
+          <!-- Step 0-A: FAA System Model & Supply Type (Complete vs KIT) -->
+          <div class="config-section" id="faaModelSection">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="productSelect">Product Model (FAA Series)</label>
+                <select id="productSelect">
+                  <optgroup label="TITAN Series">
+                    <option value="titan_open">TITAN - OPEN</option>
+                    <option value="titan_trendy">TITAN - TRENDY</option>
+                  </optgroup>
+                  <optgroup label="Family Series">
+                    <option value="family_complete">Family - Complete</option>
+                    <option value="family_flex">Family - Flex</option>
+                    <option value="family_basic">Family - Basic</option>
+                    <option value="family_kompakt_c">Family - Kompakt-C</option>
+                  </optgroup>
+                  <optgroup label="Millennium Series">
+                    <option value="millennium">Millennium</option>
+                  </optgroup>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="supplyTypeSelect">Supply Type (Complete vs KIT)</label>
+                <select id="supplyTypeSelect">
+                  <option value="complete">Complete System (With Fabric)</option>
+                  <option value="kit">KIT Only (Hardware Only - No Fabric)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 0-B: DROP A Product Model (GENIUS / TRUSCREEN / FIXED) & Sub-Type -->
+          <div class="config-section" id="dropAModelSection" style="display: none; padding-top: 0; margin-top: 0; border-top: none;">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="dropAGroupSelect">Product Model (DROP A Series)</label>
+                <select id="dropAGroupSelect">
+                  <option value="GENIUS">GENIUS</option>
+                  <option value="TRUSCREEN">TRUSCREEN</option>
+                  <option value="FIXED">FIXED</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="dropASubSelect">System Type / Sub-Model</label>
+                <select id="dropASubSelect">
+                  <option value="genius_zip">ZIP</option>
+                  <option value="genius_flexi_zip">FLEXI ZIP</option>
+                  <option value="genius_pivot">PIVOT</option>
+                  <option value="genius_wire_guide">WIRE GUIDE</option>
+                  <option value="genius_drop">DROP</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 1: Width, Projection & Fabric -->
+          <div class="config-section">
+            <div class="section-header">
+              <span class="section-title"><span class="step-num">1</span> Dimensions & Fabric</span>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="widthInput">Width</label>
+                <div class="input-wrapper">
+                  <input type="number" id="widthInput" placeholder="e.g. 3800" min="1" max="9000" value="3800" required>
+                  <span class="unit">mm</span>
+                </div>
+                <div class="hint">
+                  <span id="widthHint">* Max 9,000 mm (Rounds up)</span>
+                  <span class="tier-pill" id="widthTierPill">Tier: 4,200 mm</span>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="projInput">Projection</label>
+                <div class="input-wrapper">
+                  <input type="number" id="projInput" placeholder="e.g. 2600" min="1" max="4100" value="2600" required>
+                  <span class="unit">mm</span>
+                </div>
+                <div class="hint">
+                  <span id="projHint">* Max 3,600 mm (Rounds up)</span>
+                  <span class="tier-pill" id="projTierPill">Tier: 2,600 mm</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="fabricSelect">Fabric</label>
+                <select id="fabricSelect">
+                  <optgroup label="Acrylic">
+                    <option value="solscape">Solscape ($0/sqm)</option>
+                    <option value="docril">Docril ($10/sqm)</option>
+                    <option value="dickson">Dickson ($15/sqm)</option>
+                    <option value="sattler">Sattler ($15/sqm)</option>
+                    <option value="docril_neptune">Docril Neptune ($15/sqm)</option>
+                    <option value="dickson_max">Dickson Max ($25/sqm)</option>
+                  </optgroup>
+                  <optgroup label="Canvas">
+                    <option value="hunter_douglas">Hunter Douglas ($25/sqm)</option>
+                    <option value="somerton">Somerton ($25/sqm)</option>
+                    <option value="brella">Brella ($25/sqm)</option>
+                  </optgroup>
+                  <optgroup label="Clear PVC">
+                    <option value="clear_075">Clear 0.75mm ($10/sqm)</option>
+                    <option value="tint_075">Tint 0.75mm ($15/sqm)</option>
+                    <option value="clear_10">Clear 1.0mm ($20/sqm)</option>
+                    <option value="tint_10">Tint 1.0mm ($20/sqm)</option>
+                  </optgroup>
+                  <optgroup label="Shade Mesh">
+                    <option value="viewshade_fg_95">Viewshade Fiberglass 95 ($0/sqm)</option>
+                    <option value="viewshade_fg_99">Viewshade Fiberglass 99 ($5/sqm)</option>
+                    <option value="skyline_94">Skyline 94 ($5/sqm)</option>
+                    <option value="skyline_99">Skyline 99 ($10/sqm)</option>
+                    <option value="vistaweave_plus">Vistaweave Plus ($10/sqm)</option>
+                    <option value="visiontex_plus">Visiontex Plus ($10/sqm)</option>
+                    <option value="vistaweave_99">Vistaweave 99 ($15/sqm)</option>
+                    <option value="visiontex_ultra">Visiontex Ultra ($15/sqm)</option>
+                    <option value="visiontex_extreme">Visiontex Extreme ($15/sqm)</option>
+                    <option value="outlook_mode">Outlook Mode ($15/sqm)</option>
+                    <option value="outlook_privacy">Outlook Privacy ($15/sqm)</option>
+                    <option value="vistaweave_max">Vistaweave Max ($20/sqm)</option>
+                    <option value="outlook_zero">Outlook Zero ($20/sqm)</option>
+                  </optgroup>
+                </select>
+                <div class="hint"><span id="fabricRateHint">* Surcharge = Area (sqm) × Fabric Rate</span></div>
+              </div>
+
+              <div class="form-group">
+                <label for="sqmDisplay">Calculated Fabric Area</label>
+                <div class="input-wrapper">
+                  <input type="text" id="sqmDisplay" value="9.88 sqm (Surcharge: +$0)" readonly>
+                </div>
+                <div class="hint"><span id="sqmFormulaHint">* Width (3.80M) × Projection (2.60M) = 9.88 sqm</span></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 2: Operation, Motor Brand & Sensors/Remotes -->
+          <div class="config-section">
+            <div class="section-header">
+              <span class="section-title"><span class="step-num">2</span> Operation, Motor & Controls</span>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="operationSelect">Operation</label>
+                <select id="operationSelect">
+                  <option value="manual">Manual Gear (+$0)</option>
+                  <option value="motorised">Motorised</option>
+                </select>
+              </div>
+
+              <div class="form-group" id="motorGroup">
+                <label for="motorSelect">Motor Brand</label>
+                <select id="motorSelect" disabled>
+                  <option value="ace">ACE</option>
+                  <option value="alpha">Alpha</option>
+                  <option value="becker">Becker</option>
+                  <option value="somfy">Somfy</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Sensor & Remote Multi-Select Checkboxes -->
+            <div class="form-group">
+              <label id="sensorGroupLabel">Sensor & Remote Options (Multiple Selection)</label>
+              <div class="option-box" id="sensorBox">
+                <div class="sensor-disabled-msg">Select "Motorised" operation above to choose Sensor & Remote options.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 3: Frame Colour, LED Lighting & Fabric Tray -->
+          <div class="config-section">
+            <div class="section-header">
+              <span class="section-title"><span class="step-num">3</span> Frame Finish & Lighting</span>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="powderCoatSelect">Powder Coat</label>
+                <select id="powderCoatSelect">
+                  <option value="white">White (Standard - +$0)</option>
+                  <option value="black">Black</option>
+                  <option value="charcoal">Charcoal</option>
+                  <option value="paperbark">Paperbark</option>
+                  <option value="apo_grey">APO Grey</option>
+                  <option value="woodland_grey">Woodland Grey</option>
+                  <option value="other_durolly">Other Durolly (Non Standard)</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="ledSelect">LED Lighting</label>
+                <select id="ledSelect">
+                  <option value="none">None (No LED)</option>
+                  <option value="arm_led">ARM LED (Up to 3.1M Proj.)</option>
+                  <option value="maxi_led">Maxi LED</option>
+                </select>
+                <div class="hint"><span id="ledHint">* Requires Alpha, Becker, or Somfy motor</span></div>
+              </div>
+            </div>
+
+            <!-- Fabric Tray Option (Only active for Family - Complete) -->
+            <div class="form-group" id="fabricTrayGroup" style="display: none;">
+              <label for="fabricTraySelect">Fabric Tray Option (Family - Complete Exclusive)</label>
+              <select id="fabricTraySelect">
+                <option value="no">No (Without Fabric Tray - +$0)</option>
+                <option value="yes">Yes (Include Fabric Tray)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Step 4: Additional Brackets & Extras (Hidden by default) -->
+          <div class="config-section">
+            <div class="collapsible-bar" id="bracketCollapsibleBar">
+              <div class="collapsible-bar-left">
+                <span class="step-num">4</span>
+                <span>Additional Brackets & Extras</span>
+                <span class="count-badge" id="bracketSelectedBadge">0 selected</span>
+              </div>
+              <button type="button" class="toggle-btn" id="toggleBracketFormBtn">▼ Show Brackets & Extras</button>
+            </div>
+            <!-- Default hidden -->
+            <div class="option-box" id="bracketBox" style="display: none;"></div>
+          </div>
+
+          <div class="action-row">
+            <button type="submit" class="btn">Calculate Price</button>
+            <button type="button" class="btn-secondary" id="resetBtn">Reset</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Right Column: Sticky Quote Summary Card -->
+      <div class="card sticky-card">
+        <div class="card-title">
+          <span>💰 Estimated Quote Summary</span>
+        </div>
+
+        <div id="resultBox" class="result-box">
+          <div class="result-top">
+            <div id="resultProductTag" class="result-product-tag">FAA • TITAN - OPEN (COMPLETE)</div>
+            <div class="result-label" id="resultLabel">Total Estimated Price</div>
+            <div class="result-price" id="resultPrice">-</div>
+          </div>
+
+          <!-- Quick Spec Chips -->
+          <div class="spec-chips" id="specChips">
+            <div class="spec-chip">
+              <span class="spec-chip-label">Input Size</span>
+              <span class="spec-chip-val" id="chipInputSize">3800 × 2600</span>
+            </div>
+            <div class="spec-chip">
+              <span class="spec-chip-label">Price Tier</span>
+              <span class="spec-chip-val" id="chipTierSize">4200 × 2600</span>
+            </div>
+            <div class="spec-chip">
+              <span class="spec-chip-label">Fabric Area</span>
+              <span class="spec-chip-val" id="chipAreaSqm">9.88 sqm</span>
+            </div>
+          </div>
+
+          <!-- Caution Banner for Dark-Shaded Size Tiers (e.g. GENIUS - ZIP) -->
+          <div id="cautionBanner" class="caution-banner"></div>
+
+          <!-- Itemized Breakdown -->
+          <div id="breakdownBox" class="breakdown-box" style="display: none;">
+            <div class="breakdown-row is-active-addon">
+              <span id="basePriceLabelText">Base System Price (Complete)</span>
+              <span id="basePriceText">$0</span>
+            </div>
+            <div class="breakdown-row" id="fabricBreakdownRow">
+              <span id="fabricLabelText">Fabric (Solscape • 9.88 sqm)</span>
+              <span id="fabricPriceText">+$0</span>
+            </div>
+            <div class="breakdown-row" id="motorBreakdownRow">
+              <span id="motorLabelText">Operation (Manual Gear)</span>
+              <span id="motorPriceText">+$0</span>
+            </div>
+            <div class="breakdown-row" id="sensorBreakdownRow">
+              <span id="sensorLabelText">Sensor & Remote (None)</span>
+              <span id="sensorPriceText">+$0</span>
+            </div>
+            <div class="breakdown-row" id="pcBreakdownRow">
+              <span id="pcLabelText">Powder Coat (White)</span>
+              <span id="pcPriceText">+$0</span>
+            </div>
+            <div class="breakdown-row" id="ledBreakdownRow">
+              <span id="ledLabelText">LED Lighting (None)</span>
+              <span id="ledPriceText">+$0</span>
+            </div>
+            <div class="breakdown-row" id="trayBreakdownRow" style="display: none;">
+              <span id="trayLabelText">Fabric Tray (No)</span>
+              <span id="trayPriceText">+$0</span>
+            </div>
+            <div class="breakdown-row" id="bracketBreakdownRow">
+              <span id="bracketLabelText">Brackets & Extras (None)</span>
+              <span id="bracketPriceText">+$0</span>
+            </div>
+          </div>
+
+          <div id="resultBadge" class="badge" style="display: none;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Card: Collapsible Reference Price Tables (Hidden by default) -->
+    <div class="card" id="refTablesCard">
+      <div class="card-title collapsed" id="refTablesCardHeader" style="cursor: pointer;">
+        <span id="tableTitle">📊 FAA — TITAN - OPEN (Complete) & Options Reference Price Tables</span>
+        <button type="button" class="toggle-btn" id="toggleAllTablesBtn">▼ Show Price Tables</button>
+      </div>
+
+      <!-- Default hidden -->
+      <div id="allReferenceTablesWrapper" style="display: none;">
+        <!-- 1. Main Product + Motor + Powder Coat + LED Table -->
+        <div class="ref-subcard">
+          <div class="ref-subtitle">
+            <span id="mainTableSubtitle">System, Motor, Powder Coat & LED Price Table</span>
+            <span style="font-size: 0.8rem; font-weight: 500; color: var(--text-muted);">Unit: mm (M) / USD ($)</span>
+          </div>
+          <div class="table-container">
+            <table id="priceTable">
+              <thead>
+                <tr id="tableHeader">
+                  <th>Projection \ Width</th>
+                </tr>
+              </thead>
+              <tbody id="tableBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- 2. Brackets & Extras Reference Table -->
+        <div class="ref-subcard">
+          <div class="ref-subtitle">
+            <span>🔩 Brackets & Hardware Extras Reference Table</span>
+            <span style="font-size: 0.8rem; font-weight: 500; color: var(--text-muted);">Unit: USD ($) per unit/set</span>
+          </div>
+          <div class="ref-grid-2" id="bracketRefGrid"></div>
+        </div>
+
+        <!-- 3. Sensor & Remote Reference Table -->
+        <div class="ref-subcard">
+          <div class="ref-subtitle">
+            <span>📡 Sensor & Remote Reference Table (By Motor Brand)</span>
+            <span style="font-size: 0.8rem; font-weight: 500; color: var(--text-muted);">Unit: USD ($)</span>
+          </div>
+          <div class="ref-grid-4" id="sensorRefGrid"></div>
+        </div>
+
+        <!-- 4. Fabric Surcharge Reference Table -->
+        <div class="ref-subcard">
+          <div class="ref-subtitle">
+            <span>🧵 Fabric Surcharge Reference Table (Applies to Complete Systems)</span>
+            <span style="font-size: 0.8rem; font-weight: 500; color: var(--text-muted);">Unit: $/sqm</span>
+          </div>
+          <div class="ref-grid-4" id="fabricRefGrid"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Active Product Category State (FAA, DROP A, OZTECH, LOUVRE)
+    let activeCategory = "FAA";
+
+    // Embedded Database for FAA (TITAN, Family, Millennium — Complete & KIT), Fabrics, Motors, Sensors/Remotes, Brackets/Extras, Powder Coat, and LED Lighting
+    const DB = {
+      categories: {
+        "FAA": { label: "FAA (Folding Arm Awning)", ready: true },
+        "DROP A": { label: "DROP A (Drop Awning)", ready: true },
+        "OZTECH": { label: "OZTECH (Retractable Roof System)", ready: false },
+        "LOUVRE": { label: "LOUVRE (Louvre Roof System)", ready: false }
+      },
+      dropAModels: {
+        "GENIUS": [
+          { key: "genius_zip", name: "ZIP" },
+          { key: "genius_flexi_zip", name: "FLEXI ZIP" },
+          { key: "genius_pivot", name: "PIVOT" },
+          { key: "genius_wire_guide", name: "WIRE GUIDE" },
+          { key: "genius_drop", name: "DROP" }
+        ],
+        "TRUSCREEN": [
+          { key: "truscreen", name: "TRUSCREEN (Single)" }
+        ],
+        "FIXED": [
+          { key: "fixed_drop", name: "DROP" },
+          { key: "fixed_wire_guide", name: "WIRE GUIDE" }
+        ]
+      },
+      products: {
+        titan_open: {
+          category: "FAA",
+          name: "TITAN - OPEN",
+          series: "TITAN Series",
+          widths: [3000, 3600, 4200, 4800, 5400, 6000, 6600, 7200, 7800, 8400, 9000],
+          kitWidths: [3000, 3600, 4200, 4800, 5400, 6000, 6500, 7200, 7800, 8400, 9000],
+          projections: [1600, 2100, 2600, 3100, 3600],
+          prices: {
+            1600: { 3000: 949,  3600: 1042, 4200: 1098, 4800: 1258, 5400: 1367, 6000: 1460, 6600: 1610, 7200: 1785, 7800: 1841, 8400: 1933, 9000: 1991 },
+            2100: { 3000: 997,  3600: 1099, 4200: 1155, 4800: 1325, 5400: 1434, 6000: 1537, 6600: 1691, 7200: 1876, 7800: 1931, 8400: 2034, 9000: 2091 },
+            2600: { 3000: 1058, 3600: 1170, 4200: 1226, 4800: 1406, 5400: 1515, 6000: 1627, 6600: 1792, 7200: 1986, 7800: 2042, 8400: 2154, 9000: 2211 },
+            3100: { 3000: 0,    3600: 1230, 4200: 1286, 4800: 1475, 5400: 1585, 6000: 1706, 6600: 1877, 7200: 2081, 7800: 2136, 8400: 2258, 9000: 2316 },
+            3600: { 3000: 0,    3600: 0,    4200: 1383, 4800: 1582, 5400: 1692, 6000: 1823, 6600: 2017, 7200: 0,    7800: 0,    8400: 0,    9000: 0 }
+          },
+          kitPrices: {
+            1600: { 3000: 843,  3600: 914,  4200: 970,  4800: 1092, 5400: 1201, 6000: 1272, 6500: 1423, 7200: 1559, 7800: 1615, 8400: 1686, 9000: 1743 },
+            2100: { 3000: 874,  3600: 949,  4200: 1005, 4800: 1131, 5400: 1240, 6000: 1315, 6500: 1470, 7200: 1610, 7800: 1666, 8400: 1741, 9000: 1798 },
+            2600: { 3000: 918,  3600: 997,  4200: 1053, 4800: 1183, 5400: 1292, 6000: 1371, 6500: 1537, 7200: 1681, 7800: 1737, 8400: 1816, 9000: 1873 },
+            3100: { 3000: 0,    3600: 1035, 4200: 1090, 4800: 1225, 5400: 1334, 6000: 1417, 6500: 1587, 7200: 1736, 7800: 1792, 8400: 1875, 9000: 1932 },
+            3600: { 3000: 0,    3600: 0,    4200: 1165, 4800: 1303, 5400: 1412, 6000: 1500, 6500: 1694, 7200: 0,    7800: 0,    8400: 0,    9000: 0 }
+          },
+          powderCoat: {
+            standard: {
+              name: "Black, Charcoal, Paperbark, APO Grey, Woodland Grey",
+              prices: [70, 70, 70, 70, 70, 70, 105, 105, 105, 105, 105]
+            },
+            non_standard: {
+              name: "NON STANDARD FRAME COLOUR (Other Durolly)",
+              prices: [228, 248, 283, 293, 373, 388, 418, 439, 519, 541, 563]
+            }
+          }
+        },
+        titan_trendy: {
+          category: "FAA",
+          name: "TITAN - TRENDY",
+          series: "TITAN Series",
+          widths: [3000, 3600, 4200, 4800, 5400, 6000, 6500, 7200, 7800, 8400, 9000],
+          projections: [1600, 2100, 2600, 3100, 3600],
+          prices: {
+            1600: { 3000: 1012, 3600: 1123, 4200: 1196, 4800: 1375, 5400: 1502, 6000: 1612, 6500: 1781, 7200: 1974, 7800: 2048, 8400: 2158, 9000: 2234 },
+            2100: { 3000: 1060, 3600: 1180, 4200: 1254, 4800: 1442, 5400: 1569, 6000: 1689, 6500: 1862, 7200: 2065, 7800: 2138, 8400: 2259, 9000: 2334 },
+            2600: { 3000: 1121, 3600: 1251, 4200: 1325, 4800: 1522, 5400: 1650, 6000: 1779, 6500: 1963, 7200: 2175, 7800: 2249, 8400: 2379, 9000: 2454 },
+            3100: { 3000: 0,    3600: 1311, 4200: 1385, 4800: 1592, 5400: 1719, 6000: 1859, 6500: 2048, 7200: 2270, 7800: 2343, 8400: 2483, 9000: 2558 },
+            3600: { 3000: 0,    3600: 0,    4200: 1482, 4800: 1699, 5400: 1826, 6000: 1976, 6500: 2189, 7200: 0,    7800: 0,    8400: 0,    9000: 0 }
+          },
+          kitPrices: {
+            1600: { 3000: 906,  3600: 995,  4200: 1069, 4800: 1209, 5400: 1336, 6000: 1425, 6500: 1594, 7200: 1749, 7800: 1822, 8400: 1911, 9000: 1987 },
+            2100: { 3000: 937,  3600: 1030, 4200: 1103, 4800: 1248, 5400: 1375, 6000: 1468, 6500: 1641, 7200: 1799, 7800: 1873, 8400: 1966, 9000: 2042 },
+            2600: { 3000: 981,  3600: 1078, 4200: 1152, 4800: 1300, 5400: 1427, 6000: 1524, 6500: 1708, 7200: 1870, 7800: 1944, 8400: 2041, 9000: 2116 },
+            3100: { 3000: 0,    3600: 1115, 4200: 1189, 4800: 1341, 5400: 1469, 6000: 1570, 6500: 1759, 7200: 1925, 7800: 1999, 8400: 2100, 9000: 2175 },
+            3600: { 3000: 0,    3600: 0,    4200: 1264, 4800: 1420, 5400: 1547, 6000: 1652, 6500: 1865, 7200: 0,    7800: 0,    8400: 0,    9000: 0 }
+          },
+          powderCoat: {
+            standard: {
+              name: "Black, Charcoal, Paperbark, APO Grey, Woodland Grey",
+              prices: [70, 70, 70, 70, 70, 70, 105, 105, 105, 105, 105]
+            },
+            non_standard: {
+              name: "NON STANDARD FRAME COLOUR (Other Durolly)",
+              prices: [253, 276, 314, 325, 414, 431, 464, 488, 577, 601, 626]
+            }
+          }
+        },
+        family_complete: {
+          category: "FAA",
+          name: "Family - Complete",
+          series: "Family Series",
+          widths: [3000, 3600, 4200, 4800, 5400, 6000, 6500, 7200, 7800, 8400, 9000],
+          projections: [1600, 2100, 2600, 3100, 3600, 4100],
+          prices: {
+            1600: { 3000: 1351, 3600: 1484, 4200: 1566, 4800: 1795, 5400: 1952, 6000: 2086, 6500: 2301, 7200: 2550, 7800: 2632, 8400: 2765, 9000: 2851 },
+            2100: { 3000: 1417, 3600: 1565, 4200: 1646, 4800: 1889, 5400: 2046, 6000: 2193, 6500: 2415, 7200: 2677, 7800: 2759, 8400: 2906, 9000: 2991 },
+            2600: { 3000: 1503, 3600: 1664, 4200: 1745, 4800: 2002, 5400: 2159, 6000: 2320, 6500: 2556, 7200: 2831, 7800: 2913, 8400: 3074, 9000: 3159 },
+            3100: { 3000: 0,    3600: 1748, 4200: 1830, 4800: 2100, 5400: 2257, 6000: 2431, 6500: 2675, 7200: 2964, 7800: 3046, 8400: 3220, 9000: 3305 },
+            3600: { 3000: 0,    3600: 0,    4200: 1984, 4800: 2268, 5400: 2425, 6000: 2613, 6500: 2899, 7200: 3202, 7800: 3284, 8400: 3472, 9000: 3557 },
+            4100: { 3000: 0,    3600: 0,    4200: 0,    4800: 2414, 5400: 2571, 6000: 2773, 6500: 3090, 7200: 0,    7800: 0,    8400: 0,    9000: 0 }
+          },
+          kitPrices: {
+            1600: { 3000: 1244, 3600: 1356, 4200: 1438, 4800: 1629, 5400: 1786, 6000: 1898, 6500: 2114, 7200: 2324, 7800: 2406, 8400: 2518, 9000: 2604 },
+            2100: { 3000: 1294, 3600: 1414, 4200: 1496, 4800: 1695, 5400: 1852, 6000: 1972, 6500: 2193, 7200: 2412, 7800: 2493, 8400: 2613, 9000: 2699 },
+            2600: { 3000: 1363, 3600: 1491, 4200: 1572, 4800: 1780, 5400: 1936, 6000: 2064, 6500: 2300, 7200: 2527, 7800: 2608, 8400: 2736, 9000: 2822 },
+            3100: { 3000: 0,    3600: 1552, 4200: 1634, 4800: 1849, 5400: 2006, 6000: 2142, 6500: 2385, 7200: 2619, 7800: 2701, 8400: 2837, 9000: 2922 },
+            3600: { 3000: 0,    3600: 0,    4200: 1766, 4800: 1989, 5400: 2146, 6000: 2290, 6500: 2576, 7200: 2818, 7800: 2900, 8400: 3043, 9000: 3129 },
+            4100: { 3000: 0,    3600: 0,    4200: 0,    4800: 2107, 5400: 2264, 6000: 2415, 6500: 2733, 7200: 0,    7800: 0,    8400: 0,    9000: 0 }
+          },
+          powderCoat: {
+            standard: {
+              name: "Black, Charcoal, Paperbark, APO Grey, Woodland Grey",
+              prices: [80, 80, 80, 80, 80, 80, 120, 120, 120, 120, 120]
+            },
+            non_standard: {
+              name: "NON STANDARD FRAME COLOUR (Other Durolly)",
+              prices: [228, 248, 283, 293, 373, 388, 418, 439, 519, 541, 563]
+            }
+          },
+          fabricTray: [136, 148, 165, 171, 183, 191, 206, 217, 229, 240, 253]
+        },
+        family_flex: {
+          category: "FAA",
+          name: "Family - Flex",
+          series: "Family Series",
+          widths: [3000, 3600, 4200, 4800, 5400, 6000, 6500, 7200, 7800, 8400, 9000],
+          projections: [1600, 2100, 2600, 3100, 3600, 4100],
+          prices: {
+            1600: { 3000: 1769, 3600: 1939, 4200: 2058, 4800: 2273, 5400: 2466, 6000: 2636, 6500: 2934, 7200: 3219, 7800: 3338, 8400: 3508, 9000: 3631 },
+            2100: { 3000: 1836, 3600: 2020, 4200: 2138, 4800: 2367, 5400: 2560, 6000: 2744, 6500: 3048, 7200: 3346, 7800: 3465, 8400: 3648, 9000: 3772 },
+            2600: { 3000: 1922, 3600: 2119, 4200: 2237, 4800: 2479, 5400: 2673, 6000: 2870, 6500: 3189, 7200: 3501, 7800: 3619, 8400: 3817, 9000: 3940 },
+            3100: { 3000: 0,    3600: 2203, 4200: 2322, 4800: 2577, 5400: 2771, 6000: 2982, 6500: 3308, 7200: 3633, 7800: 3752, 8400: 3963, 9000: 4086 },
+            3600: { 3000: 0,    3600: 0,    4200: 2476, 4800: 2746, 5400: 2939, 6000: 3163, 6500: 3532, 7200: 3872, 7800: 3990, 8400: 4214, 9000: 4338 },
+            4100: { 3000: 0,    3600: 0,    4200: 0,    4800: 2892, 5400: 3085, 6000: 3323, 6500: 3723, 7200: 0,    7800: 0,    8400: 0,    9000: 0 }
+          },
+          kitPrices: {
+            1600: { 3000: 1663, 3600: 1812, 4200: 1930, 4800: 2107, 5400: 2300, 6000: 2449, 6500: 2747, 7200: 2994, 7800: 3112, 8400: 3261, 9000: 3384 },
+            2100: { 3000: 1713, 3600: 1869, 4200: 1988, 4800: 2173, 5400: 2366, 6000: 2523, 6500: 2826, 7200: 3081, 7800: 3199, 8400: 3356, 9000: 3479 },
+            2600: { 3000: 1781, 3600: 1946, 4200: 2064, 4800: 2257, 5400: 2450, 6000: 2615, 6500: 2933, 7200: 3196, 7800: 3314, 8400: 3479, 9000: 3602 },
+            3100: { 3000: 0,    3600: 2007, 4200: 2126, 4800: 2326, 5400: 2520, 6000: 2692, 6500: 3018, 7200: 3289, 7800: 3407, 8400: 3580, 9000: 3703 },
+            3600: { 3000: 0,    3600: 0,    4200: 2258, 4800: 2466, 5400: 2660, 6000: 2840, 6500: 3209, 7200: 3487, 7800: 3606, 8400: 3786, 9000: 3909 },
+            4100: { 3000: 0,    3600: 0,    4200: 0,    4800: 2584, 5400: 2778, 6000: 2966, 6500: 3366, 7200: 0,    7800: 0,    8400: 0,    9000: 0 }
+          },
+          powderCoat: {
+            standard: {
+              name: "Black, Charcoal, Paperbark, APO Grey, Woodland Grey",
+              prices: [80, 80, 80, 80, 80, 80, 120, 120, 120, 120, 120]
+            },
+            non_standard: {
+              name: "NON STANDARD FRAME COLOUR (Other Durolly)",
+              prices: [228, 248, 283, 293, 373, 388, 418, 439, 519, 541, 563]
+            }
+          }
+        },
+        family_basic: {
+          category: "FAA",
+          name: "Family - Basic",
+          series: "Family Series",
+          widths: [3000, 3600, 4200, 4800, 5400, 6000, 6500, 7200, 7800, 8400, 9000],
+          projections: [1600, 2100, 2600, 3100, 3600, 4100],
+          prices: {
+            1600: { 3000: 1675, 3600: 1845, 4200: 1964, 4800: 2179, 5400: 2372, 6000: 2542, 6500: 2793, 7200: 3078, 7800: 3197, 8400: 3367, 9000: 3490 },
+            2100: { 3000: 1742, 3600: 1926, 4200: 2044, 4800: 2273, 5400: 2466, 6000: 2650, 6500: 2906, 7200: 3205, 7800: 3323, 8400: 3507, 9000: 3630 },
+            2600: { 3000: 1827, 3600: 2025, 4200: 2143, 4800: 2385, 5400: 2579, 6000: 2776, 6500: 3047, 7200: 3360, 7800: 3478, 8400: 3675, 9000: 3799 },
+            3100: { 3000: 0,    3600: 2109, 4200: 2227, 4800: 2483, 5400: 2677, 6000: 2887, 6500: 3166, 7200: 3492, 7800: 3611, 8400: 3821, 9000: 3945 },
+            3600: { 3000: 0,    3600: 0,    4200: 2382, 4800: 2651, 5400: 2845, 6000: 3069, 6500: 3391, 7200: 3730, 7800: 3849, 8400: 4073, 9000: 4196 },
+            4100: { 3000: 0,    3600: 0,    4200: 0,    4800: 2797, 5400: 2991, 6000: 3229, 6500: 3582, 7200: 0,    7800: 0,    8400: 0,    9000: 0 }
+          },
+          kitPrices: {
+            1600: { 3000: 1569, 3600: 1717, 4200: 1836, 4800: 2013, 5400: 2206, 6000: 2355, 6500: 2606, 7200: 2853, 7800: 2971, 8400: 3120, 9000: 3243 },
+            2100: { 3000: 1619, 3600: 1775, 4200: 1894, 4800: 2078, 5400: 2272, 6000: 2428, 6500: 2685, 7200: 2940, 7800: 3058, 8400: 3215, 9000: 3338 },
+            2600: { 3000: 1687, 3600: 1852, 4200: 1970, 4800: 2163, 5400: 2356, 6000: 2521, 6500: 2792, 7200: 3055, 7800: 3173, 8400: 3338, 9000: 3461 },
+            3100: { 3000: 0,    3600: 1913, 4200: 2032, 4800: 2232, 5400: 2426, 6000: 2598, 6500: 2877, 7200: 3148, 7800: 3266, 8400: 3438, 9000: 3562 },
+            3600: { 3000: 0,    3600: 0,    4200: 2164, 4800: 2372, 5400: 2566, 6000: 2746, 6500: 3067, 7200: 3346, 7800: 3465, 8400: 3645, 9000: 3768 },
+            4100: { 3000: 0,    3600: 0,    4200: 0,    4800: 2490, 5400: 2683, 6000: 2872, 6500: 3225, 7200: 0,    7800: 0,    8400: 0,    9000: 0 }
+          },
+          powderCoat: {
+            standard: {
+              name: "Black, Charcoal, Paperbark, APO Grey, Woodland Grey",
+              prices: [80, 80, 80, 80, 80, 80, 120, 120, 120, 120, 120]
+            },
+            non_standard: {
+              name: "NON STANDARD FRAME COLOUR (Other Durolly)",
+              prices: [228, 248, 283, 293, 373, 388, 418, 439, 519, 541, 563]
+            }
+          }
+        },
+        family_kompakt_c: {
+          category: "FAA",
+          name: "Family - Kompakt-C",
+          series: "Family Series",
+          widths: [3000, 3600, 4200, 4800, 5400, 6000, 6500, 7200, 7800, 8400, 9000],
+          projections: [1600, 2100, 2600, 3100, 3600, 4100],
+          prices: {
+            1600: { 3000: 1895, 3600: 2100, 4200: 2252, 4800: 2502, 5400: 2730, 6000: 2934, 6500: 3220, 7200: 3540, 7800: 3692, 8400: 3896, 9000: 4055 },
+            2100: { 3000: 1962, 3600: 2180, 4200: 2333, 4800: 2596, 5400: 2824, 6000: 3042, 6500: 3334, 7200: 3666, 7800: 3819, 8400: 4037, 9000: 4195 },
+            2600: { 3000: 2048, 3600: 2279, 4200: 2432, 4800: 2709, 5400: 2937, 6000: 3168, 6500: 3475, 7200: 3821, 7800: 3974, 8400: 4205, 9000: 4364 },
+            3100: { 3000: 0,    3600: 2363, 4200: 2516, 4800: 2807, 5400: 3034, 6000: 3279, 6500: 3594, 7200: 3954, 7800: 4106, 8400: 4351, 9000: 4510 },
+            3600: { 3000: 0,    3600: 0,    4200: 2671, 4800: 2975, 5400: 3203, 6000: 3461, 6500: 3818, 7200: 4192, 7800: 4344, 8400: 4603, 9000: 4761 },
+            4100: { 3000: 0,    3600: 0,    4200: 0,    4800: 3121, 5400: 3349, 6000: 3621, 6500: 4009, 7200: 0,    7800: 0,    8400: 0,    9000: 0 }
+          },
+          kitPrices: {
+            1600: { 3000: 1789, 3600: 1972, 4200: 2124, 4800: 2336, 5400: 2564, 6000: 2747, 6500: 3033, 7200: 3314, 7800: 3467, 8400: 3649, 9000: 3808 },
+            2100: { 3000: 1839, 3600: 2030, 4200: 2182, 4800: 2402, 5400: 2630, 6000: 2820, 6500: 3112, 7200: 3401, 7800: 3554, 8400: 3744, 9000: 3903 },
+            2600: { 3000: 1908, 3600: 2106, 4200: 2259, 4800: 2487, 5400: 2714, 6000: 2913, 6500: 3219, 7200: 3516, 7800: 3669, 8400: 3867, 9000: 4026 },
+            3100: { 3000: 0,    3600: 2168, 4200: 2320, 4800: 2556, 5400: 2784, 6000: 2990, 6500: 3304, 7200: 3609, 7800: 3762, 8400: 3968, 9000: 4127 },
+            3600: { 3000: 0,    3600: 0,    4200: 2452, 4800: 2696, 5400: 2924, 6000: 3138, 6500: 3495, 7200: 3808, 7800: 3960, 8400: 4174, 9000: 4333 },
+            4100: { 3000: 0,    3600: 0,    4200: 0,    4800: 2814, 5400: 3041, 6000: 3264, 6500: 3652, 7200: 0,    7800: 0,    8400: 0,    9000: 0 }
+          },
+          powderCoat: {
+            standard: {
+              name: "Black, Charcoal, Paperbark, APO Grey, Woodland Grey",
+              prices: [80, 80, 80, 80, 80, 80, 120, 120, 120, 120, 120]
+            },
+            non_standard: {
+              name: "NON STANDARD FRAME COLOUR (Other Durolly)",
+              prices: [228, 248, 283, 293, 373, 388, 418, 439, 519, 541, 563]
+            }
+          }
+        },
+        millennium: {
+          category: "FAA",
+          name: "Millennium",
+          series: "Millennium Series",
+          widths: [3000, 3600, 4200, 4800, 5400, 6000, 6500, 7200, 7500],
+          projections: [1600, 2100, 2600, 3100, 3600, 4100],
+          prices: {
+            1600: { 3000: 2257, 3600: 2503, 4200: 2697, 4800: 2989, 5400: 3258, 6000: 3504, 6500: 3868, 7200: 4229, 7500: 4423 },
+            2100: { 3000: 2324, 3600: 2583, 4200: 2778, 4800: 3083, 5400: 3352, 6000: 3612, 6500: 3981, 7200: 4356, 7500: 4550 },
+            2600: { 3000: 2409, 3600: 2682, 4200: 2877, 4800: 3195, 5400: 3465, 6000: 3738, 6500: 4122, 7200: 4510, 7500: 4705 },
+            3100: { 3000: 0,    3600: 2767, 4200: 2961, 4800: 3293, 5400: 3563, 6000: 3849, 6500: 4241, 7200: 4643, 7500: 4837 },
+            3600: { 3000: 0,    3600: 0,    4200: 3116, 4800: 3461, 5400: 3731, 6000: 4031, 6500: 4465, 7200: 4881, 7500: 5075 },
+            4100: { 3000: 0,    3600: 0,    4200: 0,    4800: 3608, 5400: 3877, 6000: 4191, 6500: 4657, 7200: 0,    7500: 0 }
+          },
+          kitPrices: {
+            1600: { 3000: 2151, 3600: 2375, 4200: 2570, 4800: 2823, 5400: 3092, 6000: 3317, 6500: 3680, 7200: 4003, 7500: 4198 },
+            2100: { 3000: 2201, 3600: 2433, 4200: 2627, 4800: 2888, 5400: 3158, 6000: 3390, 6500: 3760, 7200: 4090, 7500: 4285 },
+            2600: { 3000: 2269, 3600: 2509, 4200: 2704, 4800: 2973, 5400: 3242, 6000: 3483, 6500: 3867, 7200: 4205, 7500: 4400 },
+            3100: { 3000: 0,    3600: 2571, 4200: 2765, 4800: 3042, 5400: 3312, 6000: 3560, 6500: 3952, 7200: 4298, 7500: 4493 },
+            3600: { 3000: 0,    3600: 0,    4200: 2897, 4800: 3182, 5400: 3452, 6000: 3708, 6500: 4142, 7200: 4497, 7500: 4691 },
+            4100: { 3000: 0,    3600: 0,    4200: 0,    4800: 3300, 5400: 3569, 6000: 3834, 6500: 4299, 7200: 0,    7500: 0 }
+          },
+          powderCoat: {
+            standard: {
+              name: "Black, Charcoal, Paperbark, APO Grey, Woodland Grey",
+              prices: [80, 80, 80, 80, 80, 80, 120, 120, 120]
+            },
+            non_standard: {
+              name: "NON STANDARD FRAME COLOUR (Other Durolly)",
+              prices: [253, 276, 314, 325, 414, 431, 464, 488, 577]
+            }
+          }
+        },
+        // ================= DROP A (DROP AWNING) MODELS =================
+        genius_zip: {
+          category: "DROP A",
+          group: "GENIUS",
+          subModel: "ZIP",
+          name: "GENIUS - ZIP",
+          series: "GENIUS Series",
+          widths: [900, 1200, 1500, 1800, 2100, 2400, 2700, 3000, 3300, 3600, 3900, 4200, 4800, 5400],
+          projections: [1000, 1500, 2000, 2500, 3000],
+          cautionRule: {
+            minWidth: 4200,
+            minProjection: 3000,
+            message: "⚠️ Shaded Size Tier (Width ≥ 4.2M or Drop 3.0M): Motorised operation recommended / Check warranty conditions."
+          },
+          prices: {
+            1000: { 900: 378, 1200: 419, 1500: 460, 1800: 499, 2100: 540, 2400: 581, 2700: 634, 3000: 675, 3300: 928,  3600: 1040, 3900: 1064, 4200: 1173, 4800: 1312, 5400: 1573 },
+            1500: { 900: 414, 1200: 490, 1500: 530, 1800: 569, 2100: 610, 2400: 651, 2700: 703, 3000: 743, 3300: 961,  3600: 1072, 3900: 1097, 4200: 1205, 4800: 1344, 5400: 1605 },
+            2000: { 900: 449, 1200: 560, 1500: 600, 1800: 639, 2100: 680, 2400: 720, 2700: 772, 3000: 812, 3300: 994,  3600: 1106, 3900: 1129, 4200: 1237, 4800: 1375, 5400: 1636 },
+            2500: { 900: 487, 1200: 631, 1500: 670, 1800: 709, 2100: 749, 2400: 789, 2700: 841, 3000: 882, 3300: 1028, 3600: 1138, 3900: 1162, 4200: 1271, 4800: 1407, 5400: 1668 },
+            3000: { 900: 521, 1200: 701, 1500: 741, 1800: 779, 2100: 819, 2400: 859, 2700: 911, 3000: 951, 3300: 1061, 3600: 1171, 3900: 1195, 4200: 1303, 4800: 1438, 5400: 1699 }
+          },
+          springPrices: {
+            1000: { 900: 392, 1200: 435, 1500: 478, 1800: 519, 2100: 562, 2400: 605, 2700: 657, 3000: 699, 3300: 955,  3600: 1070, 3900: 1097, 4200: 1208, 4800: 1350, 5400: 1612 },
+            1500: { 900: 429, 1200: 506, 1500: 548, 1800: 589, 2100: 632, 2400: 675, 2700: 727, 3000: 768, 3300: 988,  3600: 1103, 3900: 1129, 4200: 1240, 4800: 1382, 5400: 1645 },
+            2000: { 900: 464, 1200: 576, 1500: 617, 1800: 660, 2100: 702, 2400: 743, 2700: 796, 3000: 837, 3300: 1022, 3600: 1137, 3900: 1162, 4200: 1272, 4800: 1413, 5400: 1676 },
+            2500: { 900: 500, 1200: 647, 1500: 688, 1800: 730, 2100: 771, 2400: 812, 2700: 864, 3000: 907, 3300: 1056, 3600: 1169, 3900: 1195, 4200: 1306, 4800: 1445, 5400: 1708 },
+            3000: { 900: 535, 1200: 717, 1500: 758, 1800: 799, 2100: 841, 2400: 882, 2700: 934, 3000: 976, 3300: 1089, 3600: 1202, 3900: 1228, 4200: 1338, 4800: 1477, 5400: 1739 }
+          },
+          motors: {
+            ace:    { name: "ACE",    prices: [180, 180, 180, 180, 180, 180, 180, 180, 180, 180, 180, 180, 180, 180] },
+            becker: { name: "Becker", prices: [390, 390, 390, 390, 390, 390, 390, 390, 390, 390, 390, 390, 390, 390] },
+            alpha:  { name: "Alpha",  prices: [110, 110, 110, 110, 110, 110, 110, 110, 110, 110, 110, 110, 110, 110] },
+            somfy:  { name: "Somfy",  prices: [500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500] }
+          },
+          powderCoat: null
+        },
+        genius_flexi_zip: {
+          category: "DROP A",
+          group: "GENIUS",
+          subModel: "FLEXI ZIP",
+          name: "GENIUS - FLEXI ZIP",
+          series: "GENIUS Series",
+          widths: [900, 1200, 1500, 1800, 2100, 2400, 2700, 3000, 3300, 3600, 3900, 4200, 4800, 5400],
+          projections: [1000, 1500, 2000, 2500, 3000],
+          prices: null,
+          powderCoat: null
+        },
+        genius_pivot: {
+          category: "DROP A",
+          group: "GENIUS",
+          subModel: "PIVOT",
+          name: "GENIUS - PIVOT",
+          series: "GENIUS Series",
+          widths: [900, 1200, 1500, 1800, 2100, 2400, 2700, 3000, 3300, 3600, 3900, 4200, 4800, 5400],
+          projections: [1000, 1500, 2000, 2500, 3000],
+          prices: null,
+          powderCoat: null
+        },
+        genius_wire_guide: {
+          category: "DROP A",
+          group: "GENIUS",
+          subModel: "WIRE GUIDE",
+          name: "GENIUS - WIRE GUIDE",
+          series: "GENIUS Series",
+          widths: [900, 1200, 1500, 1800, 2100, 2400, 2700, 3000, 3300, 3600, 3900, 4200, 4800, 5400],
+          projections: [1000, 1500, 2000, 2500, 3000],
+          prices: null,
+          powderCoat: null
+        },
+        genius_drop: {
+          category: "DROP A",
+          group: "GENIUS",
+          subModel: "DROP",
+          name: "GENIUS - DROP",
+          series: "GENIUS Series",
+          widths: [900, 1200, 1500, 1800, 2100, 2400, 2700, 3000, 3300, 3600, 3900, 4200, 4800, 5400],
+          projections: [1000, 1500, 2000, 2500, 3000],
+          prices: null,
+          powderCoat: null
+        },
+        truscreen: {
+          category: "DROP A",
+          group: "TRUSCREEN",
+          subModel: "TRUSCREEN",
+          name: "TRUSCREEN",
+          series: "TRUSCREEN Series",
+          widths: [900, 1200, 1500, 1800, 2100, 2400, 2700, 3000, 3300, 3600, 3900, 4200, 4800, 5400],
+          projections: [1000, 1500, 2000, 2500, 3000],
+          prices: null,
+          powderCoat: null
+        },
+        fixed_drop: {
+          category: "DROP A",
+          group: "FIXED",
+          subModel: "DROP",
+          name: "FIXED - DROP",
+          series: "FIXED Series",
+          widths: [900, 1200, 1500, 1800, 2100, 2400, 2700, 3000, 3300, 3600, 3900, 4200, 4800, 5400],
+          projections: [1000, 1500, 2000, 2500, 3000],
+          prices: null,
+          powderCoat: null
+        },
+        fixed_wire_guide: {
+          category: "DROP A",
+          group: "FIXED",
+          subModel: "WIRE GUIDE",
+          name: "FIXED - WIRE GUIDE",
+          series: "FIXED Series",
+          widths: [900, 1200, 1500, 1800, 2100, 2400, 2700, 3000, 3300, 3600, 3900, 4200, 4800, 5400],
+          projections: [1000, 1500, 2000, 2500, 3000],
+          prices: null,
+          powderCoat: null
+        }
+      },
+      // Fabric Surcharge Database ($/sqm)
+      fabrics: {
+        solscape:               { category: "Acrylic",    name: "Solscape",                rate: 0 },
+        docril:                 { category: "Acrylic",    name: "Docril",                  rate: 10 },
+        dickson:                { category: "Acrylic",    name: "Dickson",                 rate: 15 },
+        sattler:                { category: "Acrylic",    name: "Sattler",                 rate: 15 },
+        docril_neptune:         { category: "Acrylic",    name: "Docril Neptune",          rate: 15 },
+        dickson_max:            { category: "Acrylic",    name: "Dickson Max",             rate: 25 },
+        hunter_douglas:         { category: "Canvas",     name: "Hunter Douglas",          rate: 25 },
+        somerton:               { category: "Canvas",     name: "Somerton",                rate: 25 },
+        brella:                 { category: "Canvas",     name: "Brella",                  rate: 25 },
+        clear_075:              { category: "Clear PVC",  name: "Clear 0.75mm",            rate: 10 },
+        tint_075:               { category: "Clear PVC",  name: "Tint 0.75mm",             rate: 15 },
+        clear_10:               { category: "Clear PVC",  name: "Clear 1.0mm",             rate: 20 },
+        tint_10:                { category: "Clear PVC",  name: "Tint 1.0mm",              rate: 20 },
+        viewshade_fg_95:        { category: "Shade Mesh", name: "Viewshade Fiberglass 95", rate: 0 },
+        viewshade_fg_99:        { category: "Shade Mesh", name: "Viewshade Fiberglass 99", rate: 5 },
+        skyline_94:             { category: "Shade Mesh", name: "Skyline 94",              rate: 5 },
+        skyline_99:             { category: "Shade Mesh", name: "Skyline 99",              rate: 10 },
+        vistaweave_plus:        { category: "Shade Mesh", name: "Vistaweave Plus",         rate: 10 },
+        visiontex_plus:         { category: "Shade Mesh", name: "Visiontex Plus",          rate: 10 },
+        vistaweave_99:          { category: "Shade Mesh", name: "Vistaweave 99",           rate: 15 },
+        visiontex_ultra:        { category: "Shade Mesh", name: "Visiontex Ultra",         rate: 15 },
+        visiontex_extreme:      { category: "Shade Mesh", name: "Visiontex Extreme",       rate: 15 },
+        outlook_mode:           { category: "Shade Mesh", name: "Outlook Mode",            rate: 15 },
+        outlook_privacy:        { category: "Shade Mesh", name: "Outlook Privacy",         rate: 15 },
+        vistaweave_max:         { category: "Shade Mesh", name: "Vistaweave Max",          rate: 20 },
+        outlook_zero:           { category: "Shade Mesh", name: "Outlook Zero",            rate: 20 }
+      },
+      // Motor surcharge aligned by the 11 standard width columns (3.0M ~ 9.0M)
+      motors: {
+        ace: {
+          name: "ACE",
+          prices: [180, 180, 180, 180, 180, 190, 190, 190, 190, 220, 220]
+        },
+        alpha: {
+          name: "Alpha",
+          prices: [290, 290, 290, 290, 290, 310, 310, 310, 310, 430, 430]
+        },
+        becker: {
+          name: "Becker",
+          prices: [570, 570, 570, 570, 570, 620, 620, 620, 620, 720, 720]
+        },
+        somfy: {
+          name: "Somfy",
+          prices: [680, 680, 680, 680, 680, 830, 830, 830, 830, 890, 890]
+        }
+      },
+      // Sensor and Remote Options by Motor Brand
+      sensorAndRemotes: {
+        ace: [
+          { id: "ace_add_1ch", name: "Additional Single Channel Remote", price: 42 },
+          { id: "ace_chg_15ch", name: "Change Single Channel to 15 Channel Remote", price: 45 },
+          { id: "ace_solar_sun_wind", name: "Solar Powered Sun & Wind Sensor", price: 100 }
+        ],
+        alpha: [
+          { id: "alpha_add_1ch", name: "Additional Single Channel Remote", price: 66 },
+          { id: "alpha_chg_5ch", name: "Change to 5ch Remote", price: 25 },
+          { id: "alpha_motion", name: "Alpha Motion Sensor", price: 136 },
+          { id: "alpha_sun_wind", name: "Alpha Sun & Wind Sensor", price: 203 }
+        ],
+        becker: [
+          { id: "becker_add_1ch", name: "Additional Single Channel Remote", price: 72 },
+          { id: "becker_chg_5ch", name: "Change to 5ch Remote", price: 61 },
+          { id: "becker_motion", name: "Becker Motion Sensor", price: 243 },
+          { id: "becker_wind", name: "Wireless Wind Sensor", price: 280 },
+          { id: "becker_sun_wind_rain", name: "Wireless Sun, Wind & Rain Sensor", price: 400 }
+        ],
+        somfy: [
+          { id: "somfy_add_1ch", name: "Additional Single Channel Remote", price: 72 },
+          { id: "somfy_chg_5ch", name: "Change to 5ch Remote", price: 61 },
+          { id: "somfy_rain", name: "Rain Sensor", price: 900 },
+          { id: "somfy_motion", name: "Somfy Motion Sensor", price: 280 },
+          { id: "somfy_wind", name: "Wireless Wind Sensor", price: 280 },
+          { id: "somfy_sun_wind", name: "Wireless Sun & Wind Sensor", price: 344 }
+        ]
+      },
+      // Brackets & Hardware Extras (Multi-select + Quantity)
+      bracketsAndExtras: [
+        { id: "wall_mount_bracket", name: "Wall Mount Bracket", price: 20 },
+        { id: "fascia_rafter_22", name: "Fascia Rafter Brackets (22 Degrees)", price: 50 },
+        { id: "fascia_rafter_10", name: "Fascia Rafter Brackets (10 Degrees)", price: 50 },
+        { id: "under_eave_rafter", name: "Under Eave Rafter Brackets", price: 75 },
+        { id: "top_mounting_alu", name: "Top Mounting Brackets Aluminium", price: 75 },
+        { id: "roof_tile_rafter", name: "Roof Tile Rafter Brackets set (Including L Bracket)", price: 100 },
+        { id: "support_pole_pair", name: "2.5M Support Pole & Saddle (pair)", price: 560 },
+        { id: "crank_handle", name: "Crank Handle (1.5meter)", price: 19 },
+        { id: "printing_1col", name: "Printing - 1 Colour (UV Stabilized, Valance Only)", price: 275 },
+        { id: "printing_add_col", name: "Printing - Additional Colours", price: 90 },
+        { id: "millennium_wall_bracket", name: "Millennium Wall Mount Bracket", price: 48 }
+      ],
+      powderCoatOptions: {
+        white: { label: "White", tier: null },
+        black: { label: "Black", tier: "standard" },
+        charcoal: { label: "Charcoal", tier: "standard" },
+        paperbark: { label: "Paperbark", tier: "standard" },
+        apo_grey: { label: "APO Grey", tier: "standard" },
+        woodland_grey: { label: "Woodland Grey", tier: "standard" },
+        other_durolly: { label: "Other Durolly", tier: "non_standard" }
+      },
+      // LED Lighting Surcharges (0 = Unavailable / N/A)
+      ledLighting: {
+        arm_led: {
+          name: "ARM LED",
+          maxProjection: 3100,
+          rows: {
+            alpha:  { label: "ARM LED - Alpha (Up to 3.1M Proj.)",  prices: [540, 540, 540, 540, 540, 560, 0, 0, 0, 0, 0] },
+            becker: { label: "ARM LED - Becker (Up to 3.1M Proj.)", prices: [1020, 1020, 1020, 1020, 1020, 1070, 0, 0, 0, 0, 0] },
+            somfy:  { label: "ARM LED - Somfy (Up to 3.1M Proj.)",  prices: [1130, 1130, 1130, 1130, 1130, 1280, 0, 0, 0, 0, 0] }
+          }
+        },
+        maxi_led: {
+          name: "Maxi LED",
+          maxProjection: 4100,
+          rows: {
+            alpha:  { label: "Maxi LED - Alpha",  prices: [403, 415, 428, 440, 453, 466, 479, 492, 505, 0, 0] },
+            becker: { label: "Maxi LED - Becker", prices: [527, 539, 553, 565, 577, 590, 602, 615, 629, 642, 656] },
+            somfy:  { label: "Maxi LED - Somfy",  prices: [527, 539, 553, 565, 577, 590, 602, 615, 629, 642, 656] }
+          }
+        }
+      }
+    };
+
+    function getCurrentProductKey() {
+      if (activeCategory === 'DROP A') {
+        return document.getElementById('dropASubSelect').value;
+      }
+      return document.getElementById('productSelect').value;
+    }
+
+    function getCurrentProduct() {
+      return DB.products[getCurrentProductKey()];
+    }
+
+    function getCurrentSupplyType() {
+      if (activeCategory === 'DROP A') {
+        return 'complete';
+      }
+      return document.getElementById('supplyTypeSelect').value; // 'complete' or 'kit'
+    }
+
+    function getActiveWidths(product, supplyType) {
+      if (supplyType === 'kit' && product.kitWidths) {
+        return product.kitWidths;
+      }
+      return product.widths;
+    }
+
+    function getActivePriceMatrix(product, supplyType) {
+      if (activeCategory === 'DROP A') {
+        const op = document.getElementById('operationSelect').value;
+        if (op === 'spring') {
+          return product.springPrices || null;
+        }
+        return product.prices;
+      }
+      if (supplyType === 'kit') {
+        return product.kitPrices;
+      }
+      return product.prices;
+    }
+
+    function getActiveMotors(product) {
+      if (product && product.motors) {
+        return product.motors;
+      }
+      if (activeCategory === 'FAA') {
+        return DB.motors;
+      }
+      return null;
+    }
+
+    function populateOperationOptions() {
+      const opSelect = document.getElementById('operationSelect');
+      const prevVal = opSelect.value;
+      opSelect.innerHTML = '';
+
+      if (activeCategory === 'DROP A') {
+        [
+          { value: 'manual', label: 'Manual Gear' },
+          { value: 'spring', label: 'Spring' },
+          { value: 'motorised', label: 'Motorised' }
+        ].forEach(optData => {
+          const opt = document.createElement('option');
+          opt.value = optData.value;
+          opt.textContent = optData.label;
+          opSelect.appendChild(opt);
+        });
+        opSelect.value = ['manual', 'spring', 'motorised'].includes(prevVal) ? prevVal : 'manual';
+      } else {
+        [
+          { value: 'manual', label: 'Manual Gear (+$0)' },
+          { value: 'motorised', label: 'Motorised' }
+        ].forEach(optData => {
+          const opt = document.createElement('option');
+          opt.value = optData.value;
+          opt.textContent = optData.label;
+          opSelect.appendChild(opt);
+        });
+        opSelect.value = prevVal === 'motorised' ? 'motorised' : 'manual';
+      }
+
+      document.getElementById('motorSelect').disabled = opSelect.value !== 'motorised';
+    }
+
+    function isCautionCell(product, w, p) {
+      if (!product || !product.cautionRule) return false;
+      return w >= product.cautionRule.minWidth || p >= product.cautionRule.minProjection;
+    }
+
+    function populateDropASubModels() {
+      const groupKey = document.getElementById('dropAGroupSelect').value;
+      const subSelect = document.getElementById('dropASubSelect');
+      const items = DB.dropAModels[groupKey] || [];
+      subSelect.innerHTML = '';
+      items.forEach(item => {
+        const opt = document.createElement('option');
+        opt.value = item.key;
+        opt.textContent = item.name;
+        subSelect.appendChild(opt);
+      });
+      subSelect.disabled = items.length <= 1;
+    }
+
+    function formatHeaderUnit(val) {
+      const mVal = val / 1000;
+      const mStr = Number.isInteger(mVal * 10) ? mVal.toFixed(1) : mVal.toFixed(2);
+      return `${val} (${mStr}M)`;
+    }
+
+    function formatMoney(val) {
+      return Number.isInteger(val)
+        ? val.toLocaleString()
+        : val.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    // Handle 4 Category Buttons (FAA / DROP A / OZTECH / LOUVRE)
+    function setCategory(catKey) {
+      activeCategory = catKey;
+      const catInfo = DB.categories[catKey];
+
+      document.querySelectorAll('.cat-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.category === catKey);
+      });
+
+      document.getElementById('activeCategoryHeaderBadge').textContent = `Active Lineup: ${catInfo.label}`;
+
+      const calcForm = document.getElementById('calcForm');
+      const comingSoonSection = document.getElementById('comingSoonSection');
+      const refTablesCard = document.getElementById('refTablesCard');
+      const faaModelSection = document.getElementById('faaModelSection');
+      const dropAModelSection = document.getElementById('dropAModelSection');
+
+      if (catInfo.ready) {
+        calcForm.style.display = 'block';
+        comingSoonSection.style.display = 'none';
+        refTablesCard.style.display = 'block';
+
+        if (catKey === 'DROP A') {
+          faaModelSection.style.display = 'none';
+          dropAModelSection.style.display = 'block';
+          document.getElementById('widthInput').value = 2400;
+          document.getElementById('projInput').value = 2000;
+        } else {
+          faaModelSection.style.display = 'block';
+          dropAModelSection.style.display = 'none';
+          const curW = parseFloat(document.getElementById('widthInput').value);
+          const curP = parseFloat(document.getElementById('projInput').value);
+          if (curW === 2400 && curP === 2000) {
+            document.getElementById('widthInput').value = 3800;
+            document.getElementById('projInput').value = 2600;
+          }
+        }
+
+        populateOperationOptions();
+        renderSensorOptions();
+        updateInputHints();
+        renderTable();
+        calculatePrice(false);
+      } else {
+        calcForm.style.display = 'none';
+        comingSoonSection.style.display = 'block';
+        refTablesCard.style.display = 'none';
+        document.getElementById('comingSoonTitle').textContent = `${catKey} Lineup Configuration`;
+        document.getElementById('comingSoonDesc').textContent =
+          `The ${catInfo.label} calculator module is ready to be built. Share the price tables and options for ${catKey} to activate this tab.`;
+
+        const resultBox = document.getElementById('resultBox');
+        resultBox.className = 'result-box';
+        document.getElementById('resultProductTag').textContent = catInfo.label;
+        document.getElementById('resultLabel').textContent = 'Awaiting Price Table Setup';
+        document.getElementById('resultPrice').textContent = 'Coming Soon';
+        document.getElementById('specChips').style.display = 'none';
+        document.getElementById('cautionBanner').style.display = 'none';
+        document.getElementById('breakdownBox').style.display = 'none';
+        const resultBadge = document.getElementById('resultBadge');
+        resultBadge.style.display = 'block';
+        resultBadge.textContent = `Select "FAA" or "DROP A" above to calculate prices, or provide ${catKey} pricing data.`;
+      }
+    }
+
+    // Filter Wall Mount Bracket ($20) vs Millennium Wall Mount Bracket ($48) by product series
+    function updateBracketVisibilityByProduct() {
+      const isMillennium = getCurrentProductKey() === 'millennium';
+
+      const stdWallRow = document.getElementById('brk-row-wall_mount_bracket');
+      const stdWallCb = document.getElementById('brk-cb-wall_mount_bracket');
+      const stdWallQty = document.getElementById('qty-wall_mount_bracket');
+      const stdWallSub = document.getElementById('sub-wall_mount_bracket');
+      const stdWallRefTr = document.getElementById('tr-brk-wall_mount_bracket');
+
+      const milWallRow = document.getElementById('brk-row-millennium_wall_bracket');
+      const milWallCb = document.getElementById('brk-cb-millennium_wall_bracket');
+      const milWallQty = document.getElementById('qty-millennium_wall_bracket');
+      const milWallSub = document.getElementById('sub-millennium_wall_bracket');
+      const milWallRefTr = document.getElementById('tr-brk-millennium_wall_bracket');
+
+      if (isMillennium) {
+        if (stdWallRow) {
+          stdWallRow.style.display = 'none';
+          stdWallRow.classList.remove('checked');
+        }
+        if (stdWallCb) stdWallCb.checked = false;
+        if (stdWallQty) {
+          stdWallQty.disabled = true;
+          stdWallQty.value = 1;
+        }
+        if (stdWallSub) stdWallSub.textContent = '+$20';
+        if (stdWallRefTr) stdWallRefTr.style.display = 'none';
+
+        if (milWallRow) milWallRow.style.display = 'flex';
+        if (milWallRefTr) milWallRefTr.style.display = '';
+      } else {
+        if (stdWallRow) stdWallRow.style.display = 'flex';
+        if (stdWallRefTr) stdWallRefTr.style.display = '';
+
+        if (milWallRow) {
+          milWallRow.style.display = 'none';
+          milWallRow.classList.remove('checked');
+        }
+        if (milWallCb) milWallCb.checked = false;
+        if (milWallQty) {
+          milWallQty.disabled = true;
+          milWallQty.value = 1;
+        }
+        if (milWallSub) milWallSub.textContent = '+$48';
+        if (milWallRefTr) milWallRefTr.style.display = 'none';
+      }
+    }
+
+    function updateInputHints() {
+      const product = getCurrentProduct();
+      const supplyType = getCurrentSupplyType();
+      const widths = getActiveWidths(product, supplyType);
+      const maxW = widths[widths.length - 1];
+      const maxP = product.projections[product.projections.length - 1];
+
+      document.getElementById('widthInput').max = maxW;
+      document.getElementById('projInput').max = maxP;
+      document.getElementById('widthHint').textContent = `* Max ${maxW.toLocaleString()} mm (Rounds up)`;
+      document.getElementById('projHint').textContent = `* Max ${maxP.toLocaleString()} mm (Rounds up)`;
+
+      // Toggle Fabric select state based on Supply Type (Complete vs KIT)
+      const fabricSelect = document.getElementById('fabricSelect');
+      const sqmDisplay = document.getElementById('sqmDisplay');
+      const fabricRateHint = document.getElementById('fabricRateHint');
+      if (supplyType === 'kit') {
+        fabricSelect.disabled = true;
+        sqmDisplay.classList.add('kit-disabled-display');
+        fabricRateHint.textContent = '* KIT Only excludes Fabric (+$0)';
+      } else {
+        fabricSelect.disabled = false;
+        sqmDisplay.classList.remove('kit-disabled-display');
+        fabricRateHint.textContent = '* Surcharge = Area (sqm) × Fabric Rate';
+      }
+
+      // Toggle Fabric Tray Option visibility (only for Family - Complete)
+      const fabricTrayGroup = document.getElementById('fabricTrayGroup');
+      if (product.fabricTray) {
+        fabricTrayGroup.style.display = 'block';
+      } else {
+        fabricTrayGroup.style.display = 'none';
+        document.getElementById('fabricTraySelect').value = 'no';
+      }
+
+      updateBracketVisibilityByProduct();
+    }
+
+    // Render Sensor & Remote Checkboxes based on Operation & Motor Brand
+    function renderSensorOptions() {
+      const operation = document.getElementById('operationSelect').value;
+      const motorKey = document.getElementById('motorSelect').value;
+      const sensorBox = document.getElementById('sensorBox');
+      const sensorGroupLabel = document.getElementById('sensorGroupLabel');
+
+      if (operation !== 'motorised') {
+        sensorGroupLabel.textContent = 'Sensor & Remote Options (Multiple Selection)';
+        sensorBox.innerHTML = '<div class="sensor-disabled-msg">Select "Motorised" operation above to choose Sensor & Remote options.</div>';
+        return;
+      }
+
+      const motorName = DB.motors[motorKey].name;
+      sensorGroupLabel.textContent = `Sensor & Remote Options (${motorName} Motor - Multiple Selection)`;
+
+      const options = DB.sensorAndRemotes[motorKey] || [];
+      const grid = document.createElement('div');
+      grid.className = 'checkbox-grid';
+
+      options.forEach(item => {
+        const label = document.createElement('label');
+        label.className = 'checkbox-item';
+        label.innerHTML = `
+          <span class="checkbox-left">
+            <input type="checkbox" class="sensor-checkbox" value="${item.id}" data-name="${item.name}" data-price="${item.price}">
+            <span>${item.name}</span>
+          </span>
+          <span class="checkbox-price">+$${item.price.toLocaleString()}</span>
+        `;
+
+        const checkbox = label.querySelector('input');
+        checkbox.addEventListener('change', function() {
+          label.classList.toggle('checked', this.checked);
+          calculatePrice(false);
+        });
+
+        grid.appendChild(label);
+      });
+
+      sensorBox.innerHTML = '';
+      sensorBox.appendChild(grid);
+    }
+
+    // Render Brackets & Extras Checkboxes with Quantity Input
+    function renderBracketOptions() {
+      const bracketBox = document.getElementById('bracketBox');
+      const grid = document.createElement('div');
+      grid.className = 'checkbox-grid';
+
+      DB.bracketsAndExtras.forEach(item => {
+        const row = document.createElement('div');
+        row.className = 'checkbox-item bracket-item';
+        row.id = `brk-row-${item.id}`;
+        row.innerHTML = `
+          <label class="checkbox-left" style="margin-bottom:0; cursor:pointer;">
+            <input type="checkbox" class="bracket-checkbox" id="brk-cb-${item.id}" value="${item.id}" data-name="${item.name}" data-price="${item.price}">
+            <span>${item.name} <span style="color:var(--text-muted); font-weight:500;">($${item.price}/ea)</span></span>
+          </label>
+          <div class="checkbox-right">
+            <div class="qty-wrapper">
+              <span>Qty:</span>
+              <input type="number" class="qty-input" id="qty-${item.id}" min="1" max="99" value="1" disabled>
+            </div>
+            <span class="checkbox-price" id="sub-${item.id}">+$${item.price.toLocaleString()}</span>
+          </div>
+        `;
+
+        const checkbox = row.querySelector('.bracket-checkbox');
+        const qtyInput = row.querySelector('.qty-input');
+        const subtotalEl = row.querySelector('.checkbox-price');
+
+        function updateRowState() {
+          const isChecked = checkbox.checked;
+          row.classList.toggle('checked', isChecked);
+          qtyInput.disabled = !isChecked;
+          let qty = parseInt(qtyInput.value, 10);
+          if (isNaN(qty) || qty < 1) {
+            qty = 1;
+          }
+          const sub = item.price * qty;
+          subtotalEl.textContent = isChecked ? `+$${sub.toLocaleString()}` : `+$${item.price.toLocaleString()}`;
+          calculatePrice(false);
+        }
+
+        checkbox.addEventListener('change', updateRowState);
+        qtyInput.addEventListener('input', updateRowState);
+
+        grid.appendChild(row);
+      });
+
+      bracketBox.innerHTML = '';
+      bracketBox.appendChild(grid);
+      updateBracketVisibilityByProduct();
+    }
+
+    // Render Reference Table (Base [Complete or KIT] + Fabric Tray + Motor + Powder Coat + LED Lighting)
+    function renderTable() {
+      const product = getCurrentProduct();
+      const supplyType = getCurrentSupplyType();
+      const operation = document.getElementById('operationSelect').value;
+      const supplyBadge = activeCategory === 'DROP A'
+        ? (operation === 'spring' ? 'Spring' : 'Manual Gear')
+        : (supplyType === 'kit' ? 'KIT Price' : 'Complete Price');
+      const widths = getActiveWidths(product, supplyType);
+      const priceMatrix = getActivePriceMatrix(product, supplyType);
+
+      const headerRow = document.getElementById('tableHeader');
+      const tbody = document.getElementById('tableBody');
+      const tableTitle = document.getElementById('tableTitle');
+      const mainTableSubtitle = document.getElementById('mainTableSubtitle');
+
+      tableTitle.textContent = `📊 ${activeCategory} — ${product.name} (${supplyBadge}) & Options Reference Price Tables`;
+      mainTableSubtitle.textContent = activeCategory === 'DROP A'
+        ? `${product.name} — ${supplyBadge} Price Table`
+        : `${product.name} — ${supplyBadge} Table, Motor, Powder Coat & LED`;
+      headerRow.innerHTML = '<th>Projection \\ Width</th>';
+      tbody.innerHTML = '';
+
+      widths.forEach(w => {
+        const th = document.createElement('th');
+        th.id = `th-w-${w}`;
+        th.textContent = formatHeaderUnit(w);
+        headerRow.appendChild(th);
+      });
+
+      // 1. Product Projection Rows
+      if (!priceMatrix) {
+        const tr = document.createElement('tr');
+        const td = document.createElement('td');
+        td.colSpan = widths.length + 1;
+        td.style.padding = '1.25rem';
+        td.style.color = 'var(--danger)';
+        td.style.fontWeight = '700';
+        td.textContent = supplyType === 'kit'
+          ? `KIT Price Table for ${product.name} is pending upload.`
+          : `Price Table for ${product.name} (${supplyBadge}) is pending upload.`;
+        tr.appendChild(td);
+        tbody.appendChild(tr);
+      } else {
+        product.projections.forEach(p => {
+          const tr = document.createElement('tr');
+          tr.id = `tr-p-${p}`;
+
+          const rowHeader = document.createElement('th');
+          rowHeader.textContent = formatHeaderUnit(p);
+          tr.appendChild(rowHeader);
+
+          widths.forEach(w => {
+            const td = document.createElement('td');
+            td.id = `cell-${p}-${w}`;
+            const price = priceMatrix[p][w];
+            if (price === 0) {
+              td.textContent = 'N/A (0)';
+              td.classList.add('zero-cell');
+            } else {
+              td.textContent = '$' + price.toLocaleString();
+              if (isCautionCell(product, w, p)) {
+                td.classList.add('caution-cell');
+              }
+            }
+            tr.appendChild(td);
+          });
+
+          tbody.appendChild(tr);
+        });
+      }
+
+      // 1-B. Fabric Tray Row (If applicable to product, e.g. Family - Complete)
+      if (product.fabricTray) {
+        const trayDividerTr = document.createElement('tr');
+        trayDividerTr.className = 'section-divider';
+        const trayDividerTh = document.createElement('th');
+        trayDividerTh.colSpan = widths.length + 1;
+        trayDividerTh.textContent = '🛡️ Fabric Tray Option (Family - Complete Exclusive)';
+        trayDividerTr.appendChild(trayDividerTh);
+        tbody.appendChild(trayDividerTr);
+
+        const tr = document.createElement('tr');
+        tr.id = 'tr-tray';
+
+        const rowHeader = document.createElement('th');
+        rowHeader.textContent = 'Fabric Tray';
+        tr.appendChild(rowHeader);
+
+        widths.forEach((w, idx) => {
+          const td = document.createElement('td');
+          td.id = `cell-tray-${w}`;
+          const tPrice = product.fabricTray[idx];
+          td.textContent = '+$' + tPrice.toLocaleString();
+          tr.appendChild(td);
+        });
+
+        tbody.appendChild(tr);
+      }
+
+      // 2. Section Divider for Motors (By Width Tier)
+      const activeMotors = getActiveMotors(product);
+      if (activeMotors) {
+        const motorDividerTr = document.createElement('tr');
+        motorDividerTr.className = 'section-divider';
+        const motorDividerTh = document.createElement('th');
+        motorDividerTh.colSpan = widths.length + 1;
+        motorDividerTh.textContent = '⚡ Motorised Additional Cost (By Width Tier)';
+        motorDividerTr.appendChild(motorDividerTh);
+        tbody.appendChild(motorDividerTr);
+
+        Object.entries(activeMotors).forEach(([motorKey, motorData]) => {
+          const tr = document.createElement('tr');
+          tr.id = `tr-m-${motorKey}`;
+
+          const rowHeader = document.createElement('th');
+          rowHeader.innerHTML = `${motorData.name} <span class="motor-star">★</span>`;
+          tr.appendChild(rowHeader);
+
+          widths.forEach((w, idx) => {
+            const td = document.createElement('td');
+            td.id = `cell-m-${motorKey}-${w}`;
+            const mPrice = motorData.prices[idx];
+            td.textContent = '+$' + mPrice.toLocaleString();
+            tr.appendChild(td);
+          });
+
+          tbody.appendChild(tr);
+        });
+      }
+
+      // 3. Section Divider for Powder Coat (if defined for this product)
+      if (product.powderCoat) {
+        const pcDividerTr = document.createElement('tr');
+        pcDividerTr.className = 'section-divider';
+        const pcDividerTh = document.createElement('th');
+        pcDividerTh.colSpan = widths.length + 1;
+        pcDividerTh.textContent = '🎨 Powder Coat Additional Cost (White: +$0)';
+        pcDividerTr.appendChild(pcDividerTh);
+        tbody.appendChild(pcDividerTr);
+
+        Object.entries(product.powderCoat).forEach(([pcTierKey, pcTierData]) => {
+          const tr = document.createElement('tr');
+          tr.id = `tr-pc-${pcTierKey}`;
+
+          const rowHeader = document.createElement('th');
+          rowHeader.style.fontSize = '0.76rem';
+          rowHeader.textContent = pcTierData.name;
+          tr.appendChild(rowHeader);
+
+          widths.forEach((w, idx) => {
+            const td = document.createElement('td');
+            td.id = `cell-pc-${pcTierKey}-${w}`;
+            const pcPrice = pcTierData.prices[idx];
+            td.textContent = '+$' + pcPrice.toLocaleString();
+            tr.appendChild(td);
+          });
+
+          tbody.appendChild(tr);
+        });
+      }
+
+      // 4. Section Divider for LED Lighting (FAA only)
+      if (activeCategory === 'FAA') {
+        const ledDividerTr = document.createElement('tr');
+        ledDividerTr.className = 'section-divider';
+        const ledDividerTh = document.createElement('th');
+        ledDividerTh.colSpan = widths.length + 1;
+        ledDividerTh.textContent = '💡 LED Lighting Additional Cost (By Motor Brand • ACE Not Applicable)';
+        ledDividerTr.appendChild(ledDividerTh);
+        tbody.appendChild(ledDividerTr);
+
+        Object.entries(DB.ledLighting).forEach(([ledKey, ledData]) => {
+          Object.entries(ledData.rows).forEach(([motorKey, rowData]) => {
+            const tr = document.createElement('tr');
+            tr.id = `tr-led-${ledKey}-${motorKey}`;
+
+            const rowHeader = document.createElement('th');
+            rowHeader.style.fontSize = '0.76rem';
+            rowHeader.textContent = rowData.label;
+            tr.appendChild(rowHeader);
+
+            widths.forEach((w, idx) => {
+              const td = document.createElement('td');
+              td.id = `cell-led-${ledKey}-${motorKey}-${w}`;
+              const lPrice = rowData.prices[idx];
+              if (lPrice === 0) {
+                td.textContent = 'N/A';
+                td.classList.add('na-cell');
+              } else {
+                td.textContent = '+$' + lPrice.toLocaleString();
+              }
+              tr.appendChild(td);
+            });
+
+            tbody.appendChild(tr);
+          });
+        });
+      }
+    }
+
+    // Render Brackets & Extras Reference Grid
+    function renderBracketReference() {
+      const grid = document.getElementById('bracketRefGrid');
+      grid.innerHTML = '';
+
+      const leftItems = DB.bracketsAndExtras.slice(0, 6);
+      const rightItems = DB.bracketsAndExtras.slice(6);
+
+      [
+        { title: "Mounting Brackets", items: leftItems },
+        { title: "Support Poles, Handles, Printing & Special Brackets", items: rightItems }
+      ].forEach(group => {
+        const tbl = document.createElement('table');
+        const thead = document.createElement('thead');
+        thead.innerHTML = `<tr><th colspan="2">${group.title}</th></tr>`;
+        tbl.appendChild(thead);
+
+        const tbody = document.createElement('tbody');
+        group.items.forEach(item => {
+          const tr = document.createElement('tr');
+          tr.id = `tr-brk-${item.id}`;
+          tr.innerHTML = `<td style="text-align:left; padding-left:0.75rem;">${item.name}</td><td>+$${item.price} Extra</td>`;
+          tbody.appendChild(tr);
+        });
+        tbl.appendChild(tbody);
+        grid.appendChild(tbl);
+      });
+
+      updateBracketVisibilityByProduct();
+    }
+
+    // Render Sensor & Remote Reference Grid
+    function renderSensorReference() {
+      const grid = document.getElementById('sensorRefGrid');
+      grid.innerHTML = '';
+
+      Object.entries(DB.sensorAndRemotes).forEach(([motorKey, items]) => {
+        const motorName = DB.motors[motorKey].name;
+        const tbl = document.createElement('table');
+        const thead = document.createElement('thead');
+        thead.innerHTML = `<tr><th colspan="2">${motorName} Motor</th></tr>`;
+        tbl.appendChild(thead);
+
+        const tbody = document.createElement('tbody');
+        items.forEach(item => {
+          const tr = document.createElement('tr');
+          tr.id = `tr-sen-${item.id}`;
+          tr.innerHTML = `<td style="text-align:left; padding-left:0.65rem;">${item.name}</td><td>+$${item.price}</td>`;
+          tbody.appendChild(tr);
+        });
+        tbl.appendChild(tbody);
+        grid.appendChild(tbl);
+      });
+    }
+
+    // Render Fabric Reference Grid at the bottom
+    function renderFabricReference() {
+      const grid = document.getElementById('fabricRefGrid');
+      grid.innerHTML = '';
+
+      const categories = ["Acrylic", "Canvas", "Clear PVC", "Shade Mesh"];
+      categories.forEach(cat => {
+        const tbl = document.createElement('table');
+        const thead = document.createElement('thead');
+        thead.innerHTML = `<tr><th colspan="2">${cat}</th></tr>`;
+        tbl.appendChild(thead);
+
+        const tbody = document.createElement('tbody');
+        Object.entries(DB.fabrics)
+          .filter(([, f]) => f.category === cat)
+          .forEach(([fKey, fData]) => {
+            const tr = document.createElement('tr');
+            tr.id = `tr-fab-${fKey}`;
+            tr.innerHTML = `<td>${fData.name}</td><td>$${fData.rate}/sqm</td>`;
+            tbody.appendChild(tr);
+          });
+        tbl.appendChild(tbody);
+        grid.appendChild(tbl);
+      });
+    }
+
+    function clearHighlights() {
+      document.querySelectorAll('.selected-cell').forEach(el => el.classList.remove('selected-cell'));
+      document.querySelectorAll('.selected-motor-cell').forEach(el => el.classList.remove('selected-motor-cell'));
+      document.querySelectorAll('.selected-pc-cell').forEach(el => el.classList.remove('selected-pc-cell'));
+      document.querySelectorAll('.selected-led-cell').forEach(el => el.classList.remove('selected-led-cell'));
+      document.querySelectorAll('.selected-tray-cell').forEach(el => el.classList.remove('selected-tray-cell'));
+      document.querySelectorAll('.selected-row').forEach(el => el.classList.remove('selected-row'));
+      document.querySelectorAll('.selected-motor-row').forEach(el => el.classList.remove('selected-motor-row'));
+      document.querySelectorAll('.selected-pc-row').forEach(el => el.classList.remove('selected-pc-row'));
+      document.querySelectorAll('.selected-led-row').forEach(el => el.classList.remove('selected-led-row'));
+      document.querySelectorAll('.selected-tray-row').forEach(el => el.classList.remove('selected-tray-row'));
+      document.querySelectorAll('.selected-col').forEach(el => el.classList.remove('selected-col'));
+      document.querySelectorAll('.fabric-item-selected').forEach(el => el.classList.remove('fabric-item-selected'));
+      document.querySelectorAll('.sensor-item-selected').forEach(el => el.classList.remove('sensor-item-selected'));
+      document.querySelectorAll('.bracket-item-selected').forEach(el => el.classList.remove('bracket-item-selected'));
+    }
+
+    function setErrorState(title, priceMsg, badgeMsg, showAlert, alertMsg) {
+      const resultBox = document.getElementById('resultBox');
+      const resultLabel = document.getElementById('resultLabel');
+      const resultPrice = document.getElementById('resultPrice');
+      const breakdownBox = document.getElementById('breakdownBox');
+      const resultBadge = document.getElementById('resultBadge');
+      const cautionBanner = document.getElementById('cautionBanner');
+
+      resultBox.className = 'result-box error';
+      resultLabel.textContent = title;
+      resultPrice.textContent = priceMsg;
+      cautionBanner.style.display = 'none';
+      breakdownBox.style.display = 'none';
+      resultBadge.style.display = 'block';
+      resultBadge.textContent = badgeMsg;
+      if (showAlert && alertMsg) {
+        alert(alertMsg);
+      }
+    }
+
+    function calculatePrice(showAlert = true) {
+      if (activeCategory !== 'FAA' && activeCategory !== 'DROP A') return;
+
+      clearHighlights();
+
+      const product = getCurrentProduct();
+      const supplyType = getCurrentSupplyType();
+      const isKit = supplyType === 'kit';
+      const widths = getActiveWidths(product, supplyType);
+      const priceMatrix = getActivePriceMatrix(product, supplyType);
+
+      const maxW = widths[widths.length - 1];
+      const maxP = product.projections[product.projections.length - 1];
+
+      const rawWidth = parseFloat(document.getElementById('widthInput').value);
+      const rawProj = parseFloat(document.getElementById('projInput').value);
+      const fabricKey = document.getElementById('fabricSelect').value;
+      const fabricObj = DB.fabrics[fabricKey];
+      const operation = document.getElementById('operationSelect').value;
+      const motorKey = document.getElementById('motorSelect').value;
+      const pcKey = document.getElementById('powderCoatSelect').value;
+      const pcOption = DB.powderCoatOptions[pcKey];
+      const ledKey = document.getElementById('ledSelect').value;
+      const fabricTrayVal = document.getElementById('fabricTraySelect').value;
+
+      const resultBox = document.getElementById('resultBox');
+      const resultProductTag = document.getElementById('resultProductTag');
+      const resultLabel = document.getElementById('resultLabel');
+      const resultPrice = document.getElementById('resultPrice');
+      const specChips = document.getElementById('specChips');
+      const cautionBanner = document.getElementById('cautionBanner');
+      const breakdownBox = document.getElementById('breakdownBox');
+      const basePriceLabelText = document.getElementById('basePriceLabelText');
+      const basePriceText = document.getElementById('basePriceText');
+      const fabricLabelText = document.getElementById('fabricLabelText');
+      const fabricPriceText = document.getElementById('fabricPriceText');
+      const motorLabelText = document.getElementById('motorLabelText');
+      const motorPriceText = document.getElementById('motorPriceText');
+      const sensorLabelText = document.getElementById('sensorLabelText');
+      const sensorPriceText = document.getElementById('sensorPriceText');
+      const pcLabelText = document.getElementById('pcLabelText');
+      const pcPriceText = document.getElementById('pcPriceText');
+      const ledLabelText = document.getElementById('ledLabelText');
+      const ledPriceText = document.getElementById('ledPriceText');
+      const trayBreakdownRow = document.getElementById('trayBreakdownRow');
+      const trayLabelText = document.getElementById('trayLabelText');
+      const trayPriceText = document.getElementById('trayPriceText');
+      const bracketLabelText = document.getElementById('bracketLabelText');
+      const bracketPriceText = document.getElementById('bracketPriceText');
+      const resultBadge = document.getElementById('resultBadge');
+
+      cautionBanner.style.display = 'none';
+
+      const supplyLabel = activeCategory === 'DROP A'
+        ? (operation === 'spring' ? 'SPRING' : (operation === 'motorised' ? 'MOTORISED' : 'MANUAL GEAR'))
+        : (isKit ? 'KIT ONLY' : 'COMPLETE');
+      resultProductTag.textContent = `${activeCategory} • ${product.name} (${supplyLabel})`;
+
+      if (isNaN(rawWidth) || isNaN(rawProj) || rawWidth <= 0 || rawProj <= 0) {
+        document.getElementById('sqmDisplay').value = '-';
+        if (showAlert) alert('Please enter valid positive numbers for Width and Projection.');
+        return;
+      }
+
+      // Calculate Sqm & Fabric Surcharge based on entered Width & Projection
+      const widthM = rawWidth / 1000;
+      const projM = rawProj / 1000;
+      const sqm = widthM * projM;
+      const fabricCost = isKit ? 0 : Math.round(sqm * fabricObj.rate * 100) / 100;
+
+      if (isKit) {
+        document.getElementById('sqmDisplay').value = `Excluded in KIT (${sqm.toFixed(2)} sqm • +$0)`;
+        document.getElementById('sqmFormulaHint').textContent = `* KIT Supply: Hardware Only (No Fabric Surcharge)`;
+      } else {
+        document.getElementById(`tr-fab-${fabricKey}`)?.classList.add('fabric-item-selected');
+        document.getElementById('sqmDisplay').value = `${sqm.toFixed(2)} sqm (Surcharge: +$${formatMoney(fabricCost)})`;
+        document.getElementById('sqmFormulaHint').textContent = `* Width (${widthM.toFixed(2)}M) × Projection (${projM.toFixed(2)}M) = ${sqm.toFixed(2)} sqm × $${fabricObj.rate}/sqm`;
+      }
+
+      // Ceiling match: find the smallest standard tier >= user input
+      const widthIndex = widths.findIndex(w => w >= rawWidth);
+      const matchedWidth = widthIndex !== -1 ? widths[widthIndex] : null;
+      const matchedProj = product.projections.find(p => p >= rawProj);
+
+      document.getElementById('widthTierPill').textContent = matchedWidth ? `Tier: ${matchedWidth.toLocaleString()} mm` : 'Out of Range';
+      document.getElementById('projTierPill').textContent = matchedProj ? `Tier: ${matchedProj.toLocaleString()} mm` : 'Out of Range';
+
+      specChips.style.display = 'grid';
+      document.getElementById('chipInputSize').textContent = `${rawWidth} × ${rawProj} mm`;
+      document.getElementById('chipTierSize').textContent = (matchedWidth && matchedProj) ? `${matchedWidth} × ${matchedProj} mm` : 'Out of Range';
+      document.getElementById('chipAreaSqm').textContent = isKit ? 'N/A (KIT)' : `${sqm.toFixed(2)} sqm`;
+
+      // Check if price table is pending upload for this model
+      if (!priceMatrix) {
+        setErrorState(
+          isKit ? 'KIT Price Table Pending Upload' : 'Price Table Pending Upload',
+          'Pending Price Data',
+          `Please upload the price table for ${product.name}`,
+          showAlert,
+          `ℹ️ Notice: The price table for ${product.name} has not been uploaded yet. Please provide the ${product.name} price table image.`
+        );
+        return;
+      }
+
+      // 1. Check max dimensions
+      if (!matchedWidth || !matchedProj) {
+        setErrorState(
+          'Out of Range (Unavailable)',
+          'Not Available',
+          `Max Dimensions for ${product.name}: Width ${maxW.toLocaleString()} mm / Projection ${maxP.toLocaleString()} mm`,
+          showAlert,
+          `⚠️ Warning: The entered dimensions (${rawWidth} mm × ${rawProj} mm) exceed the maximum available size (${maxW.toLocaleString()} mm × ${maxP.toLocaleString()} mm) for ${product.name}.`
+        );
+        return;
+      }
+
+      const basePrice = priceMatrix[matchedProj][matchedWidth];
+
+      // Highlight matched base row, column, and cell
+      document.getElementById(`th-w-${matchedWidth}`)?.classList.add('selected-col');
+      document.getElementById(`tr-p-${matchedProj}`)?.classList.add('selected-row');
+      document.getElementById(`cell-${matchedProj}-${matchedWidth}`)?.classList.add('selected-cell');
+
+      // 2. Check Base Price == 0 (Unavailable configuration)
+      if (basePrice === 0) {
+        setErrorState(
+          'Unavailable Product Configuration',
+          'Not Available (0)',
+          `Applied Tier: Width ${matchedWidth} mm × Projection ${matchedProj} mm`,
+          showAlert,
+          `⚠️ Warning: This configuration (Width ${rawWidth}→${matchedWidth} mm, Projection ${rawProj}→${matchedProj} mm) is not available for ${product.name}.`
+        );
+        return;
+      }
+
+      // Show Caution Banner only when in Manual/Spring mode and matched cell is in shaded caution zone (e.g., GENIUS - ZIP: Width >= 4.2M or Drop 3.0M)
+      if ((operation === 'manual' || operation === 'spring') && isCautionCell(product, matchedWidth, matchedProj)) {
+        cautionBanner.textContent = product.cautionRule.message;
+        cautionBanner.style.display = 'block';
+      }
+
+      const dropAOpLabel = operation === 'spring' ? 'Spring' : 'Manual Gear';
+      basePriceLabelText.textContent = activeCategory === 'DROP A'
+        ? `Base System Price (${product.name} - ${dropAOpLabel})`
+        : (isKit ? 'Base System Price (KIT Only)' : 'Base System Price (Complete)');
+
+      // 2-B. Populate Fabric Breakdown Row
+      if (isKit) {
+        fabricLabelText.textContent = 'Fabric (Excluded in KIT Only)';
+        fabricPriceText.textContent = '+$0';
+      } else {
+        fabricLabelText.textContent = `Fabric (${fabricObj.name} • ${sqm.toFixed(2)} sqm @ $${fabricObj.rate}/sqm)`;
+        fabricPriceText.textContent = `+$${formatMoney(fabricCost)}`;
+      }
+      document.getElementById('fabricBreakdownRow').classList.toggle('is-active-addon', fabricCost > 0);
+
+      // 3. Calculate Motor Surcharge & Sensor/Remote Options if Motorised
+      let motorCost = 0;
+      let sensorCost = 0;
+      const selectedSensors = [];
+
+      if (operation === 'motorised') {
+        const activeMotors = getActiveMotors(product);
+        const motorObj = (activeMotors && activeMotors[motorKey]) ? activeMotors[motorKey] : DB.motors[motorKey];
+        if (activeMotors && activeMotors[motorKey]) {
+          motorCost = motorObj.prices[widthIndex] || 0;
+          document.getElementById(`tr-m-${motorKey}`)?.classList.add('selected-motor-row');
+          document.getElementById(`cell-m-${motorKey}-${matchedWidth}`)?.classList.add('selected-motor-cell');
+          motorLabelText.textContent = `Motor (${motorObj.name})`;
+          motorPriceText.textContent = `+$${motorCost.toLocaleString()}`;
+        } else {
+          motorCost = 0;
+          motorLabelText.textContent = `Motor (${motorObj.name} • Motor Table Pending)`;
+          motorPriceText.textContent = '+$0';
+        }
+
+        document.querySelectorAll('.sensor-checkbox:checked').forEach(cb => {
+          const sPrice = parseFloat(cb.dataset.price) || 0;
+          const sName = cb.dataset.name;
+          sensorCost += sPrice;
+          selectedSensors.push(sName);
+          document.getElementById(`tr-sen-${cb.value}`)?.classList.add('sensor-item-selected');
+        });
+
+        if (selectedSensors.length > 0) {
+          sensorLabelText.textContent = `Sensor & Remote (${selectedSensors.join(', ')})`;
+          sensorPriceText.textContent = `+$${sensorCost.toLocaleString()}`;
+        } else {
+          sensorLabelText.textContent = 'Sensor & Remote (None)';
+          sensorPriceText.textContent = '+$0';
+        }
+      } else if (operation === 'spring') {
+        motorLabelText.textContent = 'Operation (Spring • Included in Base Table)';
+        motorPriceText.textContent = '+$0';
+        sensorLabelText.textContent = 'Sensor & Remote (N/A)';
+        sensorPriceText.textContent = '+$0';
+      } else {
+        motorLabelText.textContent = 'Operation (Manual Gear)';
+        motorPriceText.textContent = '+$0';
+        sensorLabelText.textContent = 'Sensor & Remote (N/A)';
+        sensorPriceText.textContent = '+$0';
+      }
+      document.getElementById('motorBreakdownRow').classList.toggle('is-active-addon', motorCost > 0);
+      document.getElementById('sensorBreakdownRow').classList.toggle('is-active-addon', sensorCost > 0);
+
+      // 4. Calculate Powder Coat Surcharge
+      let pcCost = 0;
+      if (pcOption.tier && product.powderCoat && product.powderCoat[pcOption.tier]) {
+        const pcTierObj = product.powderCoat[pcOption.tier];
+        pcCost = pcTierObj.prices[widthIndex] || 0;
+        document.getElementById(`tr-pc-${pcOption.tier}`)?.classList.add('selected-pc-row');
+        document.getElementById(`cell-pc-${pcOption.tier}-${matchedWidth}`)?.classList.add('selected-pc-cell');
+        pcLabelText.textContent = `Powder Coat (${pcOption.label})`;
+        pcPriceText.textContent = `+$${pcCost.toLocaleString()}`;
+      } else if (pcOption.tier && !product.powderCoat) {
+        pcLabelText.textContent = `Powder Coat (${pcOption.label} • Pending Table)`;
+        pcPriceText.textContent = '+$0';
+      } else {
+        pcLabelText.textContent = 'Powder Coat (White)';
+        pcPriceText.textContent = '+$0';
+      }
+      document.getElementById('pcBreakdownRow').classList.toggle('is-active-addon', pcCost > 0);
+
+      // 5. Calculate & Validate LED Lighting Surcharge
+      let ledCost = 0;
+      if (ledKey !== 'none' && activeCategory === 'FAA') {
+        const ledObj = DB.ledLighting[ledKey];
+
+        if (operation !== 'motorised') {
+          setErrorState(
+            'LED Option Not Available with Manual Gear',
+            'Motor Required',
+            `Selected LED: ${ledObj.name}`,
+            showAlert,
+            `⚠️ Warning: ${ledObj.name} requires a Motorised operation (Alpha, Becker, or Somfy). It cannot be applied to Manual Gear.`
+          );
+          return;
+        }
+
+        if (motorKey === 'ace') {
+          setErrorState(
+            'LED Option Not Available for ACE Motor',
+            'Not Available (ACE)',
+            `Selected: ACE Motor + ${ledObj.name}`,
+            showAlert,
+            `⚠️ Warning: LED Lighting (${ledObj.name}) is not applicable with the ACE motor. Please select Alpha, Becker, or Somfy.`
+          );
+          return;
+        }
+
+        document.getElementById(`tr-led-${ledKey}-${motorKey}`)?.classList.add('selected-led-row');
+        document.getElementById(`cell-led-${ledKey}-${motorKey}-${matchedWidth}`)?.classList.add('selected-led-cell');
+
+        if (matchedProj > ledObj.maxProjection) {
+          setErrorState(
+            `${ledObj.name} Projection Limit Exceeded`,
+            'Not Available (Proj > 3.1M)',
+            `Applied Tier: Width ${matchedWidth} mm × Projection ${matchedProj} mm (Max 3,100 mm)`,
+            showAlert,
+            `⚠️ Warning: ${ledObj.name} is only available up to 3,100 mm (3.1M) projection. Your matched projection is ${matchedProj} mm.`
+          );
+          return;
+        }
+
+        ledCost = ledObj.rows[motorKey].prices[widthIndex];
+        if (ledCost === 0) {
+          setErrorState(
+            `Unavailable ${ledObj.name} Size`,
+            'Not Available (N/A)',
+            `Selected: ${DB.motors[motorKey].name} + ${ledObj.name} at Width ${matchedWidth} mm`,
+            showAlert,
+            `⚠️ Warning: ${ledObj.name} with ${DB.motors[motorKey].name} motor is not available for Width ${matchedWidth} mm.`
+          );
+          return;
+        }
+
+        ledLabelText.textContent = `LED (${ledObj.name} - ${DB.motors[motorKey].name})`;
+        ledPriceText.textContent = `+$${ledCost.toLocaleString()}`;
+      } else {
+        ledLabelText.textContent = 'LED Lighting (None)';
+        ledPriceText.textContent = '+$0';
+      }
+      document.getElementById('ledBreakdownRow').classList.toggle('is-active-addon', ledCost > 0);
+
+      // 6. Calculate Fabric Tray Option (Only for Family - Complete)
+      let trayCost = 0;
+      if (product.fabricTray) {
+        trayBreakdownRow.style.display = 'flex';
+        if (fabricTrayVal === 'yes') {
+          trayCost = product.fabricTray[widthIndex];
+          document.getElementById('tr-tray')?.classList.add('selected-tray-row');
+          document.getElementById(`cell-tray-${matchedWidth}`)?.classList.add('selected-tray-cell');
+          trayLabelText.textContent = 'Fabric Tray (Included)';
+          trayPriceText.textContent = `+$${trayCost.toLocaleString()}`;
+        } else {
+          trayLabelText.textContent = 'Fabric Tray (No)';
+          trayPriceText.textContent = '+$0';
+        }
+        trayBreakdownRow.classList.toggle('is-active-addon', trayCost > 0);
+      } else {
+        trayBreakdownRow.style.display = 'none';
+      }
+
+      // 7. Calculate Additional Brackets & Extras (Multi-select + Quantity)
+      let bracketCost = 0;
+      const selectedBrackets = [];
+
+      document.querySelectorAll('.bracket-checkbox:checked').forEach(cb => {
+        const unitPrice = parseFloat(cb.dataset.price) || 0;
+        const bName = cb.dataset.name;
+        const qtyInput = document.getElementById(`qty-${cb.value}`);
+        let qty = parseInt(qtyInput?.value, 10);
+        if (isNaN(qty) || qty < 1) qty = 1;
+
+        const sub = unitPrice * qty;
+        bracketCost += sub;
+        selectedBrackets.push(`${bName} ×${qty}`);
+        document.getElementById(`tr-brk-${cb.value}`)?.classList.add('bracket-item-selected');
+      });
+
+      const bracketSelectedBadge = document.getElementById('bracketSelectedBadge');
+      if (selectedBrackets.length > 0) {
+        bracketSelectedBadge.textContent = `${selectedBrackets.length} selected (+$${bracketCost.toLocaleString()})`;
+        bracketSelectedBadge.classList.add('has-items');
+        bracketLabelText.textContent = `Brackets & Extras (${selectedBrackets.join(', ')})`;
+        bracketPriceText.textContent = `+$${bracketCost.toLocaleString()}`;
+      } else {
+        bracketSelectedBadge.textContent = '0 selected';
+        bracketSelectedBadge.classList.remove('has-items');
+        bracketLabelText.textContent = 'Brackets & Extras (None)';
+        bracketPriceText.textContent = '+$0';
+      }
+      document.getElementById('bracketBreakdownRow').classList.toggle('is-active-addon', bracketCost > 0);
+
+      const totalPrice = Math.round((basePrice + fabricCost + motorCost + sensorCost + pcCost + ledCost + trayCost + bracketCost) * 100) / 100;
+
+      const opDesc = operation === 'motorised'
+        ? `Motorised (${DB.motors[motorKey].name})`
+        : (operation === 'spring' ? 'Spring' : 'Manual Gear');
+      const ledDesc = ledKey === 'none' ? 'No LED' : DB.ledLighting[ledKey].name;
+      const trayDesc = (product.fabricTray && fabricTrayVal === 'yes') ? ' • Fabric Tray' : '';
+      const fabDesc = isKit ? 'No Fabric (KIT)' : fabricObj.name;
+
+      // Valid Price Output
+      resultBox.className = 'result-box active';
+      resultLabel.textContent = 'Total Estimated Price';
+      resultPrice.textContent = `$${formatMoney(totalPrice)}`;
+      basePriceText.textContent = `$${basePrice.toLocaleString()}`;
+      breakdownBox.style.display = 'block';
+      resultBadge.style.display = 'block';
+      resultBadge.textContent = `${product.name} (${supplyLabel}) • ${fabDesc} • ${opDesc} • ${pcOption.label} • ${ledDesc}${trayDesc}`;
+    }
+
+    // Event Listeners for Category Tabs
+    document.querySelectorAll('.cat-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        setCategory(this.dataset.category);
+      });
+    });
+
+    // Event Listeners for DROP A Group & Sub-Model Selects
+    document.getElementById('dropAGroupSelect').addEventListener('change', function() {
+      populateDropASubModels();
+      updateInputHints();
+      renderTable();
+      calculatePrice(false);
+    });
+
+    document.getElementById('dropASubSelect').addEventListener('change', function() {
+      updateInputHints();
+      renderTable();
+      calculatePrice(false);
+    });
+
+    // Form Submit & Reset
+    document.getElementById('calcForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      calculatePrice(true);
+    });
+
+    document.getElementById('resetBtn').addEventListener('click', function() {
+      if (activeCategory === 'DROP A') {
+        document.getElementById('dropAGroupSelect').value = 'GENIUS';
+        populateDropASubModels();
+        document.getElementById('dropASubSelect').value = 'genius_zip';
+        document.getElementById('widthInput').value = 2400;
+        document.getElementById('projInput').value = 2000;
+      } else {
+        document.getElementById('productSelect').value = 'titan_open';
+        document.getElementById('supplyTypeSelect').value = 'complete';
+        document.getElementById('widthInput').value = 3800;
+        document.getElementById('projInput').value = 2600;
+      }
+      document.getElementById('fabricSelect').value = 'solscape';
+      populateOperationOptions();
+      document.getElementById('operationSelect').value = 'manual';
+      document.getElementById('motorSelect').value = 'ace';
+      document.getElementById('motorSelect').disabled = true;
+      document.getElementById('powderCoatSelect').value = 'white';
+      document.getElementById('ledSelect').value = 'none';
+      document.getElementById('fabricTraySelect').value = 'no';
+
+      document.querySelectorAll('.bracket-checkbox').forEach(cb => {
+        cb.checked = false;
+        const row = document.getElementById(`brk-row-${cb.value}`);
+        if (row) row.classList.remove('checked');
+        const qtyInput = document.getElementById(`qty-${cb.value}`);
+        if (qtyInput) {
+          qtyInput.disabled = true;
+          qtyInput.value = 1;
+        }
+      });
+
+      renderSensorOptions();
+      updateInputHints();
+      renderTable();
+      calculatePrice(false);
+    });
+
+    document.getElementById('widthInput').addEventListener('input', function() {
+      calculatePrice(false);
+    });
+
+    document.getElementById('projInput').addEventListener('input', function() {
+      calculatePrice(false);
+    });
+
+    document.getElementById('fabricSelect').addEventListener('change', function() {
+      calculatePrice(false);
+    });
+
+    document.getElementById('productSelect').addEventListener('change', function() {
+      updateInputHints();
+      renderTable();
+      calculatePrice(true);
+    });
+
+    document.getElementById('supplyTypeSelect').addEventListener('change', function() {
+      updateInputHints();
+      renderTable();
+      calculatePrice(true);
+    });
+
+    document.getElementById('operationSelect').addEventListener('change', function() {
+      const isMotorised = this.value === 'motorised';
+      document.getElementById('motorSelect').disabled = !isMotorised;
+      renderSensorOptions();
+      if (activeCategory === 'DROP A') {
+        renderTable();
+      }
+      calculatePrice(true);
+    });
+
+    document.getElementById('motorSelect').addEventListener('change', function() {
+      renderSensorOptions();
+      calculatePrice(true);
+    });
+
+    document.getElementById('powderCoatSelect').addEventListener('change', function() {
+      calculatePrice(false);
+    });
+
+    document.getElementById('ledSelect').addEventListener('change', function() {
+      calculatePrice(true);
+    });
+
+    document.getElementById('fabricTraySelect').addEventListener('change', function() {
+      calculatePrice(false);
+    });
+
+    // Show/Hide Toggle for Additional Brackets & Extras (Default Hidden)
+    function toggleBracketSection() {
+      const box = document.getElementById('bracketBox');
+      const btn = document.getElementById('toggleBracketFormBtn');
+      const isHidden = box.style.display === 'none';
+      box.style.display = isHidden ? 'block' : 'none';
+      btn.textContent = isHidden ? '▲ Hide Brackets & Extras' : '▼ Show Brackets & Extras';
+    }
+
+    document.getElementById('bracketCollapsibleBar').addEventListener('click', function() {
+      toggleBracketSection();
+    });
+
+    // Show/Hide Toggle for Reference Price Tables Card (Default Hidden)
+    function toggleReferenceTablesSection() {
+      const wrapper = document.getElementById('allReferenceTablesWrapper');
+      const header = document.getElementById('refTablesCardHeader');
+      const btn = document.getElementById('toggleAllTablesBtn');
+      const isHidden = wrapper.style.display === 'none';
+      wrapper.style.display = isHidden ? 'block' : 'none';
+      header.classList.toggle('collapsed', !isHidden);
+      btn.textContent = isHidden ? '▲ Hide Price Tables' : '▼ Show Price Tables';
+    }
+
+    document.getElementById('refTablesCardHeader').addEventListener('click', function() {
+      toggleReferenceTablesSection();
+    });
+
+    // Initial render
+    populateDropASubModels();
+    populateOperationOptions();
+    renderBracketOptions();
+    renderSensorOptions();
+    renderTable();
+    renderBracketReference();
+    renderSensorReference();
+    renderFabricReference();
+    updateInputHints();
+    calculatePrice(false);
+  </script>
+</body>
+</html>
