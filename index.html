@@ -51,12 +51,13 @@
     body {
       background-color: var(--bg);
       color: var(--text);
-      padding: 1.75rem 1.25rem 3rem;
-      line-height: 1.5;
+      padding: 1rem 0.75rem 2.25rem;
+      line-height: 1.4;
+      font-size: 14px;
     }
 
     .container {
-      max-width: 1220px;
+      max-width: 1140px;
       margin: 0 auto;
     }
 
@@ -66,78 +67,79 @@
       align-items: center;
       justify-content: space-between;
       flex-wrap: wrap;
-      gap: 1rem;
-      margin-bottom: 1.5rem;
+      gap: 0.65rem;
+      margin-bottom: 0.9rem;
       background: var(--card-bg);
-      padding: 1.25rem 1.75rem;
-      border-radius: var(--radius-lg);
+      padding: 0.85rem 1.15rem;
+      border-radius: var(--radius-md);
       border: 1px solid var(--border);
       box-shadow: var(--shadow-sm);
     }
 
     .header-left h1 {
-      font-size: 1.5rem;
+      font-size: 1.15rem;
       font-weight: 800;
       color: var(--text);
-      letter-spacing: -0.025em;
+      letter-spacing: -0.02em;
       display: flex;
       align-items: center;
-      gap: 0.6rem;
+      gap: 0.45rem;
     }
 
     .header-left p {
       color: var(--text-muted);
-      margin-top: 0.2rem;
-      font-size: 0.875rem;
+      margin-top: 0.15rem;
+      font-size: 0.76rem;
     }
 
     .header-badge {
       background: var(--primary-light);
       color: var(--primary);
       border: 1px solid var(--primary-border);
-      padding: 0.4rem 0.85rem;
+      padding: 0.28rem 0.65rem;
       border-radius: 999px;
-      font-size: 0.8rem;
+      font-size: 0.72rem;
       font-weight: 700;
-      letter-spacing: 0.02em;
+      letter-spacing: 0.01em;
     }
 
     /* Main 2-Column Layout */
     .grid {
       display: grid;
-      grid-template-columns: 1.22fr 0.78fr;
-      gap: 1.5rem;
-      margin-bottom: 1.5rem;
+      grid-template-columns: 1.18fr 0.82fr;
+      gap: 1rem;
+      margin-bottom: 1rem;
       align-items: start;
     }
 
     @media (max-width: 920px) {
       .grid {
         grid-template-columns: 1fr;
+        gap: 0.85rem;
       }
     }
 
     .card {
       background: var(--card-bg);
-      border-radius: var(--radius-lg);
-      padding: 1.65rem;
+      border-radius: var(--radius-md);
+      padding: 1.1rem;
       box-shadow: var(--shadow-md);
       border: 1px solid var(--border);
     }
 
     .sticky-card {
       position: sticky;
-      top: 1.25rem;
+      top: 0.85rem;
     }
 
     .card-title {
-      font-size: 1.125rem;
+      font-size: 0.96rem;
       font-weight: 800;
-      margin-bottom: 1.25rem;
+      margin-bottom: 0.85rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 0.75rem;
+      gap: 0.5rem;
       color: var(--text);
     }
 
@@ -147,50 +149,44 @@
 
     /* Top 4 Category Buttons (FAA / DROP A / OZTECH / LOUVRE) */
     .category-tabs-label {
-      font-size: 0.78rem;
+      font-size: 0.7rem;
       font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
+      letter-spacing: 0.04em;
       color: var(--text-muted);
-      margin-bottom: 0.5rem;
+      margin-bottom: 0.35rem;
       display: block;
     }
 
     .category-tabs {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 0.65rem;
-      margin-bottom: 1.2rem;
-    }
-
-    @media (max-width: 560px) {
-      .category-tabs {
-        grid-template-columns: repeat(2, 1fr);
-      }
+      gap: 0.45rem;
+      margin-bottom: 0.85rem;
     }
 
     .cat-btn {
       appearance: none;
-      border: 2px solid #bfdbfe;
+      border: 1.5px solid #bfdbfe;
       background: #dbeafe;
       color: #1e3a8a;
-      font-size: 0.98rem;
+      font-size: 0.82rem;
       font-weight: 800;
-      letter-spacing: 0.03em;
-      padding: 0.75rem 0.5rem;
-      border-radius: 10px;
+      letter-spacing: 0.02em;
+      padding: 0.5rem 0.3rem;
+      border-radius: 8px;
       cursor: pointer;
-      transition: all 0.18s ease;
+      transition: all 0.16s ease;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 0.15rem;
-      box-shadow: 0 1px 2px rgba(37, 99, 235, 0.08);
+      gap: 0.1rem;
+      box-shadow: 0 1px 2px rgba(37, 99, 235, 0.06);
     }
 
     .cat-btn .cat-sub {
-      font-size: 0.65rem;
+      font-size: 0.6rem;
       font-weight: 600;
       opacity: 0.75;
       letter-spacing: 0.01em;
@@ -199,14 +195,13 @@
     .cat-btn:hover {
       background: #bfdbfe;
       border-color: #93c5fd;
-      transform: translateY(-1px);
     }
 
     .cat-btn.active {
       background: var(--primary);
       border-color: var(--primary-hover);
       color: #ffffff;
-      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.28);
+      box-shadow: 0 3px 8px rgba(37, 99, 235, 0.24);
     }
 
     .cat-btn.active .cat-sub {
@@ -214,59 +209,61 @@
       color: #dbeafe;
     }
 
-    /* FAA Product Model Buttons (Green Theme) */
+    /* FAA / Product Model Buttons (Green Theme) */
     .faa-model-tabs {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 0.55rem;
-      margin-bottom: 1rem;
+      gap: 0.4rem;
+      margin-bottom: 0.7rem;
     }
 
-    @media (max-width: 680px) {
+    @media (max-width: 640px) {
       .faa-model-tabs {
         grid-template-columns: repeat(2, 1fr);
+      }
+      #oztechModelTabs,
+      #dropAModelTabs {
+        grid-template-columns: repeat(3, 1fr) !important;
       }
     }
 
     .faa-model-btn {
       appearance: none;
-      border: 2px solid #86efac;
+      border: 1.5px solid #86efac;
       background: #dcfce7;
       color: #14532d;
-      font-size: 0.86rem;
+      font-size: 0.76rem;
       font-weight: 800;
-      letter-spacing: 0.02em;
-      padding: 0.65rem 0.45rem;
-      border-radius: 10px;
+      letter-spacing: 0.01em;
+      padding: 0.46rem 0.3rem;
+      border-radius: 8px;
       cursor: pointer;
-      transition: all 0.18s ease;
+      transition: all 0.16s ease;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 0.14rem;
+      gap: 0.1rem;
       text-align: center;
-      box-shadow: 0 1px 2px rgba(22, 163, 74, 0.08);
+      box-shadow: 0 1px 2px rgba(22, 163, 74, 0.06);
     }
 
     .faa-model-btn .faa-model-sub {
-      font-size: 0.64rem;
+      font-size: 0.58rem;
       font-weight: 600;
       opacity: 0.78;
-      letter-spacing: 0.01em;
     }
 
     .faa-model-btn:hover {
       background: #bbf7d0;
       border-color: #4ade80;
-      transform: translateY(-1px);
     }
 
     .faa-model-btn.active {
       background: #16a34a;
       border-color: #15803d;
       color: #ffffff;
-      box-shadow: 0 4px 12px rgba(22, 163, 74, 0.28);
+      box-shadow: 0 3px 8px rgba(22, 163, 74, 0.24);
     }
 
     .faa-model-btn.active .faa-model-sub {
@@ -277,50 +274,48 @@
     /* Sub-Type / Supply Type / Structure Type Buttons (Purple Theme) */
     .sub-type-tabs {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
-      gap: 0.55rem;
-      margin-bottom: 0.25rem;
+      grid-template-columns: repeat(auto-fit, minmax(88px, 1fr));
+      gap: 0.4rem;
+      margin-bottom: 0.15rem;
     }
 
     .sub-type-btn {
       appearance: none;
-      border: 2px solid #d8b4fe;
+      border: 1.5px solid #d8b4fe;
       background: #f3e8ff;
       color: #581c87;
-      font-size: 0.84rem;
+      font-size: 0.75rem;
       font-weight: 800;
-      letter-spacing: 0.02em;
-      padding: 0.6rem 0.45rem;
-      border-radius: 10px;
+      letter-spacing: 0.01em;
+      padding: 0.44rem 0.3rem;
+      border-radius: 8px;
       cursor: pointer;
-      transition: all 0.18s ease;
+      transition: all 0.16s ease;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 0.12rem;
+      gap: 0.08rem;
       text-align: center;
-      box-shadow: 0 1px 2px rgba(147, 51, 234, 0.08);
+      box-shadow: 0 1px 2px rgba(147, 51, 234, 0.06);
     }
 
     .sub-type-btn .sub-type-desc {
-      font-size: 0.64rem;
+      font-size: 0.58rem;
       font-weight: 600;
       opacity: 0.78;
-      letter-spacing: 0.01em;
     }
 
     .sub-type-btn:hover {
       background: #e9d5ff;
       border-color: #c084fc;
-      transform: translateY(-1px);
     }
 
     .sub-type-btn.active {
       background: #9333ea;
       border-color: #7e22ce;
       color: #ffffff;
-      box-shadow: 0 4px 12px rgba(147, 51, 234, 0.28);
+      box-shadow: 0 3px 8px rgba(147, 51, 234, 0.24);
     }
 
     .sub-type-btn.active .sub-type-desc {
@@ -330,8 +325,8 @@
 
     /* Section Styling inside Configuration Card */
     .config-section {
-      padding-top: 1.15rem;
-      margin-top: 1.15rem;
+      padding-top: 0.8rem;
+      margin-top: 0.8rem;
       border-top: 1px solid var(--border);
     }
 
@@ -345,47 +340,51 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 0.85rem;
+      margin-bottom: 0.55rem;
     }
 
     .section-title {
-      font-size: 0.82rem;
+      font-size: 0.74rem;
       font-weight: 800;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
+      letter-spacing: 0.04em;
       color: var(--text-secondary);
       display: flex;
       align-items: center;
-      gap: 0.45rem;
+      gap: 0.35rem;
     }
 
     .step-num {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 22px;
-      height: 22px;
-      border-radius: 6px;
+      width: 19px;
+      height: 19px;
+      border-radius: 5px;
       background: var(--primary-light);
       color: var(--primary);
-      font-size: 0.72rem;
+      font-size: 0.66rem;
       font-weight: 800;
     }
 
     .form-row {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1rem;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.6rem;
     }
 
-    @media (max-width: 560px) {
-      .form-row {
+    @media (max-width: 540px) {
+      #louvreModuleRow,
+      #oztechModuleRow,
+      #oztechPostGutterRow,
+      #fabricSpecRow {
         grid-template-columns: 1fr;
       }
     }
 
     .form-group {
-      margin-bottom: 0.9rem;
+      margin-bottom: 0.6rem;
+      min-width: 0;
     }
 
     .form-group:last-child {
@@ -394,10 +393,13 @@
 
     label {
       display: block;
-      font-size: 0.84rem;
-      font-weight: 600;
-      margin-bottom: 0.38rem;
-      color: var(--text);
+      font-size: 0.75rem;
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+      color: var(--text-secondary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .input-wrapper {
@@ -408,21 +410,23 @@
 
     select,
     input[type="number"],
-    input[type="text"] {
+    input[type="text"],
+    input[type="password"] {
       width: 100%;
-      padding: 0.68rem 0.9rem;
-      font-size: 0.94rem;
-      font-weight: 500;
+      height: 36px;
+      padding: 0.4rem 0.65rem;
+      font-size: 0.82rem;
+      font-weight: 600;
       border: 1px solid var(--border-strong);
-      border-radius: 10px;
+      border-radius: 8px;
       outline: none;
       background-color: #fff;
       color: var(--text);
-      transition: all 0.18s;
+      transition: all 0.16s;
     }
 
     input[type="number"] {
-      padding-right: 3.25rem;
+      padding-right: 2.5rem;
     }
 
     input[readonly] {
@@ -430,6 +434,7 @@
       border-color: #ddd6fe;
       color: var(--indigo);
       font-weight: 700;
+      font-size: 0.78rem;
       cursor: default;
     }
 
@@ -440,9 +445,10 @@
     }
 
     select:focus,
-    input[type="number"]:focus {
+    input[type="number"]:focus,
+    input[type="password"]:focus {
       border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+      box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.14);
     }
 
     select:disabled {
@@ -454,20 +460,21 @@
 
     .unit {
       position: absolute;
-      right: 0.9rem;
+      right: 0.6rem;
       color: var(--text-muted);
-      font-size: 0.82rem;
+      font-size: 0.72rem;
       font-weight: 600;
       pointer-events: none;
     }
 
     .hint {
-      font-size: 0.73rem;
+      font-size: 0.68rem;
       color: var(--text-muted);
-      margin-top: 0.3rem;
+      margin-top: 0.22rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
+      gap: 0.35rem;
     }
 
     .tier-pill {
@@ -475,9 +482,10 @@
       background: #eff6ff;
       color: var(--primary);
       font-weight: 700;
-      padding: 0.08rem 0.45rem;
+      padding: 0.05rem 0.38rem;
       border-radius: 4px;
-      font-size: 0.7rem;
+      font-size: 0.65rem;
+      white-space: nowrap;
     }
 
     /* Accordion / Collapsible Header Bar */
@@ -487,8 +495,8 @@
       justify-content: space-between;
       background: #f8fafc;
       border: 1px solid var(--border-strong);
-      border-radius: 10px;
-      padding: 0.65rem 0.9rem;
+      border-radius: 8px;
+      padding: 0.5rem 0.7rem;
       cursor: pointer;
       transition: all 0.15s;
       user-select: none;
@@ -502,8 +510,8 @@
     .collapsible-bar-left {
       display: flex;
       align-items: center;
-      gap: 0.55rem;
-      font-size: 0.86rem;
+      gap: 0.45rem;
+      font-size: 0.78rem;
       font-weight: 700;
       color: var(--text);
     }
@@ -511,9 +519,9 @@
     .count-badge {
       background: #e2e8f0;
       color: #475569;
-      font-size: 0.72rem;
+      font-size: 0.66rem;
       font-weight: 700;
-      padding: 0.15rem 0.55rem;
+      padding: 0.1rem 0.45rem;
       border-radius: 999px;
     }
 
@@ -526,15 +534,16 @@
       background: #ffffff;
       border: 1px solid var(--border-strong);
       color: var(--text-secondary);
-      font-size: 0.76rem;
+      font-size: 0.7rem;
       font-weight: 700;
-      padding: 0.35rem 0.75rem;
-      border-radius: 8px;
+      padding: 0.28rem 0.55rem;
+      border-radius: 6px;
       cursor: pointer;
       transition: all 0.15s;
       display: inline-flex;
       align-items: center;
-      gap: 0.3rem;
+      gap: 0.25rem;
+      white-space: nowrap;
     }
 
     .toggle-btn:hover {
@@ -545,37 +554,38 @@
     /* Multi-Select Box Styles */
     .option-box {
       border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 0.75rem;
+      border-radius: 8px;
+      padding: 0.5rem;
       background-color: #f8fafc;
-      margin-top: 0.5rem;
+      margin-top: 0.35rem;
     }
 
     .sensor-disabled-msg {
-      font-size: 0.82rem;
+      font-size: 0.74rem;
       color: var(--text-muted);
       text-align: center;
-      padding: 0.35rem 0;
+      padding: 0.2rem 0;
     }
 
     .checkbox-grid {
       display: grid;
       grid-template-columns: 1fr;
-      gap: 0.45rem;
+      gap: 0.35rem;
     }
 
     .checkbox-item {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0.52rem 0.75rem;
+      padding: 0.38rem 0.6rem;
+      min-height: 36px;
       background: #ffffff;
       border: 1px solid var(--border);
       border-radius: 8px;
       cursor: pointer;
       transition: all 0.15s;
       margin-bottom: 0;
-      gap: 0.5rem;
+      gap: 0.4rem;
     }
 
     .checkbox-item:hover {
@@ -593,7 +603,8 @@
       background: #ecfdf5;
     }
 
-    .checkbox-item.bracket-item.checked {
+    .checkbox-item.bracket-item.checked,
+    .checkbox-item.bracket-item.is-deducted {
       border-color: var(--emerald);
       background: var(--emerald-highlight);
     }
@@ -601,16 +612,17 @@
     .checkbox-left {
       display: flex;
       align-items: center;
-      gap: 0.6rem;
-      font-size: 0.84rem;
+      gap: 0.45rem;
+      font-size: 0.76rem;
       font-weight: 600;
       color: var(--text);
       flex: 1;
+      min-width: 0;
     }
 
     .checkbox-left input[type="checkbox"] {
-      width: 16px;
-      height: 16px;
+      width: 15px;
+      height: 15px;
       accent-color: var(--cyan);
       cursor: pointer;
       flex-shrink: 0;
@@ -623,12 +635,12 @@
     .checkbox-right {
       display: flex;
       align-items: center;
-      gap: 0.6rem;
+      gap: 0.4rem;
       flex-shrink: 0;
     }
 
     .checkbox-price {
-      font-size: 0.8rem;
+      font-size: 0.74rem;
       font-weight: 700;
       color: var(--cyan);
       white-space: nowrap;
@@ -636,25 +648,25 @@
 
     .bracket-item .checkbox-price {
       color: var(--emerald);
-      min-width: 72px;
       text-align: right;
     }
 
     .qty-wrapper {
       display: flex;
       align-items: center;
-      gap: 0.3rem;
-      font-size: 0.78rem;
+      gap: 0.25rem;
+      font-size: 0.72rem;
       font-weight: 600;
       color: var(--text-muted);
     }
 
     input.qty-input {
-      width: 60px !important;
-      padding: 0.25rem 0.4rem !important;
-      font-size: 0.82rem !important;
+      width: 46px !important;
+      height: 26px !important;
+      padding: 0.15rem 0.25rem !important;
+      font-size: 0.76rem !important;
       text-align: center;
-      border-radius: 6px !important;
+      border-radius: 5px !important;
       border: 1px solid var(--border-strong);
     }
 
@@ -667,22 +679,22 @@
     /* Action Buttons */
     .action-row {
       display: flex;
-      gap: 0.75rem;
-      margin-top: 1.25rem;
+      gap: 0.55rem;
+      margin-top: 0.9rem;
     }
 
     .btn {
       flex: 1;
-      padding: 0.85rem 1rem;
+      padding: 0.62rem 0.85rem;
       background-color: var(--primary);
       color: white;
       border: none;
-      border-radius: 10px;
-      font-size: 0.96rem;
+      border-radius: 8px;
+      font-size: 0.86rem;
       font-weight: 700;
       cursor: pointer;
       transition: all 0.2s;
-      box-shadow: 0 2px 6px rgba(37, 99, 235, 0.25);
+      box-shadow: 0 2px 5px rgba(37, 99, 235, 0.22);
     }
 
     .btn:hover {
@@ -690,12 +702,12 @@
     }
 
     .btn-secondary {
-      padding: 0.85rem 1.1rem;
+      padding: 0.62rem 0.9rem;
       background-color: #f1f5f9;
       color: var(--text-secondary);
       border: 1px solid var(--border-strong);
-      border-radius: 10px;
-      font-size: 0.88rem;
+      border-radius: 8px;
+      font-size: 0.8rem;
       font-weight: 700;
       cursor: pointer;
       transition: all 0.15s;
@@ -709,7 +721,7 @@
     .coming-soon-box {
       display: none;
       text-align: center;
-      padding: 3rem 1.5rem;
+      padding: 2rem 1rem;
       background: #f8fafc;
       border: 2px dashed var(--border-strong);
       border-radius: var(--radius-md);
@@ -717,21 +729,21 @@
     }
 
     .coming-soon-icon {
-      font-size: 2.4rem;
-      margin-bottom: 0.6rem;
+      font-size: 1.8rem;
+      margin-bottom: 0.4rem;
     }
 
     .coming-soon-title {
-      font-size: 1.15rem;
+      font-size: 0.95rem;
       font-weight: 800;
       color: var(--text);
-      margin-bottom: 0.35rem;
+      margin-bottom: 0.25rem;
     }
 
     .coming-soon-desc {
-      font-size: 0.88rem;
+      font-size: 0.78rem;
       color: var(--text-muted);
-      max-width: 420px;
+      max-width: 380px;
       margin: 0 auto;
     }
 
@@ -743,7 +755,7 @@
       border-radius: var(--radius-md);
       background: #f8fafc;
       border: 1px solid var(--border);
-      padding: 1.35rem;
+      padding: 0.95rem;
       transition: all 0.25s;
     }
 
@@ -759,22 +771,22 @@
 
     .result-top {
       text-align: center;
-      padding-bottom: 1rem;
-      border-bottom: 1px solid rgba(148, 163, 184, 0.25);
-      margin-bottom: 1rem;
+      padding-bottom: 0.7rem;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.22);
+      margin-bottom: 0.7rem;
     }
 
     .result-product-tag {
       display: inline-block;
-      font-size: 0.72rem;
+      font-size: 0.66rem;
       font-weight: 800;
       text-transform: uppercase;
-      letter-spacing: 0.04em;
+      letter-spacing: 0.03em;
       color: var(--primary);
       background: #dbeafe;
-      padding: 0.28rem 0.7rem;
+      padding: 0.2rem 0.55rem;
       border-radius: 999px;
-      margin-bottom: 0.6rem;
+      margin-bottom: 0.35rem;
     }
 
     .result-box.error .result-product-tag {
@@ -783,14 +795,14 @@
     }
 
     .result-label {
-      font-size: 0.82rem;
+      font-size: 0.72rem;
       color: var(--text-muted);
       font-weight: 600;
-      margin-bottom: 0.25rem;
+      margin-bottom: 0.15rem;
     }
 
     .result-price {
-      font-size: 2.65rem;
+      font-size: 2rem;
       font-weight: 900;
       color: var(--primary);
       line-height: 1.1;
@@ -799,28 +811,28 @@
 
     .result-box.error .result-price {
       color: var(--danger);
-      font-size: 1.4rem;
-      margin-top: 0.35rem;
+      font-size: 1.15rem;
+      margin-top: 0.25rem;
     }
 
     /* Quick Spec Chips inside Summary */
     .spec-chips {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 0.5rem;
-      margin-bottom: 1rem;
+      gap: 0.38rem;
+      margin-bottom: 0.7rem;
     }
 
     .spec-chip {
       background: #ffffff;
       border: 1px solid #dbeafe;
-      border-radius: 8px;
-      padding: 0.45rem 0.5rem;
+      border-radius: 7px;
+      padding: 0.32rem 0.35rem;
       text-align: center;
     }
 
     .spec-chip-label {
-      font-size: 0.65rem;
+      font-size: 0.58rem;
       font-weight: 700;
       text-transform: uppercase;
       color: var(--text-muted);
@@ -828,7 +840,7 @@
     }
 
     .spec-chip-val {
-      font-size: 0.78rem;
+      font-size: 0.72rem;
       font-weight: 800;
       color: var(--text);
     }
@@ -837,20 +849,20 @@
       width: 100%;
       background: #ffffff;
       border: 1px solid #dbeafe;
-      border-radius: 10px;
-      padding: 0.75rem 0.95rem;
-      margin-bottom: 0.85rem;
-      font-size: 0.81rem;
+      border-radius: 8px;
+      padding: 0.55rem 0.75rem;
+      margin-bottom: 0.4rem;
+      font-size: 0.75rem;
       box-shadow: var(--shadow-sm);
     }
 
     .breakdown-row {
       display: flex;
       justify-content: space-between;
-      align-items: flex-start;
-      padding: 0.38rem 0;
+      align-items: center;
+      padding: 0.3rem 0;
       color: var(--text);
-      gap: 0.75rem;
+      gap: 0.5rem;
     }
 
     .breakdown-row + .breakdown-row {
@@ -861,7 +873,7 @@
       color: var(--text-secondary);
       font-weight: 500;
       text-align: left;
-      line-height: 1.35;
+      line-height: 1.3;
     }
 
     .breakdown-row span:last-child {
@@ -881,11 +893,11 @@
     .badge {
       display: block;
       text-align: center;
-      padding: 0.45rem 0.85rem;
+      padding: 0.38rem 0.65rem;
       background: #ffffff;
       border: 1px solid var(--border);
-      border-radius: 8px;
-      font-size: 0.76rem;
+      border-radius: 7px;
+      font-size: 0.68rem;
       font-weight: 600;
       color: var(--text-secondary);
     }
@@ -1489,6 +1501,300 @@
       gap: 0.5rem;
       margin-top: 1rem;
     }
+
+    /* Hide input hints, sub-descriptions & formulas by default unless .show-hints is toggled */
+    body:not(.show-hints) .hint,
+    body:not(.show-hints) header p,
+    body:not(.show-hints) #activeCategoryHeaderBadge,
+    body:not(.show-hints) .cat-sub,
+    body:not(.show-hints) .faa-model-sub,
+    body:not(.show-hints) .sub-type-desc,
+    body:not(.show-hints) .gled-sub,
+    body:not(.show-hints) .onsite-toggle-sub,
+    body:not(.show-hints) #oztechOverhangSubtext,
+    body:not(.show-hints) #oztechGutterCoverSubtext,
+    body:not(.show-hints) #resultBadge,
+    body:not(.show-hints) #discountBreakdownRow:not(.is-active-discount),
+    body:not(.show-hints) #oztechHeightBreakdownRow:not(.is-active-addon),
+    body:not(.show-hints) #oztechPostBreakdownRow:not(.is-active-discount),
+    body:not(.show-hints) #oztechGutterCoverBreakdownRow:not(.is-active-addon),
+    body:not(.show-hints) #sensorBreakdownRow:not(.is-active-addon),
+    body:not(.show-hints) #ledBreakdownRow:not(.is-active-addon),
+    body:not(.show-hints) #trayBreakdownRow:not(.is-active-addon),
+    body:not(.show-hints) #bracketBreakdownRow:not(.is-active-addon) {
+      display: none !important;
+    }
+
+    .hint-toggle-btn {
+      appearance: none;
+      border: 1px solid #cbd5e1;
+      background: #f8fafc;
+      color: #475569;
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 0.26rem 0.58rem;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: all 0.16s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      white-space: nowrap;
+    }
+
+    .hint-toggle-btn:hover {
+      background: #e2e8f0;
+      color: #0f172a;
+      border-color: #94a3b8;
+    }
+
+    .hint-toggle-btn.active {
+      background: #dbeafe;
+      color: #1d4ed8;
+      border-color: #93c5fd;
+    }
+
+    /* OZTECH Gutter LED Option Buttons */
+    .gutter-led-tabs {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.45rem;
+    }
+
+    .gutter-led-btn {
+      appearance: none;
+      border: 1.5px solid #cbd5e1;
+      background: #f8fafc;
+      color: #334155;
+      padding: 0.48rem 0.45rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.16s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.1rem;
+      text-align: center;
+    }
+
+    .gutter-led-btn .gled-title {
+      font-size: 0.76rem;
+      font-weight: 800;
+      letter-spacing: 0.01em;
+    }
+
+    .gutter-led-btn .gled-sub {
+      font-size: 0.62rem;
+      font-weight: 600;
+      color: #64748b;
+    }
+
+    .gutter-led-btn:hover:not(:disabled) {
+      background: #fef3c7;
+      border-color: #fbbf24;
+      color: #92400e;
+    }
+
+    .gutter-led-btn.active {
+      background: #f59e0b;
+      border-color: #d97706;
+      color: #ffffff;
+      box-shadow: 0 3px 8px rgba(245, 158, 11, 0.24);
+    }
+
+    .gutter-led-btn.active .gled-sub {
+      color: #fef3c7;
+    }
+
+    .gutter-led-btn.active-none {
+      background: #475569;
+      border-color: #334155;
+      color: #ffffff;
+      box-shadow: 0 2px 6px rgba(51, 65, 85, 0.18);
+    }
+
+    .gutter-led-btn.active-none .gled-sub {
+      color: #e2e8f0;
+    }
+
+    .gutter-led-btn:disabled {
+      opacity: 0.52;
+      cursor: not-allowed;
+      background: #f1f5f9;
+      border-color: #e2e8f0;
+      color: #94a3b8;
+    }
+
+    /* On-Site Fabric Assembly Single Toggle Button */
+    .onsite-toggle-btn {
+      appearance: none;
+      width: 100%;
+      border: 1.5px solid #cbd5e1;
+      background: #f8fafc;
+      color: #1e293b;
+      padding: 0.55rem 0.75rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.16s ease;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      text-align: left;
+      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+    }
+
+    .onsite-toggle-btn:hover {
+      border-color: #34d399;
+      background: #ecfdf5;
+    }
+
+    .onsite-toggle-left {
+      display: flex;
+      flex-direction: column;
+      gap: 0.1rem;
+      min-width: 0;
+    }
+
+    .onsite-toggle-title {
+      font-size: 0.78rem;
+      font-weight: 800;
+      color: #0f172a;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .onsite-toggle-sub {
+      font-size: 0.66rem;
+      font-weight: 600;
+      color: #64748b;
+    }
+
+    .onsite-toggle-badge {
+      font-size: 0.7rem;
+      font-weight: 800;
+      padding: 0.25rem 0.55rem;
+      border-radius: 999px;
+      background: #e2e8f0;
+      color: #475569;
+      white-space: nowrap;
+      transition: all 0.16s ease;
+    }
+
+    .onsite-toggle-btn.active {
+      background: #059669;
+      border-color: #047857;
+      color: #ffffff;
+      box-shadow: 0 3px 10px rgba(5, 150, 105, 0.24);
+    }
+
+    .onsite-toggle-btn.active .onsite-toggle-title {
+      color: #ffffff;
+    }
+
+    .onsite-toggle-btn.active .onsite-toggle-sub {
+      color: #d1fae5;
+    }
+
+    .onsite-toggle-btn.active .onsite-toggle-badge {
+      background: #ffffff;
+      color: #047857;
+    }
+
+    /* Mobile Specific Compact Overrides */
+    @media (max-width: 640px) {
+      body {
+        padding: 0.5rem 0.45rem 1.5rem;
+      }
+      header {
+        padding: 0.6rem 0.75rem;
+        margin-bottom: 0.6rem;
+      }
+      .header-left h1 {
+        font-size: 0.96rem;
+      }
+      .mode-switch-btn {
+        font-size: 0.72rem;
+        padding: 0.35rem 0.6rem;
+      }
+      .card {
+        padding: 0.8rem 0.75rem;
+        border-radius: 10px;
+      }
+      .card-title {
+        font-size: 0.88rem;
+        margin-bottom: 0.65rem;
+      }
+      .cat-btn {
+        font-size: 0.74rem;
+        padding: 0.42rem 0.2rem;
+      }
+      .faa-model-btn {
+        font-size: 0.72rem;
+        padding: 0.4rem 0.25rem;
+      }
+      .sub-type-btn {
+        font-size: 0.72rem;
+        padding: 0.38rem 0.25rem;
+      }
+      label {
+        font-size: 0.7rem;
+        margin-bottom: 0.2rem;
+      }
+      select,
+      input[type="number"],
+      input[type="text"],
+      input[type="password"] {
+        height: 34px;
+        padding: 0.32rem 0.5rem;
+        font-size: 0.78rem;
+        border-radius: 7px;
+      }
+      input[type="number"] {
+        padding-right: 2.1rem;
+      }
+      .unit {
+        right: 0.45rem;
+        font-size: 0.66rem;
+      }
+      .config-section {
+        padding-top: 0.65rem;
+        margin-top: 0.65rem;
+      }
+      .section-header {
+        margin-bottom: 0.45rem;
+      }
+      .section-title {
+        font-size: 0.7rem;
+      }
+      .form-row {
+        gap: 0.45rem;
+      }
+      .form-group {
+        margin-bottom: 0.5rem;
+      }
+      .result-box {
+        padding: 0.75rem;
+      }
+      .result-price {
+        font-size: 1.65rem;
+      }
+      .spec-chip {
+        padding: 0.26rem 0.25rem;
+      }
+      .spec-chip-val {
+        font-size: 0.68rem;
+      }
+      .breakdown-box {
+        padding: 0.45rem 0.6rem;
+        font-size: 0.72rem;
+      }
+      .breakdown-row {
+        padding: 0.24rem 0;
+      }
+    }
   </style>
 </head>
 <body>
@@ -1501,8 +1807,8 @@
       </div>
       <div class="header-right">
         <div class="mode-switch-group">
-          <button type="button" class="mode-switch-btn active" id="navCalcBtn">🧮 견적 계산기 (Calculator)</button>
-          <button type="button" class="mode-switch-btn" id="navSettingsBtn">⚙️ 가격표 설정 (Price Settings)</button>
+          <button type="button" class="mode-switch-btn active" id="navCalcBtn">🧮 Calculator</button>
+          <button type="button" class="mode-switch-btn" id="navSettingsBtn">⚙️ Price Settings</button>
         </div>
         <div class="header-badge" id="activeCategoryHeaderBadge">Active Lineup: FAA (Folding Arm Awning)</div>
       </div>
@@ -1514,6 +1820,7 @@
       <div class="card">
         <div class="card-title">
           <span>📏 Configuration</span>
+          <button type="button" class="hint-toggle-btn" id="toggleHintsBtn" title="Show or hide input descriptions and surcharge formulas">ℹ️ Guide</button>
         </div>
 
         <!-- 4 Top-Level Product Model Category Buttons -->
@@ -1550,7 +1857,7 @@
         <form id="calcForm">
           <!-- Step 0-A: FAA System Model Buttons (Green Theme) & Supply Type (Complete vs KIT) -->
           <div class="config-section" id="faaModelSection">
-            <span class="category-tabs-label">Product Model (FAA Series)</span>
+            <span class="category-tabs-label">Product Model</span>
             <div class="faa-model-tabs" id="faaModelTabs">
               <button type="button" class="faa-model-btn active" data-model="titan_open">
                 <span>TITAN - OPEN</span>
@@ -1592,7 +1899,7 @@
             </select>
 
             <div class="form-group" style="margin-bottom: 0;">
-              <label>Supply Type (Complete vs KIT)</label>
+              <label>Supply Type</label>
               <div class="sub-type-tabs" id="faaSupplyTypeTabs" style="grid-template-columns: repeat(2, 1fr);">
                 <button type="button" class="sub-type-btn faa-supply-btn active" data-supply="complete">
                   <span>Complete System</span>
@@ -1613,7 +1920,7 @@
           <!-- Step 0-B: DROP A Product Model (GENIUS / TRUSCREEN / FIXED) & Sub-Type -->
           <div class="config-section" id="dropAModelSection" style="display: none; padding-top: 0; margin-top: 0; border-top: none;">
             <div class="form-group">
-              <label>Product Model (DROP A Series)</label>
+              <label>Product Model</label>
               <div class="faa-model-tabs" id="dropAModelTabs" style="grid-template-columns: repeat(3, 1fr);">
                 <button type="button" class="faa-model-btn dropa-model-btn active" data-group="GENIUS">
                   <span class="faa-model-name">GENIUS</span>
@@ -1632,8 +1939,8 @@
               </select>
             </div>
 
-            <div class="form-group" style="margin-top: 12px;">
-              <label>System Type / Sub-Model</label>
+            <div class="form-group" style="margin-top: 8px;">
+              <label>System Type</label>
               <div class="sub-type-tabs" id="dropASubTabs"></div>
               <select id="dropASubSelect" style="display: none;">
                 <option value="genius_zip">ZIP</option>
@@ -1648,7 +1955,7 @@
           <!-- Step 0-C: LOUVRE Product Model (Grand Louvre / LouvreFlex) -->
           <div class="config-section" id="louvreModelSection" style="display: none; padding-top: 0; margin-top: 0; border-top: none;">
             <div class="form-group">
-              <label>Product Model (LOUVRE Series)</label>
+              <label>Product Model</label>
               <div class="faa-model-tabs" id="louvreModelTabs" style="grid-template-columns: repeat(2, 1fr);">
                 <button type="button" class="faa-model-btn louvre-model-btn active" data-model="grand_louvre">
                   <span class="faa-model-name">Grand Louvre</span>
@@ -1667,7 +1974,7 @@
           <!-- Step 0-D: OZTECH Product Model (9 Models) & Structure Type -->
           <div class="config-section" id="oztechModelSection" style="display: none; padding-top: 0; margin-top: 0; border-top: none;">
             <div class="form-group">
-              <label>Product Model (OZTECH Series)</label>
+              <label>Product Model</label>
               <div class="faa-model-tabs" id="oztechModelTabs" style="grid-template-columns: repeat(3, 1fr);">
                 <button type="button" class="faa-model-btn oztech-model-btn active" data-group="IZI">
                   <span class="faa-model-name">IZI</span>
@@ -1710,7 +2017,7 @@
               </select>
             </div>
 
-            <div class="form-group" style="margin-top: 12px;">
+            <div class="form-group" style="margin-top: 8px;">
               <label>Structure Type</label>
               <div class="sub-type-tabs" id="oztechSubTabs"></div>
               <select id="oztechSubSelect" style="display: none;">
@@ -1764,29 +2071,50 @@
               </div>
             </div>
 
-            <!-- LOUVRE Module & Structure Spec (Located inside 1. Dimensions, below Width & Projection) -->
-            <div class="form-group" id="louvreModuleRow" style="display: none; margin-bottom: 14px;">
-              <label for="louvreModuleDisplay">Module & Structure Spec</label>
-              <div class="input-wrapper">
-                <input type="text" id="louvreModuleDisplay" value="Single Module • 4 Posts" readonly>
+            <!-- LOUVRE Module & Structure Spec + Post Exclusion (-$80/ea) -->
+            <div class="form-row" id="louvreModuleRow" style="display: none;">
+              <div class="form-group">
+                <label for="louvreModuleDisplay">Module & Spec</label>
+                <div class="input-wrapper">
+                  <input type="text" id="louvreModuleDisplay" value="Single • 4 Posts" readonly>
+                </div>
+                <div class="hint"><span id="louvreModuleSpecHint">* Base 4 Posts (+2 if Width > 5,500mm / +2 if Projection > 5,500mm • Max 8 Posts)</span></div>
+              </div>
+
+              <div class="form-group">
+                <label for="louvreNoPostCheck">Posts Exclusion</label>
+                <div class="checkbox-item bracket-item" id="louvreNoPostCard" style="margin-bottom: 0;">
+                  <label class="checkbox-left" style="margin-bottom: 0; cursor: pointer;">
+                    <input type="checkbox" id="louvreNoPostCheck">
+                    <span>Exclude</span>
+                  </label>
+                  <div class="checkbox-right">
+                    <div class="qty-wrapper">
+                      <span>Qty:</span>
+                      <input type="number" class="qty-input" id="louvreNoPostQty" min="1" max="8" value="4">
+                    </div>
+                    <span class="checkbox-price" id="louvreNoPostBadge">$0</span>
+                  </div>
+                </div>
+                <div class="hint"><span id="louvreNoPostHint">* Base 4 Posts (+2 if W > 5,500mm / +2 if P > 5,500mm • Max 8) • Editable Qty × -$80</span></div>
               </div>
             </div>
 
             <!-- OZTECH Module Selection & Overhang Option (Located inside 1. Dimensions, above Fabric) -->
             <div class="form-row" id="oztechModuleRow" style="display: none;">
               <div class="form-group">
-                <label for="oztechModuleSelect">Module (Bay) Selection</label>
+                <label for="oztechModuleSelect">Module (Bay)</label>
                 <select id="oztechModuleSelect">
-                  <option value="single">SINGLE MODULE (1BAY) — 2,000 ~ 5,000 mm</option>
-                  <option value="double">DOUBLE MODULE (2BAY) — 5,001 ~ 9,000 mm</option>
-                  <option value="triple">TRIPLE MODULE (3BAY) — 9,001 ~ 13,000 mm</option>
+                  <option value="single">SINGLE (1BAY)</option>
+                  <option value="double">DOUBLE (2BAY)</option>
+                  <option value="triple">TRIPLE (3BAY)</option>
                 </select>
                 <div class="hint"><span id="oztechModuleHint">* SINGLE MODULE (1BAY): 2,000 ~ 5,000 mm (Overhang: up to 7,000 mm)</span></div>
               </div>
 
               <div class="form-group">
-                <label for="oztechOverhangCheck">Overhang Option (+2,000 mm Width)</label>
-                <label class="checkbox-item" id="oztechOverhangLabel" style="margin-bottom: 0; height: 42px;">
+                <label for="oztechOverhangCheck">Overhang Option</label>
+                <label class="checkbox-item" id="oztechOverhangLabel" style="margin-bottom: 0;">
                   <span class="checkbox-left">
                     <input type="checkbox" id="oztechOverhangCheck">
                     <span>Apply Overhang <span id="oztechOverhangSubtext" style="color:var(--text-muted); font-weight:600;">(Up to 7,000 mm)</span></span>
@@ -1799,11 +2127,11 @@
 
             <!-- OZTECH Front Height & Back Height Inputs -->
             <div class="form-row" id="oztechHeightRow" style="display: none;">
-              <div class="form-group">
-                <label for="oztechFrontHeightInput">Front Height (Base 2.25m)</label>
+              <div class="form-group" id="oztechFrontHeightGroup">
+                <label for="oztechFrontHeightInput" id="oztechFrontHeightLabel">Front Height</label>
                 <div class="input-wrapper">
-                  <input type="number" id="oztechFrontHeightInput" placeholder="e.g. 2250 or 2.25" min="0.1" step="any" value="2250">
-                  <span class="unit">mm / m</span>
+                  <input type="number" id="oztechFrontHeightInput" placeholder="2250" min="0.1" step="any" value="2250">
+                  <span class="unit">mm</span>
                 </div>
                 <div class="hint">
                   <span id="oztechFrontHeightHint">* Base: 2,250 mm (2.25m) • Extra > 2.25m: +$78/m</span>
@@ -1811,11 +2139,11 @@
                 </div>
               </div>
 
-              <div class="form-group">
+              <div class="form-group" id="oztechBackHeightGroup">
                 <label for="oztechBackHeightInput">Back Height</label>
                 <div class="input-wrapper">
-                  <input type="number" id="oztechBackHeightInput" placeholder="e.g. 2750 or 2.75" min="0.1" step="any" value="2750">
-                  <span class="unit">mm / m</span>
+                  <input type="number" id="oztechBackHeightInput" placeholder="2750" min="0.1" step="any" value="2750">
+                  <span class="unit">mm</span>
                 </div>
                 <div class="hint">
                   <span id="oztechBackHeightHint">* Rear Height (Enter in mm e.g. 2750 or m e.g. 2.75)</span>
@@ -1827,26 +2155,26 @@
             <!-- OZTECH Front Post Exclusion (-$80/ea) & Gutter Cover (+$45/m) -->
             <div class="form-row" id="oztechPostGutterRow" style="display: none;">
               <div class="form-group">
-                <label for="oztechNoPostCheck">Front Posts Exclusion (-$80/ea)</label>
-                <div class="checkbox-item bracket-item" id="oztechNoPostCard" style="margin-bottom: 0; min-height: 42px;">
+                <label for="oztechNoPostCheck">Front Posts Exclusion</label>
+                <div class="checkbox-item bracket-item" id="oztechNoPostCard" style="margin-bottom: 0;">
                   <label class="checkbox-left" style="margin-bottom: 0; cursor: pointer;">
                     <input type="checkbox" id="oztechNoPostCheck">
-                    <span>Exclude Front Posts</span>
+                    <span>Exclude</span>
                   </label>
                   <div class="checkbox-right">
                     <div class="qty-wrapper">
                       <span>Qty:</span>
                       <input type="number" class="qty-input" id="oztechNoPostQty" min="1" max="50" value="2">
                     </div>
-                    <span class="checkbox-price" id="oztechNoPostBadge">Included ($0)</span>
+                    <span class="checkbox-price" id="oztechNoPostBadge">$0</span>
                   </div>
                 </div>
                 <div class="hint"><span id="oztechNoPostHint">* Default: Single 2 / Double 3 / Triple 4 (Harbour: 4 / 6 / 8) • Editable Qty × -$80</span></div>
               </div>
 
               <div class="form-group">
-                <label for="oztechGutterCoverCheck">Gutter Cover Option (+$45/m)</label>
-                <label class="checkbox-item" id="oztechGutterCoverCard" style="margin-bottom: 0; min-height: 42px;">
+                <label for="oztechGutterCoverCheck">Gutter Cover</label>
+                <label class="checkbox-item" id="oztechGutterCoverCard" style="margin-bottom: 0;">
                   <span class="checkbox-left">
                     <input type="checkbox" id="oztechGutterCoverCheck">
                     <span>Add Gutter Cover <span id="oztechGutterCoverSubtext" style="color:var(--text-muted); font-weight:600;">(Width × $45/m)</span></span>
@@ -1900,9 +2228,9 @@
               </div>
 
               <div class="form-group">
-                <label for="sqmDisplay" id="sqmFieldLabel">Calculated Fabric Area</label>
+                <label for="sqmDisplay" id="sqmFieldLabel">Fabric Area</label>
                 <div class="input-wrapper">
-                  <input type="text" id="sqmDisplay" value="9.88 sqm (Surcharge: +$0)" readonly>
+                  <input type="text" id="sqmDisplay" value="9.88 sqm (+$0)" readonly>
                 </div>
                 <div class="hint"><span id="sqmFormulaHint">* Width (3.80M) × Projection (2.60M) = 9.88 sqm</span></div>
               </div>
@@ -1912,11 +2240,11 @@
           <!-- Step 2: Operation, Motor Brand & Sensors/Remotes -->
           <div class="config-section">
             <div class="section-header">
-              <span class="section-title"><span class="step-num">2</span> Operation, Motor & Controls</span>
+              <span class="section-title"><span class="step-num">2</span> Operation & Controls</span>
             </div>
 
-            <div class="form-row">
-              <div class="form-group">
+            <div class="form-row" id="operationMotorRow">
+              <div class="form-group" id="operationGroup">
                 <label for="operationSelect">Operation</label>
                 <select id="operationSelect">
                   <option value="manual">Manual Gear (+$0)</option>
@@ -1925,7 +2253,8 @@
               </div>
 
               <div class="form-group" id="motorGroup">
-                <label for="motorSelect">Motor Brand</label>
+                <label for="motorSelect" id="motorFieldLabel">Motor Brand</label>
+                <div class="sub-type-tabs" id="oztechMotorTabs" style="display: none; grid-template-columns: repeat(4, 1fr);"></div>
                 <select id="motorSelect" disabled>
                   <option value="ace">ACE</option>
                   <option value="alpha">Alpha</option>
@@ -1937,9 +2266,9 @@
 
             <!-- Sensor & Remote Multi-Select Checkboxes -->
             <div class="form-group">
-              <label id="sensorGroupLabel">Sensor & Remote Options (Multiple Selection)</label>
+              <label id="sensorGroupLabel">Sensor & Remote</label>
               <div class="option-box" id="sensorBox">
-                <div class="sensor-disabled-msg">Select "Motorised" operation above to choose Sensor & Remote options.</div>
+                <div class="sensor-disabled-msg">Select "Motorised" to choose Sensor & Remote.</div>
               </div>
             </div>
           </div>
@@ -1947,15 +2276,15 @@
           <!-- Step 3: Frame Colour, LED Lighting & Fabric Tray -->
           <div class="config-section">
             <div class="section-header">
-              <span class="section-title"><span class="step-num">3</span> <span id="step3TitleText">Frame Finish & Lighting</span></span>
+              <span class="section-title"><span class="step-num">3</span> <span id="step3TitleText">Finish & Lighting</span></span>
             </div>
 
             <div class="form-row">
               <div class="form-group" id="oztechPcTypeGroup" style="display: none;">
-                <label for="oztechPcTypeSelect">Powder Coat Type (Frame / Full)</label>
+                <label for="oztechPcTypeSelect">Powder Coat Type</label>
                 <select id="oztechPcTypeSelect">
-                  <option value="frame" selected>FRAME (Standard Frame Only — Default +$0)</option>
-                  <option value="full">FULL (Fabric Support Bar Frame Colour — +Table Price)</option>
+                  <option value="frame" selected>FRAME (Standard +$0)</option>
+                  <option value="full">FULL (+Support Bar)</option>
                 </select>
                 <div class="hint"><span id="oztechPcTypeHint">* Default: FRAME (+$0) • Select FULL to add Fabric Support Bar Frame Colour Price</span></div>
               </div>
@@ -1981,41 +2310,66 @@
                   <option value="arm_led">ARM LED (Up to 3.1M Proj.)</option>
                   <option value="maxi_led">Maxi LED</option>
                 </select>
+                <!-- OZTECH 3-Button Main LED Selector (None / UniLED / Maxi) -->
+                <div class="gutter-led-tabs" id="oztechMainLedTabs" style="display: none; grid-template-columns: repeat(3, 1fr);">
+                  <button type="button" class="gutter-led-btn oztech-main-led-btn active-none" data-led="none">
+                    <span class="gled-title">None</span>
+                    <span class="gled-sub">No Main LED (+$0)</span>
+                  </button>
+                  <button type="button" class="gutter-led-btn oztech-main-led-btn" data-led="uniled">
+                    <span class="gled-title">UniLED</span>
+                    <span class="gled-sub">Standard LED</span>
+                  </button>
+                  <button type="button" class="gutter-led-btn oztech-main-led-btn" data-led="maxi_led">
+                    <span class="gled-title">Maxi</span>
+                    <span class="gled-sub">Full Width LED</span>
+                  </button>
+                </div>
+                <!-- LOUVRE Single-Click Toggle Button for Gutter LED (Same design as OZTECH On-Site Fabric Assembly) -->
+                <button type="button" class="onsite-toggle-btn" id="louvreLedToggleBtn" style="display: none;">
+                  <span class="onsite-toggle-left">
+                    <span class="onsite-toggle-title" id="louvreLedToggleTitle">Gutter LED Lighting</span>
+                    <span class="onsite-toggle-sub" id="louvreLedToggleSub">Click to apply Gutter LED lighting</span>
+                  </span>
+                  <span class="onsite-toggle-badge" id="louvreLedToggleBadge">Not Applied (+$0)</span>
+                </button>
                 <div class="hint"><span id="ledHint">* Requires Alpha, Becker, or Somfy motor</span></div>
               </div>
             </div>
 
             <!-- OZTECH Additional Gutter LED Option (Only visible in OZTECH category under Step 3 Lighting) -->
             <div class="form-group" id="oztechGutterLedGroup" style="display: none;">
-              <label for="oztechGutterLedCheck">Additional Gutter LED Option (Full Width LED Gutter)</label>
-              <label class="overhang-check-card" id="oztechGutterLedCard">
-                <span class="overhang-check-left">
-                  <input type="checkbox" id="oztechGutterLedCheck">
-                  <span>
-                    <div class="overhang-check-title">Add Full Width LED Gutter (Additional Option)</div>
-                    <div class="overhang-check-sub" id="oztechGutterLedSubtext">Can be added alongside Standard LED (UNILED) or MAXI LED</div>
-                  </span>
-                </span>
-                <span class="overhang-badge" id="oztechGutterLedBadge">No Gutter LED</span>
-              </label>
+              <label>Gutter LED Option</label>
+              <div class="gutter-led-tabs" id="oztechGutterLedTabs">
+                <button type="button" class="gutter-led-btn active-none" id="oztechGutterLedBtnNone" data-val="no">
+                  <span class="gled-title">No Gutter LED</span>
+                  <span class="gled-sub">Standard Gutter (+$0)</span>
+                </button>
+                <button type="button" class="gutter-led-btn" id="oztechGutterLedBtnYes" data-val="yes">
+                  <span class="gled-title">Full Width LED Gutter</span>
+                  <span class="gled-sub" id="oztechGutterLedSubtext">Add Gutter LED ($674 ~ $907 by Width)</span>
+                </button>
+              </div>
+              <input type="checkbox" id="oztechGutterLedCheck" style="display: none;">
+              <span id="oztechGutterLedBadge" style="display: none;">No Gutter LED</span>
               <div class="hint"><span id="oztechGutterLedHint">* Full Width LED Gutter ($674 ~ $907 by Width) • Excluding IZI, MUSE and Cantilever Systems</span></div>
             </div>
 
             <!-- Dimmer Option (Visible in LOUVRE and OZTECH categories under Step 3 Lighting) -->
             <div class="form-group" id="louvreDimmerGroup" style="display: none;">
-              <label for="louvreDimmerSelect" id="louvreDimmerLabel">Dimmer Option (Lighting Control)</label>
+              <label for="louvreDimmerSelect" id="louvreDimmerLabel">Dimmer Option</label>
               <select id="louvreDimmerSelect">
-                <option value="included">Dimmer Option (Default Included — +$0)</option>
+                <option value="included">Dimmer Included (+$0)</option>
               </select>
               <div class="hint"><span id="louvreDimmerHint">* Grand Louvre includes Dimmer Option by default (+$0)</span></div>
             </div>
 
             <!-- Fabric Tray Option (Only active for Family - Complete) -->
             <div class="form-group" id="fabricTrayGroup" style="display: none;">
-              <label for="fabricTraySelect">Fabric Tray Option (Family - Complete Exclusive)</label>
+              <label for="fabricTraySelect">Fabric Tray</label>
               <select id="fabricTraySelect">
-                <option value="no">No (Without Fabric Tray - +$0)</option>
-                <option value="yes">Yes (Include Fabric Tray)</option>
+                <option value="no">No (+$0)</option>
+                <option value="yes">Yes (Include Tray)</option>
               </select>
             </div>
           </div>
@@ -2023,12 +2377,12 @@
           <!-- Step 4: Discount Rate (Applied to Base System Price) -->
           <div class="config-section" id="discountConfigSection">
             <div class="section-header">
-              <span class="section-title"><span class="step-num">4</span> Discount Rate</span>
+              <span class="section-title"><span class="step-num">4</span> Discount</span>
             </div>
 
             <div class="form-row">
               <div class="form-group">
-                <label for="discountInput">Discount Rate (Base System Price)</label>
+                <label for="discountInput">Discount Rate</label>
                 <div class="input-wrapper">
                   <input type="number" id="discountInput" placeholder="0" min="0" max="100" step="any" value="0">
                   <span class="unit">%</span>
@@ -2039,26 +2393,24 @@
               </div>
 
               <div class="form-group">
-                <label for="discountPreviewDisplay">Calculated Base Discount</label>
+                <label for="discountPreviewDisplay">Base Discount</label>
                 <div class="input-wrapper">
-                  <input type="text" id="discountPreviewDisplay" value="-$0 (Net Base: $0)" readonly>
+                  <input type="text" id="discountPreviewDisplay" value="-$0 (Net: $0)" readonly>
                 </div>
                 <div class="hint"><span id="discountFormulaHint">* Base System Price × 0% = -$0</span></div>
               </div>
             </div>
 
             <div class="form-group" id="onsiteAssemblyGroup" style="margin-top: 0.25rem; display: none;">
-              <label for="onsiteAssemblyCheck">On-Site Fabric Assembly Discount (OZTECH Exclusive)</label>
-              <label class="overhang-check-card" id="onsiteAssemblyCard">
-                <span class="overhang-check-left">
-                  <input type="checkbox" id="onsiteAssemblyCheck">
-                  <span>
-                    <div class="overhang-check-title">On-Site Fabric Assembly (-7% off Base System Price)</div>
-                    <div class="overhang-check-sub" id="onsiteAssemblySubtext">Applies a 7% discount on the Base System Price when fabric skins are assembled on site</div>
-                  </span>
+              <label>On-Site Fabric Assembly</label>
+              <button type="button" class="onsite-toggle-btn" id="onsiteAssemblyBtn">
+                <span class="onsite-toggle-left">
+                  <span class="onsite-toggle-title" id="onsiteAssemblyTitleText">On-Site Fabric Assembly (-7%)</span>
+                  <span class="onsite-toggle-sub" id="onsiteAssemblySubtext">Click to apply a 7% discount when fabric skins are assembled on site</span>
                 </span>
-                <span class="overhang-badge" id="onsiteAssemblyBadge">Not Applied (0%)</span>
-              </label>
+                <span class="onsite-toggle-badge" id="onsiteAssemblyBadge">0%</span>
+              </button>
+              <input type="checkbox" id="onsiteAssemblyCheck" style="display: none;">
               <div class="hint"><span id="onsiteAssemblyHint">* Deducts 7% of Base System Price when fabric is assembled on site (Note: Systems ordered with LED come fully assembled)</span></div>
             </div>
           </div>
@@ -5017,6 +5369,10 @@
 
     function populateMotorOptions(resetToDefault = false) {
       const motorSelect = document.getElementById('motorSelect');
+      const oztechMotorTabs = document.getElementById('oztechMotorTabs');
+      const operationGroup = document.getElementById('operationGroup');
+      const motorGroup = document.getElementById('motorGroup');
+      const motorFieldLabel = document.getElementById('motorFieldLabel');
       const prevVal = motorSelect.value;
       const product = getCurrentProduct();
       const activeMotors = getActiveMotors(product) || DB.motors;
@@ -5035,6 +5391,40 @@
       } else {
         motorSelect.value = validVals.includes(prevVal) ? prevVal : validVals[0] || 'ace';
       }
+
+      if (activeCategory === 'OZTECH') {
+        if (operationGroup) operationGroup.style.display = 'none';
+        if (motorGroup) motorGroup.style.gridColumn = '1 / -1';
+        if (motorFieldLabel) motorFieldLabel.textContent = 'Motor Brand (Motorised)';
+        motorSelect.style.display = 'none';
+        if (oztechMotorTabs) {
+          oztechMotorTabs.style.display = 'grid';
+          oztechMotorTabs.style.gridTemplateColumns = `repeat(${Math.min(validVals.length || 1, 4)}, 1fr)`;
+          oztechMotorTabs.innerHTML = '';
+          Object.entries(activeMotors).forEach(([mKey, mData]) => {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = `sub-type-btn oztech-motor-btn${motorSelect.value === mKey ? ' active' : ''}`;
+            btn.dataset.motor = mKey;
+            btn.innerHTML = `<span>${mData.name}</span>`;
+            btn.addEventListener('click', function() {
+              motorSelect.value = mKey;
+              document.querySelectorAll('.oztech-motor-btn').forEach(b => {
+                b.classList.toggle('active', b.dataset.motor === mKey);
+              });
+              motorSelect.dispatchEvent(new Event('change'));
+            });
+            oztechMotorTabs.appendChild(btn);
+          });
+        }
+      } else {
+        if (operationGroup) operationGroup.style.display = 'block';
+        if (motorGroup) motorGroup.style.gridColumn = '';
+        if (motorFieldLabel) motorFieldLabel.textContent = 'Motor Brand';
+        motorSelect.style.display = 'block';
+        if (oztechMotorTabs) oztechMotorTabs.style.display = 'none';
+      }
+
       populateDimmerOptions();
     }
 
@@ -5047,16 +5437,22 @@
 
     function updateOnsiteAssemblyUI() {
       const cb = document.getElementById('onsiteAssemblyCheck');
-      const card = document.getElementById('onsiteAssemblyCard');
+      const btn = document.getElementById('onsiteAssemblyBtn');
+      const titleEl = document.getElementById('onsiteAssemblyTitleText');
       const badge = document.getElementById('onsiteAssemblyBadge');
       const subtext = document.getElementById('onsiteAssemblySubtext');
       const isChecked = Boolean(cb && cb.checked);
-      if (card) card.classList.toggle('checked', isChecked);
-      if (badge) badge.textContent = isChecked ? '-7% Applied' : 'Not Applied (0%)';
+      if (btn) btn.classList.toggle('active', isChecked);
+      if (titleEl) {
+        titleEl.textContent = isChecked
+          ? '✓ On-Site Fabric Assembly (-7%)'
+          : 'On-Site Fabric Assembly (-7%)';
+      }
+      if (badge) badge.textContent = isChecked ? '-7% Applied' : '0%';
       if (subtext) {
         subtext.textContent = isChecked
-          ? '7% On-Site Fabric Assembly discount applied to Base System Price'
-          : 'Applies a 7% discount on the Base System Price when fabric skins are assembled on site';
+          ? '7% discount applied to Base System Price (Click again to cancel)'
+          : 'Click to apply a 7% discount when fabric skins are assembled on site';
       }
     }
 
@@ -5078,13 +5474,13 @@
       dimmerSelect.innerHTML = '';
 
       if (activeCategory === 'OZTECH') {
-        if (dimmerLabel) dimmerLabel.textContent = 'Optional Remote Dimming Control (OZTECH LED)';
+        if (dimmerLabel) dimmerLabel.textContent = 'Remote Dimmer';
         const ledKey = document.getElementById('ledSelect').value;
         if (ledKey === 'uniled') {
           if (motorKey === 'becker') {
             [
-              { value: 'no', label: 'No Dimming Control (Standard ON-OFF Control Included — +$0)' },
-              { value: 'yes', label: 'Optional Remote Dimming Control (Becker Only — +$350)' }
+              { value: 'no', label: 'No Dimmer (+$0)' },
+              { value: 'yes', label: 'Remote Dimmer (+$350)' }
             ].forEach(item => {
               const opt = document.createElement('option');
               opt.value = item.value;
@@ -5097,7 +5493,7 @@
           } else {
             const opt = document.createElement('option');
             opt.value = 'no';
-            opt.textContent = 'ON-OFF Control Only (Dimmer +$350 is Becker Motor Exclusive)';
+            opt.textContent = 'ON-OFF Only (Becker Required)';
             dimmerSelect.appendChild(opt);
             dimmerSelect.value = 'no';
             dimmerSelect.disabled = true;
@@ -5106,8 +5502,8 @@
         } else if (ledKey === 'maxi_led') {
           if (motorKey === 'becker' || motorKey === 'somfy') {
             [
-              { value: 'no', label: 'No Dimming Control (Standard ON-OFF Control Included — +$0)' },
-              { value: 'yes', label: 'Optional Remote Dimming Control (Becker & Somfy — +$200)' }
+              { value: 'no', label: 'No Dimmer (+$0)' },
+              { value: 'yes', label: 'Remote Dimmer (+$200)' }
             ].forEach(item => {
               const opt = document.createElement('option');
               opt.value = item.value;
@@ -5120,7 +5516,7 @@
           } else {
             const opt = document.createElement('option');
             opt.value = 'no';
-            opt.textContent = 'ON-OFF Control Only (Dimmer +$200 Requires Becker or Somfy Motor)';
+            opt.textContent = 'ON-OFF Only (Becker/Somfy Required)';
             dimmerSelect.appendChild(opt);
             dimmerSelect.value = 'no';
             dimmerSelect.disabled = true;
@@ -5129,7 +5525,7 @@
         } else {
           const opt = document.createElement('option');
           opt.value = 'no';
-          opt.textContent = 'Select UNILED or MAXI LED to enable Remote Dimming Control';
+          opt.textContent = 'Select Main LED First';
           dimmerSelect.appendChild(opt);
           dimmerSelect.value = 'no';
           dimmerSelect.disabled = true;
@@ -5138,21 +5534,21 @@
         return;
       }
 
-      if (dimmerLabel) dimmerLabel.textContent = 'Dimmer Option (Lighting Control)';
+      if (dimmerLabel) dimmerLabel.textContent = 'Dimmer Option';
       const isGrandLouvre = getCurrentProductKey() === 'grand_louvre';
 
       if (isGrandLouvre) {
         const opt = document.createElement('option');
         opt.value = 'included';
-        opt.textContent = 'Dimmer Option (Default Included — +$0)';
+        opt.textContent = 'Dimmer Included (+$0)';
         dimmerSelect.appendChild(opt);
         dimmerSelect.value = 'included';
         dimmerSelect.disabled = true;
         dimmerHint.textContent = '* Grand Louvre includes Dimmer Option by default (+$0)';
       } else if (motorKey === 'becker') {
         [
-          { value: 'no', label: 'No Dimmer Option (+$0)' },
-          { value: 'yes', label: 'Include Dimmer Option (Becker Exclusive — +$350)' }
+          { value: 'no', label: 'No Dimmer (+$0)' },
+          { value: 'yes', label: 'Include Dimmer (+$350)' }
         ].forEach(item => {
           const opt = document.createElement('option');
           opt.value = item.value;
@@ -5165,7 +5561,7 @@
       } else {
         const opt = document.createElement('option');
         opt.value = 'no';
-        opt.textContent = 'Not Available (Becker Motor Exclusive — +$350)';
+        opt.textContent = 'N/A (Becker Exclusive)';
         dimmerSelect.appendChild(opt);
         dimmerSelect.value = 'no';
         dimmerSelect.disabled = true;
@@ -5229,7 +5625,8 @@
 
     function updateOztechGutterLedUI() {
       const cb = document.getElementById('oztechGutterLedCheck');
-      const card = document.getElementById('oztechGutterLedCard');
+      const btnNone = document.getElementById('oztechGutterLedBtnNone');
+      const btnYes = document.getElementById('oztechGutterLedBtnYes');
       const badge = document.getElementById('oztechGutterLedBadge');
       const subtext = document.getElementById('oztechGutterLedSubtext');
       const hint = document.getElementById('oztechGutterLedHint');
@@ -5245,21 +5642,74 @@
         }
       }
       const isChecked = Boolean(cb && cb.checked && !isExcluded);
-      if (card) card.classList.toggle('checked', isChecked);
+      if (btnNone) {
+        btnNone.classList.toggle('active-none', !isChecked);
+      }
+      if (btnYes) {
+        btnYes.disabled = isExcluded;
+        btnYes.classList.toggle('active', isChecked);
+      }
 
       if (isExcluded) {
         if (badge) badge.textContent = 'Excluded (N/A)';
-        if (subtext) subtext.textContent = `Not available on ${product.name} (Excluding IZI, MUSE & Cantilever Systems)`;
+        if (subtext) subtext.textContent = `Excluded on ${product.name}`;
         if (hint) hint.textContent = '* Full Width LED Gutter is excluded on IZI, IZI SLOPE, MUSE and Cantilever Systems';
       } else {
         if (badge) badge.textContent = isChecked ? 'Gutter LED Added' : 'No Gutter LED';
         if (subtext) {
           subtext.textContent = isChecked
-            ? 'Full Width LED Gutter selected ($674 ~ $907 by Width)'
-            : 'Can be added alongside Standard LED (UNILED) or MAXI LED ($674 ~ $907)';
+            ? 'Selected (+$674 ~ $907 by Width)'
+            : 'Add Gutter LED (+$674 ~ $907 by Width)';
         }
         if (hint) {
           hint.textContent = '* Full Width LED Gutter ($674 ~ $907 by Width) • Excluding IZI, MUSE and Cantilever Systems';
+        }
+      }
+    }
+
+    function updateOztechMainLedUI() {
+      const ledSelect = document.getElementById('ledSelect');
+      const curVal = ledSelect ? ledSelect.value : 'none';
+      document.querySelectorAll('#oztechMainLedTabs .oztech-main-led-btn').forEach(btn => {
+        const bVal = btn.dataset.led;
+        const isMatch = bVal === curVal;
+        if (bVal === 'none') {
+          btn.classList.toggle('active-none', isMatch);
+          btn.classList.remove('active');
+        } else {
+          btn.classList.toggle('active', isMatch);
+          btn.classList.remove('active-none');
+        }
+      });
+    }
+
+    function updateLouvreLedToggleUI(priceOverride = null) {
+      const ledSelect = document.getElementById('ledSelect');
+      const btn = document.getElementById('louvreLedToggleBtn');
+      const titleEl = document.getElementById('louvreLedToggleTitle');
+      const subEl = document.getElementById('louvreLedToggleSub');
+      const badgeEl = document.getElementById('louvreLedToggleBadge');
+      if (!btn) return;
+      const isSelected = Boolean(ledSelect && ledSelect.value === 'louvre_led');
+      const isGrandLouvre = getCurrentProductKey() === 'grand_louvre';
+      btn.classList.toggle('active', isSelected);
+      if (titleEl) {
+        titleEl.textContent = isSelected
+          ? `✓ Gutter LED Lighting${isGrandLouvre ? ' (Dimmer Included)' : ''}`
+          : `Gutter LED Lighting${isGrandLouvre ? ' (Dimmer Included)' : ''}`;
+      }
+      if (subEl) {
+        subEl.textContent = isSelected
+          ? 'Gutter LED applied (Click again to cancel)'
+          : 'Click to apply Gutter LED lighting';
+      }
+      if (badgeEl) {
+        if (isSelected) {
+          badgeEl.textContent = (priceOverride !== null && priceOverride > 0)
+            ? `+$${formatMoney(priceOverride)}`
+            : 'Applied';
+        } else {
+          badgeEl.textContent = 'Not Applied (+$0)';
         }
       }
     }
@@ -5268,12 +5718,19 @@
       const ledSelect = document.getElementById('ledSelect');
       const prevVal = ledSelect.value;
       const ledHint = document.getElementById('ledHint');
+      const ledGroup = document.getElementById('ledGroup');
       const ledGroupLabel = document.getElementById('ledGroupLabel');
+      const oztechMainLedTabs = document.getElementById('oztechMainLedTabs');
+      const louvreLedToggleBtn = document.getElementById('louvreLedToggleBtn');
       const oztechGutterLedGroup = document.getElementById('oztechGutterLedGroup');
       ledSelect.innerHTML = '';
 
       if (activeCategory === 'LOUVRE') {
+        if (ledGroup) ledGroup.style.gridColumn = '1 / -1';
         if (ledGroupLabel) ledGroupLabel.textContent = 'LED Lighting';
+        ledSelect.style.display = 'none';
+        if (oztechMainLedTabs) oztechMainLedTabs.style.display = 'none';
+        if (louvreLedToggleBtn) louvreLedToggleBtn.style.display = 'flex';
         if (oztechGutterLedGroup) oztechGutterLedGroup.style.display = 'none';
         const isGrandLouvre = getCurrentProductKey() === 'grand_louvre';
         [
@@ -5294,13 +5751,18 @@
             ? '* Gutter LED Price by Width & Projection • Somfy & Dimmer Default Included'
             : '* Gutter LED Price by Width & Projection • Dimmer Option (+$350) Available on Becker Motor Only';
         }
+        updateLouvreLedToggleUI();
       } else if (activeCategory === 'OZTECH') {
-        if (ledGroupLabel) ledGroupLabel.textContent = 'Main LED Lighting (UNILED / MAXI LED)';
+        if (ledGroup) ledGroup.style.gridColumn = '1 / -1';
+        if (ledGroupLabel) ledGroupLabel.textContent = 'Main LED Lighting';
+        ledSelect.style.display = 'none';
+        if (oztechMainLedTabs) oztechMainLedTabs.style.display = 'grid';
+        if (louvreLedToggleBtn) louvreLedToggleBtn.style.display = 'none';
         if (oztechGutterLedGroup) oztechGutterLedGroup.style.display = 'block';
         [
-          { value: 'none', label: 'None (No Main LED)' },
-          { value: 'uniled', label: 'UNILED — Standard LED Middle Bar (ON-OFF Control)' },
-          { value: 'maxi_led', label: 'MAXI LED — Full Width LED Middle Bar (ON-OFF Control)' }
+          { value: 'none', label: 'None (No LED)' },
+          { value: 'uniled', label: 'UNILED (Standard LED)' },
+          { value: 'maxi_led', label: 'MAXI LED (Full Width)' }
         ].forEach(item => {
           const opt = document.createElement('option');
           opt.value = item.value;
@@ -5311,14 +5773,19 @@
         if (ledHint) {
           ledHint.textContent = '* Select Standard LED (UNILED) or MAXI LED (Width 3M~13M × Proj 3M~10M) • Gutter LED can be added below';
         }
+        updateOztechMainLedUI();
         updateOztechGutterLedUI();
         populateDimmerOptions();
       } else {
+        if (ledGroup) ledGroup.style.gridColumn = '';
         if (ledGroupLabel) ledGroupLabel.textContent = 'LED Lighting';
+        ledSelect.style.display = 'block';
+        if (oztechMainLedTabs) oztechMainLedTabs.style.display = 'none';
+        if (louvreLedToggleBtn) louvreLedToggleBtn.style.display = 'none';
         if (oztechGutterLedGroup) oztechGutterLedGroup.style.display = 'none';
         [
           { value: 'none', label: 'None (No LED)' },
-          { value: 'arm_led', label: 'ARM LED (Up to 3.1M Proj.)' },
+          { value: 'arm_led', label: 'ARM LED (≤ 3.1M)' },
           { value: 'maxi_led', label: 'Maxi LED' }
         ].forEach(item => {
           const opt = document.createElement('option');
@@ -5346,12 +5813,12 @@
       }
 
       if (activeCategory === 'OZTECH') {
-        if (pcLabel) pcLabel.textContent = 'Powder Coat Finish (Duralloy / Duratec)';
+        if (pcLabel) pcLabel.textContent = 'Powder Coat Finish';
         if (pcHintBox) pcHintBox.style.display = 'block';
         if (pcHint) pcHint.textContent = '* All Duralloy: +$0 • Duratec: Base System Price × 0.128';
         [
-          { value: 'duralloy', text: 'All Duralloy Colours (Included — +$0)', tier: 'duralloy', label: 'All Duralloy (Included)' },
-          { value: 'duratec', text: 'Duratec (Base System Price × 0.128)', tier: 'duratec', label: 'Duratec (Base × 0.128)' }
+          { value: 'duralloy', text: 'All Duralloy (+$0)', tier: 'duralloy', label: 'All Duralloy' },
+          { value: 'duratec', text: 'Duratec (+12.8%)', tier: 'duratec', label: 'Duratec (+12.8%)' }
         ].forEach(item => {
           const opt = document.createElement('option');
           opt.value = item.value;
@@ -5367,8 +5834,8 @@
         if (pcLabel) pcLabel.textContent = 'Powder Coat';
         if (pcHintBox) pcHintBox.style.display = 'none';
         [
-          { value: 'duralloy', text: 'All Duralloy Colours (Included - +$0)', tier: 'duralloy', label: 'All Duralloy (Included)' },
-          { value: 'duratec', text: 'Duratec (+1.28% of Base System Price)', tier: 'duratec', label: 'Duratec (+1.28% of Base)' }
+          { value: 'duralloy', text: 'All Duralloy (+$0)', tier: 'duralloy', label: 'All Duralloy' },
+          { value: 'duratec', text: 'Duratec (+1.28%)', tier: 'duratec', label: 'Duratec (+1.28%)' }
         ].forEach(item => {
           const opt = document.createElement('option');
           opt.value = item.value;
@@ -5529,7 +5996,7 @@
         Array.from(modSelect.options).forEach(opt => {
           const m = modCfg[opt.value] || DB.oztechModules[opt.value];
           if (m) {
-            opt.textContent = `${m.label} — ${m.minWidth.toLocaleString()} ~ ${m.maxWidth.toLocaleString()} mm`;
+            opt.textContent = `${m.label} (${(m.minWidth / 1000).toFixed(0)}~${(m.maxWidth / 1000).toFixed(0)}M)`;
           }
         });
       }
@@ -5616,6 +6083,32 @@
         hintEl.textContent = isHarbour
           ? `* ${groupKey} Default Posts: Single 4 / Double 6 / Triple 8 (Current Default: ${defaultCount} ea • Editable × -$80)`
           : `* Standard Default Posts: Single 2 / Double 3 / Triple 4 (Current Default: ${defaultCount} ea • Editable × -$80)`;
+      }
+    }
+
+    let lastAutoLouvrePostCount = 4;
+
+    function getDefaultLouvrePostCount(w, p) {
+      const rawW = w !== undefined ? w : (parseFloat(document.getElementById('widthInput')?.value) || 0);
+      const rawP = p !== undefined ? p : (parseFloat(document.getElementById('projInput')?.value) || 0);
+      let count = 4;
+      if (rawW > 5500) count += 2;
+      if (rawP > 5500) count += 2;
+      return Math.min(8, count);
+    }
+
+    function syncLouvreDefaultPostQty(forceSync = false) {
+      const defaultCount = getDefaultLouvrePostCount();
+      const qtyInput = document.getElementById('louvreNoPostQty');
+      if (qtyInput) {
+        if (forceSync || defaultCount !== lastAutoLouvrePostCount) {
+          qtyInput.value = defaultCount;
+          lastAutoLouvrePostCount = defaultCount;
+        }
+      }
+      const hintEl = document.getElementById('louvreNoPostHint');
+      if (hintEl) {
+        hintEl.textContent = `* Default Posts: ${defaultCount} ea (Base 4, +2 if W > 5,500mm, +2 if P > 5,500mm • Max 8 • Editable × -$80)`;
       }
     }
 
@@ -5713,6 +6206,7 @@
           if (oztechModelSection) oztechModelSection.style.display = 'none';
           document.getElementById('widthInput').value = 3000;
           document.getElementById('projInput').value = 3000;
+          syncLouvreDefaultPostQty(true);
         } else if (catKey === 'OZTECH') {
           faaModelSection.style.display = 'none';
           dropAModelSection.style.display = 'none';
@@ -5829,16 +6323,33 @@
 
       const louvreModuleRow = document.getElementById('louvreModuleRow');
       if (louvreModuleRow) {
-        louvreModuleRow.style.display = activeCategory === 'LOUVRE' ? 'block' : 'none';
+        louvreModuleRow.style.display = activeCategory === 'LOUVRE' ? 'grid' : 'none';
+        if (activeCategory === 'LOUVRE') {
+          syncLouvreDefaultPostQty(false);
+        }
       }
 
       const oztechModuleRow = document.getElementById('oztechModuleRow');
       const oztechHeightRow = document.getElementById('oztechHeightRow');
+      const oztechFrontHeightLabel = document.getElementById('oztechFrontHeightLabel');
+      const oztechBackHeightGroup = document.getElementById('oztechBackHeightGroup');
       const oztechPostGutterRow = document.getElementById('oztechPostGutterRow');
       const onsiteAssemblyGroup = document.getElementById('onsiteAssemblyGroup');
       if (activeCategory === 'OZTECH') {
         if (oztechModuleRow) oztechModuleRow.style.display = 'grid';
-        if (oztechHeightRow) oztechHeightRow.style.display = 'grid';
+        if (oztechHeightRow) {
+          oztechHeightRow.style.display = 'grid';
+          const isIziSlope = product && product.group === 'IZI SLOPE';
+          oztechHeightRow.style.gridTemplateColumns = isIziSlope ? '1fr' : '';
+          if (oztechFrontHeightLabel) {
+            oztechFrontHeightLabel.textContent = isIziSlope
+              ? 'Height'
+              : 'Front Height';
+          }
+          if (oztechBackHeightGroup) {
+            oztechBackHeightGroup.style.display = isIziSlope ? 'none' : 'block';
+          }
+        }
         if (oztechPostGutterRow) oztechPostGutterRow.style.display = 'grid';
         if (onsiteAssemblyGroup) onsiteAssemblyGroup.style.display = 'block';
         updateOztechModuleHints();
@@ -5898,29 +6409,29 @@
       if (activeCategory === 'LOUVRE') {
         fabricSelect.disabled = true;
         sqmDisplay.classList.remove('kit-disabled-display');
-        step1TitleText.textContent = 'Dimensions & Blade Specification';
-        sqmFieldLabel.textContent = 'Blade Count & Post Specification';
+        step1TitleText.textContent = 'Dimensions & Blades';
+        sqmFieldLabel.textContent = 'Blade & Post Spec';
         chipAreaLabel.textContent = 'Blades / Posts';
         fabricRateHint.textContent = '* Aluminum Louvre Blades (No Fabric Surcharge)';
       } else if (activeCategory === 'OZTECH') {
         fabricSelect.disabled = false;
         sqmDisplay.classList.remove('kit-disabled-display');
-        step1TitleText.textContent = 'Dimensions, Module & Roof Fabric';
-        sqmFieldLabel.textContent = 'Calculated Fabric Area & Surcharge';
+        step1TitleText.textContent = 'Dimensions & Fabric';
+        sqmFieldLabel.textContent = 'Fabric Area';
         chipAreaLabel.textContent = 'Module / Area';
         fabricRateHint.textContent = '* Surcharge = System Size (Width × Projection) × Fabric Rate ($/sqm)';
       } else if (supplyType === 'kit') {
         fabricSelect.disabled = true;
         sqmDisplay.classList.add('kit-disabled-display');
         step1TitleText.textContent = 'Dimensions & Fabric';
-        sqmFieldLabel.textContent = 'Calculated Fabric Area';
+        sqmFieldLabel.textContent = 'Fabric Area';
         chipAreaLabel.textContent = 'Fabric Area';
         fabricRateHint.textContent = '* KIT Only excludes Fabric (+$0)';
       } else {
         fabricSelect.disabled = false;
         sqmDisplay.classList.remove('kit-disabled-display');
         step1TitleText.textContent = 'Dimensions & Fabric';
-        sqmFieldLabel.textContent = 'Calculated Fabric Area';
+        sqmFieldLabel.textContent = 'Fabric Area';
         chipAreaLabel.textContent = 'Fabric Area';
         fabricRateHint.textContent = '* Surcharge = Area (sqm) × Fabric Rate';
       }
@@ -5965,8 +6476,8 @@
       const sensorGroupLabel = document.getElementById('sensorGroupLabel');
 
       if (operation !== 'motorised') {
-        sensorGroupLabel.textContent = 'Sensor & Remote Options (Multiple Selection)';
-        sensorBox.innerHTML = '<div class="sensor-disabled-msg">Select "Motorised" operation above to choose Sensor & Remote options.</div>';
+        sensorGroupLabel.textContent = 'Sensor & Remote';
+        sensorBox.innerHTML = '<div class="sensor-disabled-msg">Select "Motorised" to choose Sensor & Remote.</div>';
         return;
       }
 
@@ -5976,10 +6487,8 @@
         : (DB.motors[motorKey]?.name || motorKey.toUpperCase());
       const isGrandLouvre = getCurrentProductKey() === 'grand_louvre';
       sensorGroupLabel.textContent = activeCategory === 'LOUVRE'
-        ? (isGrandLouvre
-            ? `Rain Sensor Option (Somfy Exclusive)`
-            : `Sensor & Remote Options (${motorName} — Motion Sensor Excluded)`)
-        : `Sensor & Remote Options (${motorName} Motor - Multiple Selection)`;
+        ? (isGrandLouvre ? 'Rain Sensor (Somfy)' : `Sensor & Remote (${motorName})`)
+        : `Sensor & Remote (${motorName})`;
 
       let options = [];
       if (product && product.sensorAndRemotes) {
@@ -6849,7 +7358,9 @@
       const matchedProj = product.projections.find(p => p >= rawProj) ||
         ((bladeCheck && bladeCheck.valid) ? product.projections[product.projections.length - 1] : null);
       renderNearestProjSuggestions(bladeCheck, rawProj, product);
-      const postCount = (product.postCounts && matchedProj) ? product.postCounts[matchedProj] : null;
+      const postCount = activeCategory === 'LOUVRE'
+        ? getDefaultLouvrePostCount(rawWidth, rawProj)
+        : ((product.postCounts && matchedProj) ? product.postCounts[matchedProj] : null);
       const louvreModType = getLouvreModuleType(product, matchedWidth);
       const isOzOverhangTier = Boolean(ozModInfo && matchedWidth && ozModInfo.overhangWidths.includes(matchedWidth));
 
@@ -6875,22 +7386,23 @@
         if (bladeCheck && bladeCheck.valid) {
           const b = bladeCheck.match;
           const structStr = postCount ? `${postCount} Posts` : louvreModType;
-          document.getElementById('sqmDisplay').value = `${b.blades} Blades (${b.min.toLocaleString()}~${b.max.toLocaleString()} mm) • ${structStr}`;
+          const shortMod = louvreModType.replace(' Module', '');
+          document.getElementById('sqmDisplay').value = `${b.blades} Blades • ${structStr}`;
           document.getElementById('sqmFormulaHint').textContent = `* Valid Blade Span: ${b.blades} Blades (${b.min.toLocaleString()} ~ ${b.max.toLocaleString()} mm)`;
           if (louvreModuleDisplay) {
             louvreModuleDisplay.value = postCount
-              ? `${louvreModType} • ${postCount} Posts • ${b.blades} Blades`
-              : `${louvreModType} • ${b.blades} Blades`;
+              ? `${shortMod} • ${postCount} Posts • ${b.blades}B`
+              : `${shortMod} • ${b.blades} Blades`;
           }
           document.getElementById(`tr-blade-${b.blades}`)?.classList.add('selected-row');
         } else if (bladeCheck && !bladeCheck.valid) {
           const lowStr = bladeCheck.lower ? `${bladeCheck.lower.blades}B (${bladeCheck.lower.min}~${bladeCheck.lower.max})` : null;
           const upStr = bladeCheck.upper ? `${bladeCheck.upper.blades}B (${bladeCheck.upper.min}~${bladeCheck.upper.max})` : null;
           const nearHint = [lowStr, upStr].filter(Boolean).join(' or ');
-          document.getElementById('sqmDisplay').value = `Invalid Projection Gap (${rawProj} mm)`;
+          document.getElementById('sqmDisplay').value = `Invalid Span (${rawProj} mm)`;
           document.getElementById('sqmFormulaHint').textContent = `* Nearest Valid: ${nearHint}`;
           if (louvreModuleDisplay) {
-            louvreModuleDisplay.value = `Unbuildable Projection (${rawProj} mm)`;
+            louvreModuleDisplay.value = `Invalid (${rawProj} mm)`;
           }
         } else {
           document.getElementById('sqmDisplay').value = `${louvreModType} (${sqm.toFixed(2)} sqm)`;
@@ -6898,14 +7410,14 @@
         }
       } else if (activeCategory === 'OZTECH') {
         document.getElementById(`tr-fab-${fabricKey}`)?.classList.add('fabric-item-selected');
-        document.getElementById('sqmDisplay').value = `${sqm.toFixed(2)} sqm (Surcharge: +$${formatMoney(fabricCost)})`;
+        document.getElementById('sqmDisplay').value = `${sqm.toFixed(2)} sqm (+$${formatMoney(fabricCost)})`;
         document.getElementById('sqmFormulaHint').textContent = `* Width (${widthM.toFixed(2)}M) × Projection (${projM.toFixed(2)}M) = ${sqm.toFixed(2)} sqm × $${fabricObj.rate}/sqm (${fabricObj.category} • ${fabricObj.fabricWidth}mm)`;
       } else if (isKit) {
-        document.getElementById('sqmDisplay').value = `Excluded in KIT (${sqm.toFixed(2)} sqm • +$0)`;
+        document.getElementById('sqmDisplay').value = `KIT Only (${sqm.toFixed(2)} sqm • +$0)`;
         document.getElementById('sqmFormulaHint').textContent = `* KIT Supply: Hardware Only (No Fabric Surcharge)`;
       } else {
         document.getElementById(`tr-fab-${fabricKey}`)?.classList.add('fabric-item-selected');
-        document.getElementById('sqmDisplay').value = `${sqm.toFixed(2)} sqm (Surcharge: +$${formatMoney(fabricCost)})`;
+        document.getElementById('sqmDisplay').value = `${sqm.toFixed(2)} sqm (+$${formatMoney(fabricCost)})`;
         document.getElementById('sqmFormulaHint').textContent = `* Width (${widthM.toFixed(2)}M) × Projection (${projM.toFixed(2)}M) = ${sqm.toFixed(2)} sqm × $${fabricObj.rate}/sqm`;
       }
 
@@ -7046,40 +7558,40 @@
       if (onsiteBadgeEl) {
         onsiteBadgeEl.textContent = isOnsiteAssembly
           ? `-7% (-$${formatMoney(onsiteDiscountAmount)})`
-          : 'Not Applied (0%)';
+          : '0%';
       }
 
       const discountParts = [];
       if (discountRate > 0) {
-        discountParts.push(`Rate ${discountRate}% (-$${formatMoney(manualDiscountAmount)})`);
+        discountParts.push(`${discountRate}%`);
       }
       if (isOnsiteAssembly) {
-        discountParts.push(`On-Site Fabric Assembly 7% (-$${formatMoney(onsiteDiscountAmount)})`);
+        discountParts.push(`On-Site -7%`);
       }
 
-      document.getElementById('discountPreviewDisplay').value = `-$${formatMoney(discountAmount)} (Net Base: $${formatMoney(netBasePrice)})`;
+      document.getElementById('discountPreviewDisplay').value = `-$${formatMoney(discountAmount)} (Net: $${formatMoney(netBasePrice)})`;
       document.getElementById('discountFormulaHint').textContent = discountParts.length > 0
         ? `* Base ($${basePrice.toLocaleString()}) × ${totalDiscountRate}% [${discountParts.join(' + ')}] = -$${formatMoney(discountAmount)}`
         : `* Base ($${basePrice.toLocaleString()}) × 0% = -$0`;
       document.getElementById('discountLabelText').textContent = discountParts.length > 0
-        ? `Base System Discount (${discountParts.join(' + ')})`
-        : 'Base System Discount (0%)';
+        ? `Base Discount (${discountParts.join(' + ')})`
+        : 'Base Discount (0%)';
       document.getElementById('discountPriceText').textContent = `-$${formatMoney(discountAmount)}`;
       document.getElementById('discountBreakdownRow').classList.toggle('is-active-discount', discountAmount > 0);
 
       // 2-B. Populate Fabric / Louvre Blade / OZTECH Roof Breakdown Row
       if (activeCategory === 'LOUVRE') {
-        const bCount = (bladeCheck && bladeCheck.valid) ? `${bladeCheck.match.blades} Blades (${bladeCheck.match.min}~${bladeCheck.match.max} mm)` : 'Aluminum Blades';
-        fabricLabelText.textContent = `Louvre Roof Spec (${bCount} • ${louvreBaseSpec})`;
-        fabricPriceText.textContent = 'Included (+$0)';
+        const bCount = (bladeCheck && bladeCheck.valid) ? `${bladeCheck.match.blades} Blades` : 'Aluminum Blades';
+        fabricLabelText.textContent = `Louvre Spec (${bCount} • ${louvreBaseSpec.replace(' Module', '')})`;
+        fabricPriceText.textContent = 'Included';
       } else if (activeCategory === 'OZTECH') {
-        fabricLabelText.textContent = `Roof Fabric (${fabricObj.name} [${fabricObj.category}] • ${sqm.toFixed(2)} sqm @ $${fabricObj.rate}/sqm)`;
+        fabricLabelText.textContent = `Roof Fabric (${fabricObj.name} • ${sqm.toFixed(1)} sqm)`;
         fabricPriceText.textContent = `+$${formatMoney(fabricCost)}`;
       } else if (isKit) {
-        fabricLabelText.textContent = 'Fabric (Excluded in KIT Only)';
+        fabricLabelText.textContent = 'Fabric (KIT Only)';
         fabricPriceText.textContent = '+$0';
       } else {
-        fabricLabelText.textContent = `Fabric (${fabricObj.name} • ${sqm.toFixed(2)} sqm @ $${fabricObj.rate}/sqm)`;
+        fabricLabelText.textContent = `Fabric (${fabricObj.name} • ${sqm.toFixed(1)} sqm)`;
         fabricPriceText.textContent = `+$${formatMoney(fabricCost)}`;
       }
       document.getElementById('fabricBreakdownRow').classList.toggle('is-active-addon', fabricCost > 0);
@@ -7099,7 +7611,8 @@
         if (oztechPostBreakdownRow) oztechPostBreakdownRow.style.display = 'flex';
         if (oztechGutterCoverBreakdownRow) oztechGutterCoverBreakdownRow.style.display = 'flex';
 
-        // 1) Front Height (Base 2.25m, +$78/m for extra height) & Back Height
+        // 1) Front Height (Base 2.25m, +$78/m for extra height) & Back Height (IZI SLOPE uses single Height only)
+        const isIziSlope = product && product.group === 'IZI SLOPE';
         const frontHeightM = parseHeightMeters(document.getElementById('oztechFrontHeightInput')?.value);
         const backHeightM = parseHeightMeters(document.getElementById('oztechBackHeightInput')?.value);
         const frontHeightMm = Math.round(frontHeightM * 1000);
@@ -7119,17 +7632,24 @@
           backPillEl.textContent = `${backHeightM.toFixed(2)}M (${backHeightMm.toLocaleString()} mm)`;
         }
         if (frontHintEl) {
+          const hLabel = isIziSlope ? 'Height' : 'Front Height';
           frontHintEl.textContent = extraFrontM > 0
-            ? `* Extra Front Height: +${extraFrontM.toFixed(2)}m (> 2.25m) × $78/m = +$${formatMoney(oztechHeightCost)}`
+            ? `* Extra ${hLabel}: +${extraFrontM.toFixed(2)}m (> 2.25m) × $78/m = +$${formatMoney(oztechHeightCost)}`
             : '* Base: 2,250 mm (2.25m) • Extra > 2.25m: +$78/m';
         }
 
-        document.getElementById('oztechHeightLabelText').textContent = extraFrontM > 0
-          ? `Heights (Front ${frontHeightMm.toLocaleString()}mm [${frontHeightM.toFixed(2)}m] / Back ${backHeightMm.toLocaleString()}mm [${backHeightM.toFixed(2)}m] • +${extraFrontM.toFixed(2)}m @ $78/m)`
-          : `Heights (Front ${frontHeightMm.toLocaleString()}mm [${frontHeightM.toFixed(2)}m] / Back ${backHeightMm.toLocaleString()}mm [${backHeightM.toFixed(2)}m] • Base 2.25m)`;
+        if (isIziSlope) {
+          document.getElementById('oztechHeightLabelText').textContent = extraFrontM > 0
+            ? `Height (${frontHeightM.toFixed(2)}m • +${extraFrontM.toFixed(2)}m)`
+            : `Height (${frontHeightM.toFixed(2)}m)`;
+        } else {
+          document.getElementById('oztechHeightLabelText').textContent = extraFrontM > 0
+            ? `Heights (${frontHeightM.toFixed(2)}m / ${backHeightM.toFixed(2)}m)`
+            : `Heights (${frontHeightM.toFixed(2)}m / ${backHeightM.toFixed(2)}m)`;
+        }
         document.getElementById('oztechHeightPriceText').textContent = oztechHeightCost > 0
           ? `+$${formatMoney(oztechHeightCost)}`
-          : 'Included (+$0)';
+          : '+$0';
         oztechHeightBreakdownRow?.classList.toggle('is-active-addon', oztechHeightCost > 0);
 
         // 2) Front Post Exclusion (-$80/ea, editable quantity)
@@ -7144,16 +7664,16 @@
         if (noPostCard) noPostCard.classList.toggle('checked', isNoPostChecked);
         if (noPostBadge) {
           noPostBadge.textContent = isNoPostChecked
-            ? `-$${formatMoney(oztechPostDeduction)} (${noPostQty} ea)`
-            : `Included (${noPostQty} Posts • $0)`;
+            ? `-$${formatMoney(oztechPostDeduction)}`
+            : `$0`;
         }
 
         document.getElementById('oztechPostLabelText').textContent = isNoPostChecked
-          ? `Front Posts Excluded (${noPostQty} Posts × -$80/ea)`
-          : `Front Posts (Standard ${defaultPostQty} Posts Included)`;
+          ? `Front Posts (-${noPostQty} ea)`
+          : `Front Posts (${defaultPostQty} ea)`;
         document.getElementById('oztechPostPriceText').textContent = isNoPostChecked
           ? `-$${formatMoney(oztechPostDeduction)}`
-          : 'Included ($0)';
+          : '$0';
         oztechPostBreakdownRow?.classList.toggle('is-active-discount', oztechPostDeduction > 0);
 
         // 3) Gutter Cover (+$45/m by System Width)
@@ -7170,7 +7690,7 @@
         if (gutterCoverBadge) {
           gutterCoverBadge.textContent = isGutterCoverChecked
             ? `+$${formatMoney(oztechGutterCoverCost)}`
-            : `+$0 (Est. +$${formatMoney(gutterCoverCalc)})`;
+            : `+$0`;
         }
         if (gutterCoverHint) {
           gutterCoverHint.textContent = isGutterCoverChecked
@@ -7179,17 +7699,59 @@
         }
 
         document.getElementById('oztechGutterCoverLabelText').textContent = isGutterCoverChecked
-          ? `Gutter Cover (Width ${widthM.toFixed(2)}M × $45/m)`
+          ? `Gutter Cover (${widthM.toFixed(2)}M)`
           : 'Gutter Cover (None)';
         document.getElementById('oztechGutterCoverPriceText').textContent = isGutterCoverChecked
           ? `+$${formatMoney(oztechGutterCoverCost)}`
           : '+$0';
         oztechGutterCoverBreakdownRow?.classList.toggle('is-active-addon', oztechGutterCoverCost > 0);
 
-        const structBadgeParts = [`H: ${frontHeightM.toFixed(2)}m/${backHeightM.toFixed(2)}m`];
+        const structBadgeParts = [
+          isIziSlope ? `H: ${frontHeightM.toFixed(2)}m` : `H: ${frontHeightM.toFixed(2)}m/${backHeightM.toFixed(2)}m`
+        ];
         if (isNoPostChecked) structBadgeParts.push(`No Front Posts (-$${formatMoney(oztechPostDeduction)})`);
         if (isGutterCoverChecked) structBadgeParts.push(`Gutter Cover (+$${formatMoney(oztechGutterCoverCost)})`);
         ozStructBadgeDesc = ` • ${structBadgeParts.join(' • ')}`;
+      } else if (activeCategory === 'LOUVRE') {
+        if (oztechHeightBreakdownRow) oztechHeightBreakdownRow.style.display = 'none';
+        if (oztechGutterCoverBreakdownRow) oztechGutterCoverBreakdownRow.style.display = 'none';
+        if (oztechPostBreakdownRow) oztechPostBreakdownRow.style.display = 'flex';
+
+        const defaultLouvrePosts = getDefaultLouvrePostCount(rawWidth, rawProj);
+        const louvreNoPostCheckEl = document.getElementById('louvreNoPostCheck');
+        const louvreNoPostQtyEl = document.getElementById('louvreNoPostQty');
+        const louvreNoPostCardEl = document.getElementById('louvreNoPostCard');
+        const louvreNoPostBadgeEl = document.getElementById('louvreNoPostBadge');
+        const louvreNoPostHintEl = document.getElementById('louvreNoPostHint');
+
+        const isLouvreNoPostChecked = Boolean(louvreNoPostCheckEl && louvreNoPostCheckEl.checked);
+        let louvreNoPostQty = louvreNoPostQtyEl ? parseInt(louvreNoPostQtyEl.value, 10) : defaultLouvrePosts;
+        if (isNaN(louvreNoPostQty) || louvreNoPostQty < 1) louvreNoPostQty = defaultLouvrePosts;
+        if (louvreNoPostQty > 8) louvreNoPostQty = 8;
+
+        oztechPostDeduction = isLouvreNoPostChecked ? (louvreNoPostQty * 80) : 0;
+
+        if (louvreNoPostCardEl) louvreNoPostCardEl.classList.toggle('is-deducted', isLouvreNoPostChecked);
+        if (louvreNoPostBadgeEl) {
+          louvreNoPostBadgeEl.textContent = isLouvreNoPostChecked
+            ? `-$${formatMoney(oztechPostDeduction)}`
+            : `$0`;
+        }
+        if (louvreNoPostHintEl) {
+          louvreNoPostHintEl.textContent = `* Standard Posts: Base 4 / Width > 5,500mm (+2) / Proj > 5,500mm (+2) (Current Std: ${defaultLouvrePosts} ea • Max 8 • -$80/ea)`;
+        }
+
+        document.getElementById('oztechPostLabelText').textContent = isLouvreNoPostChecked
+          ? `Posts Excluded (-${louvreNoPostQty} ea)`
+          : `Posts (${defaultLouvrePosts} ea)`;
+        document.getElementById('oztechPostPriceText').textContent = isLouvreNoPostChecked
+          ? `-$${formatMoney(oztechPostDeduction)}`
+          : '$0';
+        oztechPostBreakdownRow?.classList.toggle('is-active-discount', oztechPostDeduction > 0);
+
+        if (isLouvreNoPostChecked) {
+          ozStructBadgeDesc = ` • No Posts (-$${formatMoney(oztechPostDeduction)})`;
+        }
       } else {
         if (oztechHeightBreakdownRow) oztechHeightBreakdownRow.style.display = 'none';
         if (oztechPostBreakdownRow) oztechPostBreakdownRow.style.display = 'none';
@@ -7289,15 +7851,11 @@
             : '* All Duralloy: +$0 • Duratec: Base System Price × 0.128';
         }
 
-        const finishPart = isDuratec
-          ? `Duratec (Base $${basePrice.toLocaleString()} × 0.128 = +$${formatMoney(duratecCost)})`
-          : 'All Duralloy (+$0)';
-        const typePart = ozPcType === 'full'
-          ? `FULL [Tier ${pcMatchedW}×${pcMatchedP}mm: +$${fullPcPrice.toLocaleString()}]`
-          : 'FRAME (+$0)';
+        const finishPart = isDuratec ? 'Duratec (+12.8%)' : 'Duralloy';
+        const typePart = ozPcType === 'full' ? 'FULL' : 'FRAME';
 
         pcLabelText.textContent = `Powder Coat (${typePart} • ${finishPart})`;
-        pcPriceText.textContent = pcCost > 0 ? `+$${formatMoney(pcCost)}` : 'Included (+$0)';
+        pcPriceText.textContent = pcCost > 0 ? `+$${formatMoney(pcCost)}` : 'Included';
         pcBadgeLabel = `${ozPcType.toUpperCase()} (${isDuratec ? 'Duratec' : 'All Duralloy'})`;
       } else if (activeCategory === 'LOUVRE') {
         const duratecRate = product.powderCoatRule?.duratecRate || 0.0128;
@@ -7305,13 +7863,13 @@
           pcCost = Math.round(basePrice * duratecRate * 100) / 100;
           document.getElementById('tr-pc-duratec')?.classList.add('selected-pc-row');
           document.getElementById('cell-pc-duratec')?.classList.add('selected-pc-cell');
-          pcLabelText.textContent = `Powder Coat (Duratec • Base $${basePrice.toLocaleString()} × ${duratecRate})`;
+          pcLabelText.textContent = 'Powder Coat (Duratec +1.28%)';
           pcPriceText.textContent = `+$${formatMoney(pcCost)}`;
         } else {
           pcCost = 0;
           document.getElementById('tr-pc-duralloy')?.classList.add('selected-pc-row');
-          pcLabelText.textContent = 'Powder Coat (All Duralloy Colours Included)';
-          pcPriceText.textContent = 'Included (+$0)';
+          pcLabelText.textContent = 'Powder Coat (Duralloy)';
+          pcPriceText.textContent = 'Included';
         }
       } else if (pcOption.tier && product.powderCoat && product.powderCoat[pcOption.tier]) {
         const pcTierObj = product.powderCoat[pcOption.tier];
@@ -7378,12 +7936,11 @@
           }
 
           ledCost += mainPrice;
-          ozLedParts.push(`${ozMainLedName} [${ledMatchedW}×${ledMatchedP}mm: +$${mainPrice.toLocaleString()}]`);
+          ozLedParts.push(ledKey === 'uniled' ? 'UNILED' : 'MAXI LED');
 
           if (isOzDimmerSelected && mainLedEntry.dimmerPrice) {
             ledCost += mainLedEntry.dimmerPrice;
-            const motorLabel = DB.motors[motorKey]?.name || motorKey.toUpperCase();
-            ozLedParts.push(`Remote Dimmer (${motorLabel}: +$${mainLedEntry.dimmerPrice})`);
+            ozLedParts.push('Dimmer');
           }
         }
 
@@ -7396,14 +7953,14 @@
 
           if (gutterPrice > 0) {
             ledCost += gutterPrice;
-            ozLedParts.push(`Full Width LED Gutter [${gutterMatchedW}mm: +$${gutterPrice.toLocaleString()}]`);
+            ozLedParts.push('Gutter LED');
           }
         }
 
         if (ozLedParts.length > 0) {
-          ledLabelText.textContent = `LED Lighting (${ozLedParts.join(' + ')})`;
+          ledLabelText.textContent = `LED (${ozLedParts.join(' + ')})`;
           ledPriceText.textContent = `+$${ledCost.toLocaleString()}`;
-          ozLedBadgeDesc = ` • ${ozLedParts.map(p => p.split(' [')[0]).join(' + ')}`;
+          ozLedBadgeDesc = ` • ${ozLedParts.join(' + ')}`;
         } else {
           ledLabelText.textContent = 'LED Lighting (None)';
           ledPriceText.textContent = '+$0';
@@ -7439,6 +7996,7 @@
               return;
             }
             ledCost = gutterLedPrice + dimmerCost;
+            updateLouvreLedToggleUI(gutterLedPrice);
             const dimmerDesc = isGrandLouvre
               ? ' • Dimmer Default Included'
               : (isBeckerDimmerSelected ? ' + Becker Dimmer (+$350)' : '');
@@ -7446,11 +8004,13 @@
             ledPriceText.textContent = `+$${ledCost.toLocaleString()}`;
           } else {
             ledCost = dimmerCost;
+            updateLouvreLedToggleUI(0);
             ledLabelText.textContent = 'Gutter LED (Selected • LED Price Table Pending)';
             ledPriceText.textContent = `+$${ledCost.toLocaleString()}`;
           }
         } else {
           ledCost = dimmerCost;
+          updateLouvreLedToggleUI(0);
           if (isGrandLouvre) {
             ledLabelText.textContent = 'LED Lighting (None • Dimmer Option Default Included)';
             ledPriceText.textContent = 'Included (+$0)';
@@ -7831,6 +8391,16 @@
       calculatePrice(false);
     });
 
+    document.getElementById('louvreNoPostCheck')?.addEventListener('change', function() {
+      calculatePrice(false);
+    });
+
+    document.getElementById('louvreNoPostQty')?.addEventListener('input', function() {
+      let val = parseInt(this.value, 10);
+      if (val > 8) this.value = 8;
+      calculatePrice(false);
+    });
+
     // Form Submit & Reset
     document.getElementById('calcForm').addEventListener('submit', function(e) {
       e.preventDefault();
@@ -7848,6 +8418,9 @@
         setLouvreModel('grand_louvre', false);
         document.getElementById('widthInput').value = 3000;
         document.getElementById('projInput').value = 3000;
+        const louvreNoPostCheck = document.getElementById('louvreNoPostCheck');
+        if (louvreNoPostCheck) louvreNoPostCheck.checked = false;
+        syncLouvreDefaultPostQty(true);
       } else if (activeCategory === 'OZTECH') {
         setOztechGroup('IZI', false);
         populateOztechSubModels();
@@ -7888,6 +8461,8 @@
       const ozPcTypeSelect = document.getElementById('oztechPcTypeSelect');
       if (ozPcTypeSelect) ozPcTypeSelect.value = 'frame';
       document.getElementById('ledSelect').value = 'none';
+      updateOztechMainLedUI();
+      updateLouvreLedToggleUI(0);
       if (activeCategory === 'OZTECH') populateDimmerOptions();
       document.getElementById('fabricTraySelect').value = 'no';
 
@@ -7933,6 +8508,8 @@
             renderTable();
           }
         }
+      } else if (activeCategory === 'LOUVRE') {
+        syncLouvreDefaultPostQty(false);
       }
       calculatePrice(false);
     });
@@ -7942,6 +8519,9 @@
     });
 
     document.getElementById('projInput').addEventListener('input', function() {
+      if (activeCategory === 'LOUVRE') {
+        syncLouvreDefaultPostQty(false);
+      }
       calculatePrice(false);
     });
 
@@ -7952,6 +8532,14 @@
     document.getElementById('onsiteAssemblyCheck').addEventListener('change', function() {
       updateOnsiteAssemblyUI();
       calculatePrice(false);
+    });
+
+    document.getElementById('onsiteAssemblyBtn')?.addEventListener('click', function() {
+      const cb = document.getElementById('onsiteAssemblyCheck');
+      if (cb) {
+        cb.checked = !cb.checked;
+        cb.dispatchEvent(new Event('change'));
+      }
     });
 
     document.getElementById('fabricSelect').addEventListener('change', function() {
@@ -8000,14 +8588,67 @@
 
     document.getElementById('ledSelect').addEventListener('change', function() {
       if (activeCategory === 'OZTECH') {
+        updateOztechMainLedUI();
         populateDimmerOptions();
+      } else if (activeCategory === 'LOUVRE') {
+        updateLouvreLedToggleUI();
       }
       calculatePrice(true);
+    });
+
+    document.querySelectorAll('#oztechMainLedTabs .oztech-main-led-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        const ledSelect = document.getElementById('ledSelect');
+        if (ledSelect) {
+          ledSelect.value = this.dataset.led;
+          ledSelect.dispatchEvent(new Event('change'));
+        }
+      });
+    });
+
+    document.getElementById('louvreLedToggleBtn')?.addEventListener('click', function() {
+      const ledSelect = document.getElementById('ledSelect');
+      if (ledSelect) {
+        ledSelect.value = ledSelect.value === 'louvre_led' ? 'none' : 'louvre_led';
+        ledSelect.dispatchEvent(new Event('change'));
+      }
     });
 
     document.getElementById('oztechGutterLedCheck').addEventListener('change', function() {
       updateOztechGutterLedUI();
       calculatePrice(false);
+    });
+
+    document.getElementById('oztechGutterLedBtnNone')?.addEventListener('click', function() {
+      const cb = document.getElementById('oztechGutterLedCheck');
+      if (cb) {
+        cb.checked = false;
+        cb.dispatchEvent(new Event('change'));
+      }
+    });
+
+    document.getElementById('oztechGutterLedBtnYes')?.addEventListener('click', function() {
+      if (this.disabled) return;
+      const cb = document.getElementById('oztechGutterLedCheck');
+      if (cb && !cb.disabled) {
+        cb.checked = true;
+        cb.dispatchEvent(new Event('change'));
+      }
+    });
+
+    // Show/Hide Toggle for Input Guide & Surcharge Formulas (Default Hidden)
+    function toggleFormHints() {
+      const isShowing = document.body.classList.toggle('show-hints');
+      const form = document.getElementById('calcForm');
+      if (form) form.classList.toggle('show-hints', isShowing);
+      document.querySelectorAll('#toggleHintsBtn, .hint-toggle-sync').forEach(btn => {
+        btn.classList.toggle('active', isShowing);
+        btn.textContent = isShowing ? '🙈 Hide Guide' : 'ℹ️ Guide';
+      });
+    }
+
+    document.querySelectorAll('#toggleHintsBtn, .hint-toggle-sync').forEach(btn => {
+      btn.addEventListener('click', toggleFormHints);
     });
 
     document.getElementById('fabricTraySelect').addEventListener('change', function() {
