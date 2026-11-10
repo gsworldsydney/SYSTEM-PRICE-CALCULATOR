@@ -4,1798 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>System Price Calculator</title>
-  <style>
-    :root {
-      --primary: #2563eb;
-      --primary-hover: #1d4ed8;
-      --primary-light: #eff6ff;
-      --primary-border: #bfdbfe;
-      --accent: #0f766e;
-      --accent-highlight: #ccfbf1;
-      --purple: #7c3aed;
-      --purple-highlight: #ede9fe;
-      --amber: #d97706;
-      --amber-highlight: #fef3c7;
-      --pink: #db2777;
-      --pink-highlight: #fce7f3;
-      --indigo: #4f46e5;
-      --indigo-highlight: #e0e7ff;
-      --cyan: #0284c7;
-      --cyan-highlight: #e0f2fe;
-      --emerald: #059669;
-      --emerald-highlight: #d1fae5;
-      --bg: #f1f5f9;
-      --card-bg: #ffffff;
-      --text: #0f172a;
-      --text-secondary: #334155;
-      --text-muted: #64748b;
-      --border: #e2e8f0;
-      --border-strong: #cbd5e1;
-      --danger: #ef4444;
-      --danger-bg: #fef2f2;
-      --highlight: #dbeafe;
-      --radius-lg: 16px;
-      --radius-md: 12px;
-      --radius-sm: 8px;
-      --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.06);
-      --shadow-md: 0 4px 12px -2px rgba(15, 23, 42, 0.08), 0 2px 6px -2px rgba(15, 23, 42, 0.04);
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Inter", Helvetica, Arial, sans-serif;
-    }
-
-    body {
-      background-color: var(--bg);
-      color: var(--text);
-      padding: 1rem 0.75rem 2.25rem;
-      line-height: 1.4;
-      font-size: 14px;
-    }
-
-    .container {
-      max-width: 1140px;
-      margin: 0 auto;
-    }
-
-    /* Top Header */
-    header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 0.65rem;
-      margin-bottom: 0.9rem;
-      background: var(--card-bg);
-      padding: 0.85rem 1.15rem;
-      border-radius: var(--radius-md);
-      border: 1px solid var(--border);
-      box-shadow: var(--shadow-sm);
-    }
-
-    .header-left h1 {
-      font-size: 1.15rem;
-      font-weight: 800;
-      color: var(--text);
-      letter-spacing: -0.02em;
-      display: flex;
-      align-items: center;
-      gap: 0.45rem;
-    }
-
-    .header-left p {
-      color: var(--text-muted);
-      margin-top: 0.15rem;
-      font-size: 0.76rem;
-    }
-
-    .header-badge {
-      background: var(--primary-light);
-      color: var(--primary);
-      border: 1px solid var(--primary-border);
-      padding: 0.28rem 0.65rem;
-      border-radius: 999px;
-      font-size: 0.72rem;
-      font-weight: 700;
-      letter-spacing: 0.01em;
-    }
-
-    /* Main 2-Column Layout */
-    .grid {
-      display: grid;
-      grid-template-columns: 1.18fr 0.82fr;
-      gap: 1rem;
-      margin-bottom: 1rem;
-      align-items: start;
-    }
-
-    @media (max-width: 920px) {
-      .grid {
-        grid-template-columns: 1fr;
-        gap: 0.85rem;
-      }
-    }
-
-    .card {
-      background: var(--card-bg);
-      border-radius: var(--radius-md);
-      padding: 1.1rem;
-      box-shadow: var(--shadow-md);
-      border: 1px solid var(--border);
-    }
-
-    .sticky-card {
-      position: sticky;
-      top: 0.85rem;
-    }
-
-    .card-title {
-      font-size: 0.96rem;
-      font-weight: 800;
-      margin-bottom: 0.85rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 0.5rem;
-      color: var(--text);
-    }
-
-    .card-title.collapsed {
-      margin-bottom: 0;
-    }
-
-    /* Top 4 Category Buttons (FAA / DROP A / OZTECH / LOUVRE) */
-    .category-tabs-label {
-      font-size: 0.7rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      color: var(--text-muted);
-      margin-bottom: 0.35rem;
-      display: block;
-    }
-
-    .category-tabs {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 0.45rem;
-      margin-bottom: 0.85rem;
-    }
-
-    .cat-btn {
-      appearance: none;
-      border: 1.5px solid #bfdbfe;
-      background: #dbeafe;
-      color: #1e3a8a;
-      font-size: 0.82rem;
-      font-weight: 800;
-      letter-spacing: 0.02em;
-      padding: 0.5rem 0.3rem;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: all 0.16s ease;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 0.1rem;
-      box-shadow: 0 1px 2px rgba(37, 99, 235, 0.06);
-    }
-
-    .cat-btn .cat-sub {
-      font-size: 0.6rem;
-      font-weight: 600;
-      opacity: 0.75;
-      letter-spacing: 0.01em;
-    }
-
-    .cat-btn:hover {
-      background: #bfdbfe;
-      border-color: #93c5fd;
-    }
-
-    .cat-btn.active {
-      background: var(--primary);
-      border-color: var(--primary-hover);
-      color: #ffffff;
-      box-shadow: 0 3px 8px rgba(37, 99, 235, 0.24);
-    }
-
-    .cat-btn.active .cat-sub {
-      opacity: 0.9;
-      color: #dbeafe;
-    }
-
-    /* FAA / Product Model Buttons (Green Theme) */
-    .faa-model-tabs {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 0.4rem;
-      margin-bottom: 0.7rem;
-    }
-
-    @media (max-width: 640px) {
-      .faa-model-tabs {
-        grid-template-columns: repeat(2, 1fr);
-      }
-      #oztechModelTabs,
-      #dropAModelTabs {
-        grid-template-columns: repeat(3, 1fr) !important;
-      }
-    }
-
-    .faa-model-btn {
-      appearance: none;
-      border: 1.5px solid #86efac;
-      background: #dcfce7;
-      color: #14532d;
-      font-size: 0.76rem;
-      font-weight: 800;
-      letter-spacing: 0.01em;
-      padding: 0.46rem 0.3rem;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: all 0.16s ease;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 0.1rem;
-      text-align: center;
-      box-shadow: 0 1px 2px rgba(22, 163, 74, 0.06);
-    }
-
-    .faa-model-btn .faa-model-sub {
-      font-size: 0.58rem;
-      font-weight: 600;
-      opacity: 0.78;
-    }
-
-    .faa-model-btn:hover {
-      background: #bbf7d0;
-      border-color: #4ade80;
-    }
-
-    .faa-model-btn.active {
-      background: #16a34a;
-      border-color: #15803d;
-      color: #ffffff;
-      box-shadow: 0 3px 8px rgba(22, 163, 74, 0.24);
-    }
-
-    .faa-model-btn.active .faa-model-sub {
-      opacity: 0.92;
-      color: #dcfce7;
-    }
-
-    /* Sub-Type / Supply Type / Structure Type Buttons (Purple Theme) */
-    .sub-type-tabs {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(88px, 1fr));
-      gap: 0.4rem;
-      margin-bottom: 0.15rem;
-    }
-
-    .sub-type-btn {
-      appearance: none;
-      border: 1.5px solid #d8b4fe;
-      background: #f3e8ff;
-      color: #581c87;
-      font-size: 0.75rem;
-      font-weight: 800;
-      letter-spacing: 0.01em;
-      padding: 0.44rem 0.3rem;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: all 0.16s ease;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 0.08rem;
-      text-align: center;
-      box-shadow: 0 1px 2px rgba(147, 51, 234, 0.06);
-    }
-
-    .sub-type-btn .sub-type-desc {
-      font-size: 0.58rem;
-      font-weight: 600;
-      opacity: 0.78;
-    }
-
-    .sub-type-btn:hover {
-      background: #e9d5ff;
-      border-color: #c084fc;
-    }
-
-    .sub-type-btn.active {
-      background: #9333ea;
-      border-color: #7e22ce;
-      color: #ffffff;
-      box-shadow: 0 3px 8px rgba(147, 51, 234, 0.24);
-    }
-
-    .sub-type-btn.active .sub-type-desc {
-      opacity: 0.92;
-      color: #f3e8ff;
-    }
-
-    /* Section Styling inside Configuration Card */
-    .config-section {
-      padding-top: 0.8rem;
-      margin-top: 0.8rem;
-      border-top: 1px solid var(--border);
-    }
-
-    .config-section:first-of-type {
-      padding-top: 0;
-      margin-top: 0;
-      border-top: none;
-    }
-
-    .section-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 0.55rem;
-    }
-
-    .section-title {
-      font-size: 0.74rem;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      color: var(--text-secondary);
-      display: flex;
-      align-items: center;
-      gap: 0.35rem;
-    }
-
-    .step-num {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 19px;
-      height: 19px;
-      border-radius: 5px;
-      background: var(--primary-light);
-      color: var(--primary);
-      font-size: 0.66rem;
-      font-weight: 800;
-    }
-
-    .form-row {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 0.6rem;
-    }
-
-    @media (max-width: 540px) {
-      #louvreModuleRow,
-      #oztechModuleRow,
-      #oztechPostGutterRow,
-      #fabricSpecRow {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    .form-group {
-      margin-bottom: 0.6rem;
-      min-width: 0;
-    }
-
-    .form-group:last-child {
-      margin-bottom: 0;
-    }
-
-    label {
-      display: block;
-      font-size: 0.75rem;
-      font-weight: 700;
-      margin-bottom: 0.25rem;
-      color: var(--text-secondary);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .input-wrapper {
-      position: relative;
-      display: flex;
-      align-items: center;
-    }
-
-    select,
-    input[type="number"],
-    input[type="text"],
-    input[type="password"] {
-      width: 100%;
-      height: 36px;
-      padding: 0.4rem 0.65rem;
-      font-size: 0.82rem;
-      font-weight: 600;
-      border: 1px solid var(--border-strong);
-      border-radius: 8px;
-      outline: none;
-      background-color: #fff;
-      color: var(--text);
-      transition: all 0.16s;
-    }
-
-    input[type="number"] {
-      padding-right: 2.5rem;
-    }
-
-    input[readonly] {
-      background-color: #f5f3ff;
-      border-color: #ddd6fe;
-      color: var(--indigo);
-      font-weight: 700;
-      font-size: 0.78rem;
-      cursor: default;
-    }
-
-    input[readonly].kit-disabled-display {
-      background-color: #f1f5f9;
-      border-color: var(--border);
-      color: var(--text-muted);
-    }
-
-    select:focus,
-    input[type="number"]:focus,
-    input[type="password"]:focus {
-      border-color: var(--primary);
-      box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.14);
-    }
-
-    select:disabled {
-      background-color: #f1f5f9;
-      border-color: var(--border);
-      color: var(--text-muted);
-      cursor: not-allowed;
-    }
-
-    .unit {
-      position: absolute;
-      right: 0.6rem;
-      color: var(--text-muted);
-      font-size: 0.72rem;
-      font-weight: 600;
-      pointer-events: none;
-    }
-
-    .hint {
-      font-size: 0.68rem;
-      color: var(--text-muted);
-      margin-top: 0.22rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 0.35rem;
-    }
-
-    .tier-pill {
-      display: inline-block;
-      background: #eff6ff;
-      color: var(--primary);
-      font-weight: 700;
-      padding: 0.05rem 0.38rem;
-      border-radius: 4px;
-      font-size: 0.65rem;
-      white-space: nowrap;
-    }
-
-    /* Accordion / Collapsible Header Bar */
-    .collapsible-bar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: #f8fafc;
-      border: 1px solid var(--border-strong);
-      border-radius: 8px;
-      padding: 0.5rem 0.7rem;
-      cursor: pointer;
-      transition: all 0.15s;
-      user-select: none;
-    }
-
-    .collapsible-bar:hover {
-      background: #f1f5f9;
-      border-color: #94a3b8;
-    }
-
-    .collapsible-bar-left {
-      display: flex;
-      align-items: center;
-      gap: 0.45rem;
-      font-size: 0.78rem;
-      font-weight: 700;
-      color: var(--text);
-    }
-
-    .count-badge {
-      background: #e2e8f0;
-      color: #475569;
-      font-size: 0.66rem;
-      font-weight: 700;
-      padding: 0.1rem 0.45rem;
-      border-radius: 999px;
-    }
-
-    .count-badge.has-items {
-      background: var(--emerald-highlight);
-      color: var(--emerald);
-    }
-
-    .toggle-btn {
-      background: #ffffff;
-      border: 1px solid var(--border-strong);
-      color: var(--text-secondary);
-      font-size: 0.7rem;
-      font-weight: 700;
-      padding: 0.28rem 0.55rem;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: all 0.15s;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.25rem;
-      white-space: nowrap;
-    }
-
-    .toggle-btn:hover {
-      background: #f1f5f9;
-      border-color: #94a3b8;
-    }
-
-    /* Multi-Select Box Styles */
-    .option-box {
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 0.5rem;
-      background-color: #f8fafc;
-      margin-top: 0.35rem;
-    }
-
-    .sensor-disabled-msg {
-      font-size: 0.74rem;
-      color: var(--text-muted);
-      text-align: center;
-      padding: 0.2rem 0;
-    }
-
-    .checkbox-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 0.35rem;
-    }
-
-    .checkbox-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0.38rem 0.6rem;
-      min-height: 36px;
-      background: #ffffff;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      cursor: pointer;
-      transition: all 0.15s;
-      margin-bottom: 0;
-      gap: 0.4rem;
-    }
-
-    .checkbox-item:hover {
-      border-color: var(--cyan);
-      background: #f0f9ff;
-    }
-
-    .checkbox-item.checked {
-      border-color: var(--cyan);
-      background: var(--cyan-highlight);
-    }
-
-    .checkbox-item.bracket-item:hover {
-      border-color: var(--emerald);
-      background: #ecfdf5;
-    }
-
-    .checkbox-item.bracket-item.checked,
-    .checkbox-item.bracket-item.is-deducted {
-      border-color: var(--emerald);
-      background: var(--emerald-highlight);
-    }
-
-    .checkbox-left {
-      display: flex;
-      align-items: center;
-      gap: 0.45rem;
-      font-size: 0.76rem;
-      font-weight: 600;
-      color: var(--text);
-      flex: 1;
-      min-width: 0;
-    }
-
-    .checkbox-left input[type="checkbox"] {
-      width: 15px;
-      height: 15px;
-      accent-color: var(--cyan);
-      cursor: pointer;
-      flex-shrink: 0;
-    }
-
-    .bracket-item .checkbox-left input[type="checkbox"] {
-      accent-color: var(--emerald);
-    }
-
-    .checkbox-right {
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-      flex-shrink: 0;
-    }
-
-    .checkbox-price {
-      font-size: 0.74rem;
-      font-weight: 700;
-      color: var(--cyan);
-      white-space: nowrap;
-    }
-
-    .bracket-item .checkbox-price {
-      color: var(--emerald);
-      text-align: right;
-    }
-
-    .qty-wrapper {
-      display: flex;
-      align-items: center;
-      gap: 0.25rem;
-      font-size: 0.72rem;
-      font-weight: 600;
-      color: var(--text-muted);
-    }
-
-    input.qty-input {
-      width: 46px !important;
-      height: 26px !important;
-      padding: 0.15rem 0.25rem !important;
-      font-size: 0.76rem !important;
-      text-align: center;
-      border-radius: 5px !important;
-      border: 1px solid var(--border-strong);
-    }
-
-    input.qty-input:disabled {
-      background-color: #f1f5f9;
-      color: #94a3b8;
-      cursor: not-allowed;
-    }
-
-    /* Action Buttons */
-    .action-row {
-      display: flex;
-      gap: 0.55rem;
-      margin-top: 0.9rem;
-    }
-
-    .btn {
-      flex: 1;
-      padding: 0.62rem 0.85rem;
-      background-color: var(--primary);
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-size: 0.86rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.2s;
-      box-shadow: 0 2px 5px rgba(37, 99, 235, 0.22);
-    }
-
-    .btn:hover {
-      background-color: var(--primary-hover);
-    }
-
-    .btn-secondary {
-      padding: 0.62rem 0.9rem;
-      background-color: #f1f5f9;
-      color: var(--text-secondary);
-      border: 1px solid var(--border-strong);
-      border-radius: 8px;
-      font-size: 0.8rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.15s;
-    }
-
-    .btn-secondary:hover {
-      background-color: #e2e8f0;
-    }
-
-    /* Placeholder for DROP A / OZTECH / LOUVRE */
-    .coming-soon-box {
-      display: none;
-      text-align: center;
-      padding: 2rem 1rem;
-      background: #f8fafc;
-      border: 2px dashed var(--border-strong);
-      border-radius: var(--radius-md);
-      margin-top: 0.5rem;
-    }
-
-    .coming-soon-icon {
-      font-size: 1.8rem;
-      margin-bottom: 0.4rem;
-    }
-
-    .coming-soon-title {
-      font-size: 0.95rem;
-      font-weight: 800;
-      color: var(--text);
-      margin-bottom: 0.25rem;
-    }
-
-    .coming-soon-desc {
-      font-size: 0.78rem;
-      color: var(--text-muted);
-      max-width: 380px;
-      margin: 0 auto;
-    }
-
-    /* Result / Quote Summary Styles */
-    .result-box {
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      border-radius: var(--radius-md);
-      background: #f8fafc;
-      border: 1px solid var(--border);
-      padding: 0.95rem;
-      transition: all 0.25s;
-    }
-
-    .result-box.active {
-      background: linear-gradient(180deg, #eff6ff 0%, #f8fafc 100%);
-      border: 1px solid #bfdbfe;
-    }
-
-    .result-box.error {
-      background: var(--danger-bg);
-      border: 1px solid #fecaca;
-    }
-
-    .result-top {
-      text-align: center;
-      padding-bottom: 0.7rem;
-      border-bottom: 1px solid rgba(148, 163, 184, 0.22);
-      margin-bottom: 0.7rem;
-    }
-
-    .result-product-tag {
-      display: inline-block;
-      font-size: 0.66rem;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.03em;
-      color: var(--primary);
-      background: #dbeafe;
-      padding: 0.2rem 0.55rem;
-      border-radius: 999px;
-      margin-bottom: 0.35rem;
-    }
-
-    .result-box.error .result-product-tag {
-      color: var(--danger);
-      background: #fee2e2;
-    }
-
-    .result-label {
-      font-size: 0.72rem;
-      color: var(--text-muted);
-      font-weight: 600;
-      margin-bottom: 0.15rem;
-    }
-
-    .result-price {
-      font-size: 2rem;
-      font-weight: 900;
-      color: var(--primary);
-      line-height: 1.1;
-      letter-spacing: -0.02em;
-    }
-
-    .result-box.error .result-price {
-      color: var(--danger);
-      font-size: 1.15rem;
-      margin-top: 0.25rem;
-    }
-
-    /* Quick Spec Chips inside Summary */
-    .spec-chips {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 0.38rem;
-      margin-bottom: 0.7rem;
-    }
-
-    .spec-chip {
-      background: #ffffff;
-      border: 1px solid #dbeafe;
-      border-radius: 7px;
-      padding: 0.32rem 0.35rem;
-      text-align: center;
-    }
-
-    .spec-chip-label {
-      font-size: 0.58rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      display: block;
-    }
-
-    .spec-chip-val {
-      font-size: 0.72rem;
-      font-weight: 800;
-      color: var(--text);
-    }
-
-    .breakdown-box {
-      width: 100%;
-      background: #ffffff;
-      border: 1px solid #dbeafe;
-      border-radius: 8px;
-      padding: 0.55rem 0.75rem;
-      margin-bottom: 0.4rem;
-      font-size: 0.75rem;
-      box-shadow: var(--shadow-sm);
-    }
-
-    .breakdown-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 0.3rem 0;
-      color: var(--text);
-      gap: 0.5rem;
-    }
-
-    .breakdown-row + .breakdown-row {
-      border-top: 1px dashed #e2e8f0;
-    }
-
-    .breakdown-row span:first-child {
-      color: var(--text-secondary);
-      font-weight: 500;
-      text-align: left;
-      line-height: 1.3;
-    }
-
-    .breakdown-row span:last-child {
-      font-weight: 700;
-      white-space: nowrap;
-      color: var(--text);
-    }
-
-    .breakdown-row.is-active-addon span:last-child {
-      color: var(--primary);
-    }
-
-    .breakdown-row.is-active-discount span:last-child {
-      color: var(--emerald);
-    }
-
-    .badge {
-      display: block;
-      text-align: center;
-      padding: 0.38rem 0.65rem;
-      background: #ffffff;
-      border: 1px solid var(--border);
-      border-radius: 7px;
-      font-size: 0.68rem;
-      font-weight: 600;
-      color: var(--text-secondary);
-    }
-
-    /* Reference Tables Section */
-    .table-container {
-      overflow-x: auto;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.82rem;
-      text-align: center;
-    }
-
-    th, td {
-      padding: 0.55rem 0.45rem;
-      border: 1px solid var(--border);
-    }
-
-    th {
-      background-color: #f1f5f9;
-      font-weight: 700;
-      color: var(--text);
-    }
-
-    td.zero-cell {
-      color: #94a3b8;
-      background-color: #1e293b;
-      font-weight: 600;
-    }
-
-    td.caution-cell {
-      color: #ffffff;
-      background-color: #334155;
-      font-weight: 700;
-    }
-
-    .caution-banner {
-      display: none;
-      width: 100%;
-      background: #fffbeb;
-      border: 1px solid #fde68a;
-      color: #92400e;
-      border-radius: 8px;
-      padding: 0.55rem 0.75rem;
-      margin-bottom: 0.75rem;
-      font-size: 0.77rem;
-      font-weight: 600;
-      text-align: left;
-      line-height: 1.4;
-    }
-
-    /* Nearest Buildable Projection Selector (Grand Louvre) */
-    .nearest-proj-box {
-      display: none;
-      margin-top: 0.55rem;
-      padding: 0.7rem 0.8rem;
-      border-radius: 10px;
-      background: #fff7ed;
-      border: 1.5px solid #fb923c;
-      text-align: left;
-    }
-
-    .nearest-proj-title {
-      font-size: 0.76rem;
-      font-weight: 800;
-      color: #9a3412;
-      margin-bottom: 0.45rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 0.4rem;
-    }
-
-    .nearest-proj-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 0.45rem;
-    }
-
-    @media (max-width: 520px) {
-      .nearest-proj-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    .nearest-proj-btn {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 0.14rem;
-      padding: 0.52rem 0.65rem;
-      border-radius: 8px;
-      border: 1.5px solid #fdba74;
-      background: #ffffff;
-      color: var(--text);
-      cursor: pointer;
-      transition: all 0.16s ease;
-      text-align: left;
-      width: 100%;
-    }
-
-    .nearest-proj-btn:hover {
-      border-color: var(--primary);
-      background: var(--highlight);
-      transform: translateY(-1px);
-      box-shadow: var(--shadow-sm);
-    }
-
-    .nearest-proj-btn-top {
-      font-size: 0.8rem;
-      font-weight: 800;
-      color: var(--primary);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      width: 100%;
-    }
-
-    .nearest-proj-btn-diff {
-      font-size: 0.68rem;
-      font-weight: 700;
-      color: #ea580c;
-      background: #ffedd5;
-      padding: 0.08rem 0.38rem;
-      border-radius: 999px;
-    }
-
-    .nearest-proj-btn-sub {
-      font-size: 0.71rem;
-      font-weight: 600;
-      color: var(--text-muted);
-    }
-
-    .nearest-proj-select-wrap {
-      margin-top: 0.5rem;
-      padding-top: 0.45rem;
-      border-top: 1px dashed #fdba74;
-    }
-
-    .nearest-proj-select-wrap select {
-      padding: 0.42rem 0.6rem;
-      font-size: 0.78rem;
-      border-color: #fdba74;
-      background-color: #ffffff;
-    }
-
-    td.na-cell {
-      color: #94a3b8;
-      background-color: #f8fafc;
-      font-weight: 600;
-    }
-
-    td.selected-cell {
-      background-color: var(--primary) !important;
-      color: white !important;
-      font-weight: 800;
-      position: relative;
-      box-shadow: inset 0 0 0 2px #1e40af;
-    }
-
-    td.selected-cell.zero-cell,
-    td.selected-led-cell.na-cell {
-      background-color: var(--danger) !important;
-      color: white !important;
-      box-shadow: inset 0 0 0 2px #991b1b;
-    }
-
-    td.selected-motor-cell {
-      background-color: var(--accent) !important;
-      color: white !important;
-      font-weight: 800;
-      box-shadow: inset 0 0 0 2px #115e59;
-    }
-
-    td.selected-pc-cell {
-      background-color: var(--purple) !important;
-      color: white !important;
-      font-weight: 800;
-      box-shadow: inset 0 0 0 2px #5b21b6;
-    }
-
-    td.selected-led-cell {
-      background-color: var(--amber) !important;
-      color: white !important;
-      font-weight: 800;
-      box-shadow: inset 0 0 0 2px #92400e;
-    }
-
-    td.selected-tray-cell {
-      background-color: var(--pink) !important;
-      color: white !important;
-      font-weight: 800;
-      box-shadow: inset 0 0 0 2px #9d174d;
-    }
-
-    tr.selected-row th {
-      background-color: var(--highlight);
-      color: var(--primary);
-    }
-
-    tr.selected-motor-row th {
-      background-color: var(--accent-highlight);
-      color: var(--accent);
-    }
-
-    tr.selected-pc-row th {
-      background-color: var(--purple-highlight);
-      color: var(--purple);
-    }
-
-    tr.selected-led-row th {
-      background-color: var(--amber-highlight);
-      color: var(--amber);
-    }
-
-    tr.selected-tray-row th {
-      background-color: var(--pink-highlight);
-      color: var(--pink);
-    }
-
-    th.selected-col {
-      background-color: var(--highlight);
-      color: var(--primary);
-    }
-
-    .section-divider th {
-      background-color: #e2e8f0;
-      color: #334155;
-      font-size: 0.74rem;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      padding: 0.45rem;
-      text-align: left;
-      padding-left: 0.85rem;
-    }
-
-    .motor-star {
-      color: #ef4444;
-      margin-left: 2px;
-    }
-
-    /* Reference Grids */
-    .ref-grid-4 {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 1rem;
-    }
-
-    .ref-grid-2 {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 1rem;
-    }
-
-    @media (max-width: 960px) {
-      .ref-grid-4, .ref-grid-2 {
-        grid-template-columns: repeat(2, 1fr);
-      }
-    }
-
-    @media (max-width: 560px) {
-      .ref-grid-4, .ref-grid-2 {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    .fabric-item-selected td {
-      background-color: var(--indigo) !important;
-      color: white !important;
-      font-weight: 700;
-    }
-
-    .sensor-item-selected td {
-      background-color: var(--cyan) !important;
-      color: white !important;
-      font-weight: 700;
-    }
-
-    .bracket-item-selected td {
-      background-color: var(--emerald) !important;
-      color: white !important;
-      font-weight: 700;
-    }
-
-    .ref-subcard {
-      margin-top: 1.25rem;
-      padding-top: 1.25rem;
-      border-top: 1px solid var(--border);
-    }
-
-    .ref-subtitle {
-      font-size: 0.95rem;
-      font-weight: 700;
-      margin-bottom: 0.85rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    /* Header Mode Switch & Settings Page Styles */
-    .header-right {
-      display: flex;
-      align-items: center;
-      gap: 0.65rem;
-      flex-wrap: wrap;
-    }
-
-    .mode-switch-group {
-      display: inline-flex;
-      background: #e2e8f0;
-      padding: 4px;
-      border-radius: 10px;
-      gap: 4px;
-    }
-
-    .mode-switch-btn {
-      appearance: none;
-      border: none;
-      background: transparent;
-      color: var(--text-muted);
-      font-size: 0.82rem;
-      font-weight: 700;
-      padding: 0.5rem 0.9rem;
-      border-radius: 7px;
-      cursor: pointer;
-      transition: all 0.18s ease;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
-    }
-
-    .mode-switch-btn:hover {
-      color: var(--text-main);
-    }
-
-    .mode-switch-btn.active {
-      background: #ffffff;
-      color: var(--primary);
-      box-shadow: 0 1px 3px rgba(15, 23, 42, 0.12);
-    }
-
-    .settings-top-bar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 0.85rem;
-      margin-bottom: 1.25rem;
-      padding-bottom: 1rem;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .settings-actions {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      flex-wrap: wrap;
-    }
-
-    .settings-action-btn {
-      appearance: none;
-      border: 1px solid var(--border);
-      background: #ffffff;
-      color: var(--text-main);
-      font-size: 0.8rem;
-      font-weight: 700;
-      padding: 0.5rem 0.85rem;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: all 0.15s ease;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
-    }
-
-    .settings-action-btn:hover {
-      background: #f8fafc;
-      border-color: #94a3b8;
-    }
-
-    .settings-action-btn.primary {
-      background: var(--emerald);
-      border-color: #047857;
-      color: #ffffff;
-    }
-
-    .settings-action-btn.primary:hover {
-      background: #047857;
-    }
-
-    .settings-action-btn.danger {
-      color: var(--danger);
-      border-color: #fecaca;
-      background: #fef2f2;
-    }
-
-    .settings-action-btn.danger:hover {
-      background: #fee2e2;
-      border-color: #fca5a5;
-    }
-
-    .settings-status-pill {
-      font-size: 0.76rem;
-      font-weight: 700;
-      padding: 0.35rem 0.7rem;
-      border-radius: 999px;
-      background: #dcfce7;
-      color: #15803d;
-      border: 1px solid #86efac;
-    }
-
-    .settings-filter-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1rem;
-      margin-bottom: 1rem;
-      background: #f8fafc;
-      padding: 1rem;
-      border-radius: 10px;
-      border: 1px solid var(--border);
-    }
-
-    @media (max-width: 820px) {
-      .settings-filter-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    .bulk-adjust-bar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 0.75rem;
-      padding: 0.75rem 1rem;
-      background: #f0fdf4;
-      border: 1px solid #bbf7d0;
-      border-radius: 10px;
-      margin-bottom: 1rem;
-    }
-
-    .bulk-adjust-controls {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      flex-wrap: wrap;
-    }
-
-    .bulk-adjust-controls input,
-    .bulk-adjust-controls select {
-      width: auto;
-      padding: 0.4rem 0.6rem;
-      font-size: 0.82rem;
-      height: 34px;
-    }
-
-    .editable-table-wrap {
-      overflow-x: auto;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      max-height: 68vh;
-      overflow-y: auto;
-    }
-
-    .editable-matrix-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.8rem;
-    }
-
-    .editable-matrix-table th {
-      position: sticky;
-      top: 0;
-      z-index: 2;
-      background: #1e293b;
-      color: #ffffff;
-      padding: 0.55rem 0.5rem;
-      font-weight: 700;
-      border: 1px solid #334155;
-      white-space: nowrap;
-    }
-
-    .editable-matrix-table td {
-      padding: 0.3rem 0.35rem;
-      border: 1px solid var(--border);
-      background: #ffffff;
-      text-align: center;
-    }
-
-    .editable-matrix-table td.row-label-cell {
-      position: sticky;
-      left: 0;
-      z-index: 1;
-      background: #f1f5f9;
-      font-weight: 700;
-      color: var(--text-main);
-      padding: 0.45rem 0.65rem;
-      white-space: nowrap;
-      text-align: left;
-    }
-
-    .price-cell-input {
-      width: 78px !important;
-      padding: 0.32rem 0.4rem !important;
-      font-size: 0.8rem !important;
-      font-weight: 600 !important;
-      text-align: right;
-      border: 1px solid #cbd5e1 !important;
-      border-radius: 6px !important;
-      background: #ffffff !important;
-      color: #0f172a !important;
-      transition: all 0.12s ease;
-    }
-
-    .price-cell-input:focus {
-      border-color: var(--primary) !important;
-      background: #eff6ff !important;
-      box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.18) !important;
-      outline: none;
-    }
-
-    .price-cell-input.is-zero {
-      color: #94a3b8 !important;
-      background: #f8fafc !important;
-    }
-
-    .price-cell-input.is-modified {
-      background: #fef9c3 !important;
-      border-color: #eab308 !important;
-      color: #854d0e !important;
-    }
-
-    /* Password Modal Styles */
-    .pw-modal-backdrop {
-      position: fixed;
-      inset: 0;
-      background: rgba(15, 23, 42, 0.58);
-      backdrop-filter: blur(4px);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 9999;
-      padding: 1rem;
-    }
-
-    .pw-modal-backdrop.open {
-      display: flex;
-    }
-
-    .pw-modal-card {
-      background: #ffffff;
-      border-radius: 16px;
-      border: 1px solid var(--border);
-      box-shadow: 0 20px 40px rgba(15, 23, 42, 0.25);
-      width: 100%;
-      max-width: 400px;
-      padding: 1.5rem;
-      animation: pwFadeIn 0.16s ease-out;
-    }
-
-    @keyframes pwFadeIn {
-      from { opacity: 0; transform: translateY(8px) scale(0.98); }
-      to { opacity: 1; transform: translateY(0) scale(1); }
-    }
-
-    .pw-modal-title {
-      font-size: 1.05rem;
-      font-weight: 800;
-      color: var(--text-main);
-      margin-bottom: 0.35rem;
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-    }
-
-    .pw-modal-desc {
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      margin-bottom: 1rem;
-      line-height: 1.45;
-    }
-
-    .pw-error-msg {
-      display: none;
-      font-size: 0.78rem;
-      font-weight: 700;
-      color: var(--danger);
-      background: #fef2f2;
-      border: 1px solid #fecaca;
-      border-radius: 8px;
-      padding: 0.5rem 0.7rem;
-      margin-bottom: 0.85rem;
-    }
-
-    .pw-modal-actions {
-      display: flex;
-      justify-content: flex-end;
-      gap: 0.5rem;
-      margin-top: 1rem;
-    }
-
-    /* Hide input hints, sub-descriptions & formulas by default unless .show-hints is toggled */
-    body:not(.show-hints) .hint,
-    body:not(.show-hints) header p,
-    body:not(.show-hints) #activeCategoryHeaderBadge,
-    body:not(.show-hints) .cat-sub,
-    body:not(.show-hints) .faa-model-sub,
-    body:not(.show-hints) .sub-type-desc,
-    body:not(.show-hints) .gled-sub,
-    body:not(.show-hints) .onsite-toggle-sub,
-    body:not(.show-hints) #oztechOverhangSubtext,
-    body:not(.show-hints) #oztechGutterCoverSubtext,
-    body:not(.show-hints) #resultBadge,
-    body:not(.show-hints) #discountBreakdownRow:not(.is-active-discount),
-    body:not(.show-hints) #oztechHeightBreakdownRow:not(.is-active-addon),
-    body:not(.show-hints) #oztechPostBreakdownRow:not(.is-active-discount),
-    body:not(.show-hints) #oztechGutterCoverBreakdownRow:not(.is-active-addon),
-    body:not(.show-hints) #sensorBreakdownRow:not(.is-active-addon),
-    body:not(.show-hints) #ledBreakdownRow:not(.is-active-addon),
-    body:not(.show-hints) #trayBreakdownRow:not(.is-active-addon),
-    body:not(.show-hints) #bracketBreakdownRow:not(.is-active-addon) {
-      display: none !important;
-    }
-
-    .hint-toggle-btn {
-      appearance: none;
-      border: 1px solid #cbd5e1;
-      background: #f8fafc;
-      color: #475569;
-      font-size: 0.7rem;
-      font-weight: 700;
-      padding: 0.26rem 0.58rem;
-      border-radius: 999px;
-      cursor: pointer;
-      transition: all 0.16s ease;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.25rem;
-      white-space: nowrap;
-    }
-
-    .hint-toggle-btn:hover {
-      background: #e2e8f0;
-      color: #0f172a;
-      border-color: #94a3b8;
-    }
-
-    .hint-toggle-btn.active {
-      background: #dbeafe;
-      color: #1d4ed8;
-      border-color: #93c5fd;
-    }
-
-    /* OZTECH Gutter LED Option Buttons */
-    .gutter-led-tabs {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 0.45rem;
-    }
-
-    .gutter-led-btn {
-      appearance: none;
-      border: 1.5px solid #cbd5e1;
-      background: #f8fafc;
-      color: #334155;
-      padding: 0.48rem 0.45rem;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: all 0.16s ease;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 0.1rem;
-      text-align: center;
-    }
-
-    .gutter-led-btn .gled-title {
-      font-size: 0.76rem;
-      font-weight: 800;
-      letter-spacing: 0.01em;
-    }
-
-    .gutter-led-btn .gled-sub {
-      font-size: 0.62rem;
-      font-weight: 600;
-      color: #64748b;
-    }
-
-    .gutter-led-btn:hover:not(:disabled) {
-      background: #fef3c7;
-      border-color: #fbbf24;
-      color: #92400e;
-    }
-
-    .gutter-led-btn.active {
-      background: #f59e0b;
-      border-color: #d97706;
-      color: #ffffff;
-      box-shadow: 0 3px 8px rgba(245, 158, 11, 0.24);
-    }
-
-    .gutter-led-btn.active .gled-sub {
-      color: #fef3c7;
-    }
-
-    .gutter-led-btn.active-none {
-      background: #475569;
-      border-color: #334155;
-      color: #ffffff;
-      box-shadow: 0 2px 6px rgba(51, 65, 85, 0.18);
-    }
-
-    .gutter-led-btn.active-none .gled-sub {
-      color: #e2e8f0;
-    }
-
-    .gutter-led-btn:disabled {
-      opacity: 0.52;
-      cursor: not-allowed;
-      background: #f1f5f9;
-      border-color: #e2e8f0;
-      color: #94a3b8;
-    }
-
-    /* On-Site Fabric Assembly Single Toggle Button */
-    .onsite-toggle-btn {
-      appearance: none;
-      width: 100%;
-      border: 1.5px solid #cbd5e1;
-      background: #f8fafc;
-      color: #1e293b;
-      padding: 0.55rem 0.75rem;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: all 0.16s ease;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 0.5rem;
-      text-align: left;
-      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
-    }
-
-    .onsite-toggle-btn:hover {
-      border-color: #34d399;
-      background: #ecfdf5;
-    }
-
-    .onsite-toggle-left {
-      display: flex;
-      flex-direction: column;
-      gap: 0.1rem;
-      min-width: 0;
-    }
-
-    .onsite-toggle-title {
-      font-size: 0.78rem;
-      font-weight: 800;
-      color: #0f172a;
-      display: flex;
-      align-items: center;
-      gap: 0.3rem;
-    }
-
-    .onsite-toggle-sub {
-      font-size: 0.66rem;
-      font-weight: 600;
-      color: #64748b;
-    }
-
-    .onsite-toggle-badge {
-      font-size: 0.7rem;
-      font-weight: 800;
-      padding: 0.25rem 0.55rem;
-      border-radius: 999px;
-      background: #e2e8f0;
-      color: #475569;
-      white-space: nowrap;
-      transition: all 0.16s ease;
-    }
-
-    .onsite-toggle-btn.active {
-      background: #059669;
-      border-color: #047857;
-      color: #ffffff;
-      box-shadow: 0 3px 10px rgba(5, 150, 105, 0.24);
-    }
-
-    .onsite-toggle-btn.active .onsite-toggle-title {
-      color: #ffffff;
-    }
-
-    .onsite-toggle-btn.active .onsite-toggle-sub {
-      color: #d1fae5;
-    }
-
-    .onsite-toggle-btn.active .onsite-toggle-badge {
-      background: #ffffff;
-      color: #047857;
-    }
-
-    /* Mobile Specific Compact Overrides */
-    @media (max-width: 640px) {
-      body {
-        padding: 0.5rem 0.45rem 1.5rem;
-      }
-      header {
-        padding: 0.6rem 0.75rem;
-        margin-bottom: 0.6rem;
-      }
-      .header-left h1 {
-        font-size: 0.96rem;
-      }
-      .mode-switch-btn {
-        font-size: 0.72rem;
-        padding: 0.35rem 0.6rem;
-      }
-      .card {
-        padding: 0.8rem 0.75rem;
-        border-radius: 10px;
-      }
-      .card-title {
-        font-size: 0.88rem;
-        margin-bottom: 0.65rem;
-      }
-      .cat-btn {
-        font-size: 0.74rem;
-        padding: 0.42rem 0.2rem;
-      }
-      .faa-model-btn {
-        font-size: 0.72rem;
-        padding: 0.4rem 0.25rem;
-      }
-      .sub-type-btn {
-        font-size: 0.72rem;
-        padding: 0.38rem 0.25rem;
-      }
-      label {
-        font-size: 0.7rem;
-        margin-bottom: 0.2rem;
-      }
-      select,
-      input[type="number"],
-      input[type="text"],
-      input[type="password"] {
-        height: 34px;
-        padding: 0.32rem 0.5rem;
-        font-size: 0.78rem;
-        border-radius: 7px;
-      }
-      input[type="number"] {
-        padding-right: 2.1rem;
-      }
-      .unit {
-        right: 0.45rem;
-        font-size: 0.66rem;
-      }
-      .config-section {
-        padding-top: 0.65rem;
-        margin-top: 0.65rem;
-      }
-      .section-header {
-        margin-bottom: 0.45rem;
-      }
-      .section-title {
-        font-size: 0.7rem;
-      }
-      .form-row {
-        gap: 0.45rem;
-      }
-      .form-group {
-        margin-bottom: 0.5rem;
-      }
-      .result-box {
-        padding: 0.75rem;
-      }
-      .result-price {
-        font-size: 1.65rem;
-      }
-      .spec-chip {
-        padding: 0.26rem 0.25rem;
-      }
-      .spec-chip-val {
-        font-size: 0.68rem;
-      }
-      .breakdown-box {
-        padding: 0.45rem 0.6rem;
-        font-size: 0.72rem;
-      }
-      .breakdown-row {
-        padding: 0.24rem 0;
-      }
-    }
-  </style>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
@@ -1808,6 +17,7 @@
       <div class="header-right">
         <div class="mode-switch-group">
           <button type="button" class="mode-switch-btn active" id="navCalcBtn">🧮 Calculator</button>
+          <button type="button" class="mode-switch-btn" id="navQuotesBtn">📁 Saved Quotes <span class="quote-nav-badge" id="navQuoteCountBadge">0</span></button>
           <button type="button" class="mode-switch-btn" id="navSettingsBtn">⚙️ Price Settings</button>
         </div>
         <div class="header-badge" id="activeCategoryHeaderBadge">Active Lineup: FAA (Folding Arm Awning)</div>
@@ -2244,7 +454,7 @@
             </div>
 
             <div class="form-row" id="operationMotorRow">
-              <div class="form-group" id="operationGroup">
+              <div class="form-group" id="operationGroup" style="grid-column: 1 / -1;">
                 <label for="operationSelect">Operation</label>
                 <select id="operationSelect">
                   <option value="manual">Manual Gear (+$0)</option>
@@ -2252,10 +462,10 @@
                 </select>
               </div>
 
-              <div class="form-group" id="motorGroup">
+              <div class="form-group" id="motorGroup" style="grid-column: 1 / -1;">
                 <label for="motorSelect" id="motorFieldLabel">Motor Brand</label>
-                <div class="sub-type-tabs" id="oztechMotorTabs" style="display: none; grid-template-columns: repeat(4, 1fr);"></div>
-                <select id="motorSelect" disabled>
+                <div class="sub-type-tabs" id="oztechMotorTabs" style="display: grid; grid-template-columns: repeat(4, 1fr);"></div>
+                <select id="motorSelect" style="display: none;" disabled>
                   <option value="ace">ACE</option>
                   <option value="alpha">Alpha</option>
                   <option value="becker">Becker</option>
@@ -2430,8 +640,7 @@
           </div>
 
           <div class="action-row">
-            <button type="submit" class="btn">Calculate Price</button>
-            <button type="button" class="btn-secondary" id="resetBtn">Reset</button>
+            <button type="button" class="btn-secondary" id="resetBtn" style="flex: 1;">🔄 Reset</button>
           </div>
         </form>
       </div>
@@ -2524,6 +733,41 @@
           </div>
 
           <div id="resultBadge" class="badge" style="display: none;"></div>
+
+          <!-- Active Editing Quote Banner (Shown when a saved quote is loaded) -->
+          <div id="editingQuoteBanner" class="editing-quote-banner" style="margin-top: 0.7rem; margin-bottom: 0;">
+            <span id="editingQuoteBannerText">✏️ Editing: QT-0000</span>
+            <button type="button" id="clearEditingQuoteBtn">New Quote</button>
+          </div>
+
+          <!-- Multi-Product Job Builder: Add Item Bar -->
+          <div class="job-add-bar" id="jobItemAddBar">
+            <input type="text" id="jobItemLabelInput" placeholder="Item location / tag (e.g. Patio, Window 1)">
+            <div style="display:flex; align-items:center; gap:0.25rem;">
+              <span style="font-size:0.68rem; font-weight:700; color:var(--text-muted);">Qty:</span>
+              <input type="number" id="jobItemQtyInput" min="1" max="99" value="1" style="padding-right:0.35rem; text-align:center;">
+            </div>
+            <button type="button" class="btn-add-job-item" id="addJobItemBtn">➕ Add Item</button>
+          </div>
+
+          <!-- Multi-Product Job Items List -->
+          <div class="job-items-box" id="jobItemsBox">
+            <div class="job-items-header">
+              <span id="jobItemsHeaderTitle">🧾 Current Quote Items (0)</span>
+              <button type="button" class="job-item-mini-btn" id="clearJobItemsBtn" style="color:#b91c1c; border-color:#fecaca;">Clear All</button>
+            </div>
+            <div class="job-items-list" id="jobItemsList"></div>
+            <div class="job-grand-total-bar">
+              <span id="jobGrandTotalLabel">Grand Total (0 Items)</span>
+              <span id="jobGrandTotalValue" style="color:#059669; font-size:1.02rem;">$0</span>
+            </div>
+          </div>
+
+          <!-- Quote Save & Copy Toolbar -->
+          <div class="quote-save-bar" id="quoteSaveActionBar">
+            <button type="button" class="btn-save-quote" id="openSaveQuoteModalBtn">💾 Save Quote</button>
+            <button type="button" class="btn-copy-quote" id="copyQuoteTextBtn">📋 Copy Summary</button>
+          </div>
         </div>
       </div>
     </div>
@@ -2633,30 +877,113 @@
     </div>
     </div><!-- /#calculatorPageView -->
 
+    <!-- Saved Quotes Page View: Quote Storage & Cloud Sync -->
+    <div id="quotesPageView" style="display: none;">
+      <div class="card">
+        <div class="settings-top-bar">
+          <div>
+            <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.25rem;">
+              <h2 style="font-size: 1.15rem; font-weight: 800; color: var(--text-main); margin: 0;">📁 Saved Quotes & Cloud History</h2>
+              <span class="q-cat-badge" id="activeAccessRoleBadge" style="background: #ecfdf5; color: #047857; border-color: #6ee7b7;">🔒 Protected</span>
+            </div>
+            <p style="font-size: 0.82rem; color: var(--text-muted);">Search and manage your company's saved quotes, reload jobs back into the calculator, or print a quote sheet.</p>
+          </div>
+          <div class="settings-actions">
+            <button type="button" class="cloud-status-pill" id="cloudDbStatusPill" title="Cloud Sync Status">⚪ Local Mode (Browser Storage)</button>
+            <button type="button" class="settings-action-btn" id="openSupabaseConfigModalBtn">☁️ Supabase DB Setup</button>
+            <button type="button" class="settings-action-btn primary" id="syncQuotesBtn">🔄 Sync</button>
+            <button type="button" class="settings-action-btn" id="exportQuotesCsvBtn">📥 Export CSV</button>
+            <button type="button" class="settings-action-btn" id="switchDealerCodeBtn">🔑 Switch Account</button>
+            <button type="button" class="settings-action-btn" id="lockQuotesBtn">🔒 Lock & Exit</button>
+          </div>
+        </div>
+
+        <!-- KPI Summary Cards -->
+        <div class="quotes-kpi-grid">
+          <div class="quotes-kpi-card">
+            <div class="quotes-kpi-label">Total Saved Quotes</div>
+            <div class="quotes-kpi-val" id="kpiTotalQuotes">0</div>
+          </div>
+          <div class="quotes-kpi-card">
+            <div class="quotes-kpi-label">Draft / Sent</div>
+            <div class="quotes-kpi-val" id="kpiActiveQuotes" style="color: #1d4ed8;">0</div>
+          </div>
+          <div class="quotes-kpi-card">
+            <div class="quotes-kpi-label">Approved</div>
+            <div class="quotes-kpi-val" id="kpiApprovedQuotes" style="color: #059669;">0</div>
+          </div>
+          <div class="quotes-kpi-card">
+            <div class="quotes-kpi-label">Total Quoted Volume</div>
+            <div class="quotes-kpi-val" id="kpiTotalAmount">$0</div>
+          </div>
+        </div>
+
+        <!-- Search & Filter Bar -->
+        <div class="quotes-filter-bar" id="quotesFilterBar">
+          <div class="form-group" style="margin-bottom: 0;">
+            <label for="quoteSearchInput">🔍 Search (Client · Quote No · Site Address · Product · Notes)</label>
+            <input type="text" id="quoteSearchInput" placeholder="Search by client name, quote no, address, product...">
+          </div>
+          <div class="form-group" id="quoteDealerFilterGroup" style="margin-bottom: 0; display: none;">
+            <label for="quoteDealerFilter">🏢 Dealer / Company (Admin)</label>
+            <select id="quoteDealerFilter">
+              <option value="ALL">All Dealers & HQ</option>
+            </select>
+          </div>
+          <div class="form-group" style="margin-bottom: 0;">
+            <label for="quoteCategoryFilter">Product Lineup</label>
+            <select id="quoteCategoryFilter">
+              <option value="ALL">All Categories</option>
+              <option value="MULTI">Multi-Category / Mixed Job</option>
+              <option value="FAA">FAA (Folding Arm)</option>
+              <option value="DROP A">DROP A (Drop Awning)</option>
+              <option value="OZTECH">OZTECH (Retractable Roof)</option>
+              <option value="LOUVRE">LOUVRE (Louvre System)</option>
+            </select>
+          </div>
+          <div class="form-group" style="margin-bottom: 0;">
+            <label for="quoteStatusFilter">Status</label>
+            <select id="quoteStatusFilter">
+              <option value="ALL">All Status</option>
+              <option value="draft">Draft</option>
+              <option value="sent">Sent</option>
+              <option value="approved">Approved</option>
+              <option value="hold">On Hold</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Quotes List Container -->
+        <div id="quotesListContainer" class="quote-list"></div>
+      </div>
+    </div><!-- /#quotesPageView -->
+
     <!-- Settings Page View: Price Table & Option Manager -->
     <div id="settingsPageView" style="display: none;">
       <div class="card">
         <div class="settings-top-bar">
           <div>
-            <h2 style="font-size: 1.15rem; font-weight: 800; color: var(--text-main); margin-bottom: 0.25rem;">⚙️ 가격 테이블 및 옵션 설정 (Price Table & Option Manager)</h2>
-            <p style="font-size: 0.82rem; color: var(--text-muted);">모든 제품(FAA, DROP A, OZTECH, LOUVRE)의 기본 가격표, 원단 단가, 모터, 파우더코팅, LED, 센서 및 브라켓 가격을 표에서 직접 수정하고 저장할 수 있습니다.</p>
+            <h2 style="font-size: 1.15rem; font-weight: 800; color: var(--text-main); margin-bottom: 0.25rem;">⚙️ Price Table & Option Manager (Master Admin)</h2>
+            <p style="font-size: 0.82rem; color: var(--text-muted);">Edit and save base price matrices, fabric rates, motors, powder coating, LED lighting, sensors, bracket prices, and manage Dealer Access Codes.</p>
           </div>
           <div class="settings-actions">
-            <span class="settings-status-pill" id="settingsStatusPill">✓ 현재 최신 데이터 적용됨</span>
-            <button type="button" class="settings-action-btn primary" id="saveSettingsBtn">💾 브라우저에 저장 (Save)</button>
-            <button type="button" class="settings-action-btn" id="exportJsonBtn">📥 JSON 다운로드 (Export)</button>
+            <span class="settings-status-pill" id="settingsStatusPill">✓ Default Price Data Active</span>
+            <button type="button" class="settings-action-btn primary" id="saveSettingsBtn">💾 Save to Browser</button>
+            <button type="button" class="settings-action-btn" id="openDealerManagerModalBtn" style="background: #eff6ff; border-color: #93c5fd; color: #1d4ed8;">👥 Dealer Codes</button>
+            <button type="button" class="settings-action-btn" id="exportJsonBtn">📥 Export JSON</button>
             <label class="settings-action-btn" style="margin: 0; cursor: pointer;">
-              📤 JSON 불러오기 (Import)
+              📤 Import JSON
               <input type="file" id="importJsonInput" accept=".json" style="display: none;">
             </label>
-            <button type="button" class="settings-action-btn" id="openChangePwModalBtn">🔑 암호 변경 (Change PW)</button>
-            <button type="button" class="settings-action-btn danger" id="resetDefaultDbBtn">🔄 초기값 복원 (Reset All)</button>
-            <button type="button" class="settings-action-btn" id="lockSettingsBtn">🔒 잠금 및 나가기 (Lock)</button>
+            <button type="button" class="settings-action-btn" id="openSupabaseFromSettingsBtn">☁️ Supabase DB Setup</button>
+            <button type="button" class="settings-action-btn" id="openChangePwModalBtn">🔑 Change Admin PW</button>
+            <button type="button" class="settings-action-btn danger" id="resetDefaultDbBtn">🔄 Reset All Defaults</button>
+            <button type="button" class="settings-action-btn" id="lockSettingsBtn">🔒 Lock & Exit</button>
           </div>
         </div>
 
         <!-- 1. Category Selection Tabs in Settings -->
-        <span class="category-tabs-label">1. 수정할 카테고리 선택 (Select Category to Edit)</span>
+        <span class="category-tabs-label">1. Select Category to Edit</span>
         <div class="category-tabs" id="settingsCategoryTabs" style="grid-template-columns: repeat(5, 1fr); margin-bottom: 1rem;">
           <button type="button" class="cat-btn settings-cat-btn active" data-scat="FAA">
             <span>FAA</span>
@@ -2676,25 +1003,25 @@
           </button>
           <button type="button" class="cat-btn settings-cat-btn" data-scat="COMMON">
             <span>COMMON & FABRICS</span>
-            <span class="cat-sub">원단 · 센서 · 브라켓 · 공통</span>
+            <span class="cat-sub">Fabrics · Sensors · Brackets</span>
           </button>
         </div>
 
         <!-- 2. Model & Table Type Selectors -->
         <div class="settings-filter-grid">
           <div class="form-group" id="settingsModelGroup" style="margin-bottom: 0;">
-            <label for="settingsModelSelect">2. 제품 모델 선택 (Product Model)</label>
+            <label for="settingsModelSelect">2. Product Model</label>
             <select id="settingsModelSelect"></select>
           </div>
           <div class="form-group" id="settingsTableTypeGroup" style="margin-bottom: 0;">
-            <label for="settingsTableTypeSelect">3. 가격 테이블 종류 (Table / Option Type)</label>
+            <label for="settingsTableTypeSelect">3. Table / Option Type</label>
             <select id="settingsTableTypeSelect"></select>
           </div>
           <div class="form-group" style="margin-bottom: 0;">
-            <label>빠른 안내 (Quick Guide)</label>
+            <label>Quick Guide</label>
             <div style="font-size: 0.78rem; color: var(--text-muted); line-height: 1.45; padding-top: 4px;">
-              • 셀 숫자를 직접 입력하면 <strong>즉시 계산기에 반영</strong>되고 자동 저장됩니다.<br>
-              • 값이 <code>0</code>인 셀은 해당 사이즈 조합 제작 불가(Unavailable)로 처리됩니다.
+              • Editing any cell immediately updates the calculator and auto-saves locally.<br>
+              • Cells set to <code>0</code> are treated as Unavailable for that size combination.
             </div>
           </div>
         </div>
@@ -2702,43 +1029,43 @@
         <!-- 3. Bulk Adjust Bar -->
         <div class="bulk-adjust-bar">
           <div style="font-size: 0.82rem; font-weight: 700; color: #14532d;">
-            ⚡ 현재 표시된 테이블 일괄 조정 (Bulk Price Adjustment)
+            ⚡ Bulk Price Adjustment (Current Table)
           </div>
           <div class="bulk-adjust-controls">
             <select id="bulkAdjustMode">
-              <option value="percent">퍼센트 증감 (%)</option>
-              <option value="add">고정 금액 증감 (+$ / -$)</option>
+              <option value="percent">Percentage (%)</option>
+              <option value="add">Fixed Amount (+$ / -$)</option>
             </select>
-            <input type="number" id="bulkAdjustValue" step="any" placeholder="예: 5 또는 -3" style="width: 120px;">
-            <button type="button" class="settings-action-btn primary" id="applyBulkAdjustBtn" style="padding: 0.42rem 0.8rem;">현재 표에 일괄 적용</button>
+            <input type="number" id="bulkAdjustValue" step="any" placeholder="e.g. 5 or -3" style="width: 120px;">
+            <button type="button" class="settings-action-btn primary" id="applyBulkAdjustBtn" style="padding: 0.42rem 0.8rem;">Apply to Current Table</button>
           </div>
         </div>
 
         <!-- 4. Editable Table Container -->
         <div class="ref-subtitle" style="margin-bottom: 0.6rem;">
           <span id="settingsActiveTableTitle">📊 Price Table Editor</span>
-          <span style="font-size: 0.78rem; color: var(--text-muted);" id="settingsActiveTableMeta">Unit: mm / USD ($)</span>
+          <span style="font-size: 0.78rem; color: var(--text-muted);" id="settingsActiveTableMeta">Unit: mm / AUD ($)</span>
         </div>
         <div class="editable-table-wrap" id="settingsEditorContainer"></div>
       </div>
     </div>
 
-    <!-- Password Verification Modal for Entering Settings Page -->
+    <!-- Password Verification Modal for Entering Settings / Saved Quotes Page -->
     <div class="pw-modal-backdrop" id="settingsPasswordModal">
       <div class="pw-modal-card">
-        <div class="pw-modal-title">🔒 관리자 암호 확인 (Password Required)</div>
-        <div class="pw-modal-desc">
-          가격표 설정 페이지에 접근하려면 관리자 암호를 입력해주세요.<br>
-          <span style="font-size: 0.74rem; color: #64748b;">(초기 기본 암호: <code>1234</code> • 설정 페이지 내에서 변경 가능)</span>
+        <div class="pw-modal-title" id="settingsPwModalTitle">🔒 Access Code Required</div>
+        <div class="pw-modal-desc" id="settingsPwModalDesc">
+          Enter your assigned <strong>Dealer Access Code</strong> to open your company's Saved Quotes, or enter the <strong>Master Admin Password</strong>.<br>
+          <span style="font-size: 0.74rem; color: #64748b;">(Master Admin default: <code>1234</code> • Dealer codes are managed in Price Settings)</span>
         </div>
-        <div class="pw-error-msg" id="settingsPwErrorMsg">⚠️ 암호가 일치하지 않습니다. 다시 확인해주세요.</div>
+        <div class="pw-error-msg" id="settingsPwErrorMsg">⚠️ Invalid access code or password. Please try again.</div>
         <div class="form-group" style="margin-bottom: 0;">
-          <label for="settingsPasswordInput">Password</label>
-          <input type="password" id="settingsPasswordInput" placeholder="암호를 입력하세요" autocomplete="off">
+          <label for="settingsPasswordInput" id="settingsPasswordInputLabel">Dealer Access Code / Admin Password</label>
+          <input type="password" id="settingsPasswordInput" placeholder="Enter dealer code or admin password" autocomplete="off">
         </div>
         <div class="pw-modal-actions">
-          <button type="button" class="settings-action-btn" id="cancelSettingsPwBtn">취소 (Cancel)</button>
-          <button type="button" class="settings-action-btn primary" id="confirmSettingsPwBtn">확인 및 입장 (Unlock)</button>
+          <button type="button" class="settings-action-btn" id="cancelSettingsPwBtn">Cancel</button>
+          <button type="button" class="settings-action-btn primary" id="confirmSettingsPwBtn">Unlock</button>
         </div>
       </div>
     </div>
@@ -2746,26 +1073,215 @@
     <!-- Change Password Modal -->
     <div class="pw-modal-backdrop" id="changePasswordModal">
       <div class="pw-modal-card">
-        <div class="pw-modal-title">🔑 관리자 암호 변경 (Change Password)</div>
+        <div class="pw-modal-title">🔑 Change Master Admin Password</div>
         <div class="pw-modal-desc">
-          가격표 설정 페이지 접속에 사용할 새 암호를 설정합니다.
+          Set a new Master Admin password for accessing Price Settings, Dealer Code Management, and All-Dealers Saved Quotes.
         </div>
         <div class="pw-error-msg" id="changePwErrorMsg"></div>
         <div class="form-group" style="margin-bottom: 0.75rem;">
-          <label for="currentPwInput">현재 암호 (Current Password)</label>
-          <input type="password" id="currentPwInput" placeholder="현재 암호 입력" autocomplete="off">
+          <label for="currentPwInput">Current Master Password</label>
+          <input type="password" id="currentPwInput" placeholder="Enter current master password" autocomplete="off">
         </div>
         <div class="form-group" style="margin-bottom: 0.75rem;">
-          <label for="newPwInput">새 암호 (New Password)</label>
-          <input type="password" id="newPwInput" placeholder="새 암호 입력" autocomplete="off">
+          <label for="newPwInput">New Master Password</label>
+          <input type="password" id="newPwInput" placeholder="Enter new master password" autocomplete="off">
         </div>
         <div class="form-group" style="margin-bottom: 0;">
-          <label for="confirmNewPwInput">새 암호 확인 (Confirm New Password)</label>
-          <input type="password" id="confirmNewPwInput" placeholder="새 암호 다시 입력" autocomplete="off">
+          <label for="confirmNewPwInput">Confirm New Master Password</label>
+          <input type="password" id="confirmNewPwInput" placeholder="Re-enter new master password" autocomplete="off">
         </div>
         <div class="pw-modal-actions">
-          <button type="button" class="settings-action-btn" id="cancelChangePwBtn">취소 (Cancel)</button>
-          <button type="button" class="settings-action-btn primary" id="saveChangePwBtn">암호 저장 (Save Password)</button>
+          <button type="button" class="settings-action-btn" id="cancelChangePwBtn">Cancel</button>
+          <button type="button" class="settings-action-btn primary" id="saveChangePwBtn">Save Password</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dealer Access Codes Manager Modal (Master Admin Only) -->
+    <div class="pw-modal-backdrop" id="dealerManagerModal">
+      <div class="pw-modal-card" style="max-width: 580px; max-height: 90vh; overflow-y: auto;">
+        <div class="pw-modal-title">👥 Dealer Access Codes Manager</div>
+        <div class="pw-modal-desc">
+          Assign a unique <strong>Access Code (Password)</strong> to each dealer/company. Each dealer will only be able to save and view quotes under their own code, and cannot access Price Settings.
+        </div>
+        <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 9px; padding: 0.75rem; margin-bottom: 0.85rem;">
+          <div class="form-row" style="margin-bottom: 0.5rem;">
+            <div class="form-group" style="margin-bottom: 0;">
+              <label for="dmDealerNameInput">Company / Dealer Name *</label>
+              <input type="text" id="dmDealerNameInput" placeholder="e.g. ABC Blinds Sydney" autocomplete="off">
+            </div>
+            <div class="form-group" style="margin-bottom: 0;">
+              <label for="dmDealerCodeInput">Access Code (Password) *</label>
+              <input type="text" id="dmDealerCodeInput" placeholder="e.g. ABC1234" autocomplete="off">
+            </div>
+          </div>
+          <button type="button" class="settings-action-btn primary" id="dmAddDealerBtn" style="width: 100%; justify-content: center;">➕ Register / Update Dealer Code</button>
+        </div>
+        <div style="font-size: 0.76rem; font-weight: 800; color: #334155; margin-bottom: 0.4rem;">Registered Dealer Accounts</div>
+        <div id="dmDealerListContainer" style="display: flex; flex-direction: column; gap: 0.4rem; max-height: 260px; overflow-y: auto;"></div>
+        <div class="pw-modal-actions" style="margin-top: 1rem;">
+          <button type="button" class="settings-action-btn" id="closeDealerManagerBtn">Close</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Save Quote Modal -->
+    <div class="pw-modal-backdrop" id="saveQuoteModal">
+      <div class="pw-modal-card" style="max-width: 520px;">
+        <div class="pw-modal-title">💾 Save Quote</div>
+        <div class="pw-modal-desc" id="saveQuoteSummaryPreview" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 0.55rem 0.7rem; font-weight: 700; color: #0f172a; margin-bottom: 0.85rem;">
+          Product • Dimensions • Total Price
+        </div>
+        <div class="form-group" style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 0.55rem 0.7rem; margin-bottom: 0.75rem;">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.25rem;">
+            <label for="sqDealerCodeInput" style="margin-bottom: 0; color: #1e3a8a;">🔑 Company / Dealer Access Code *</label>
+            <span id="sqVerifiedDealerBadge" style="font-size: 0.7rem; font-weight: 800; color: #64748b;">Enter code to verify</span>
+          </div>
+          <input type="password" id="sqDealerCodeInput" placeholder="Enter your company access code (or admin password)" autocomplete="off">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="sqQuoteNoInput">Quote No.</label>
+            <input type="text" id="sqQuoteNoInput" placeholder="e.g. QT-20261109-001">
+          </div>
+          <div class="form-group">
+            <label for="sqStatusSelect">Status</label>
+            <select id="sqStatusSelect">
+              <option value="draft">Draft</option>
+              <option value="sent">Sent</option>
+              <option value="approved">Approved</option>
+              <option value="hold">On Hold</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="sqClientNameInput">Client / Customer Name *</label>
+            <input type="text" id="sqClientNameInput" placeholder="e.g. John Smith / Project Name">
+          </div>
+          <div class="form-group">
+            <label for="sqClientPhoneInput">Phone / Contact</label>
+            <input type="text" id="sqClientPhoneInput" placeholder="e.g. 0400 000 000">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="sqSiteAddressInput">Site Address / Project</label>
+            <input type="text" id="sqSiteAddressInput" placeholder="e.g. 123 George St, Sydney">
+          </div>
+          <div class="form-group">
+            <label for="sqAuthorInput">Sales Rep / Author</label>
+            <input type="text" id="sqAuthorInput" placeholder="Sales rep name">
+          </div>
+        </div>
+        <div class="form-group" style="margin-bottom: 0;">
+          <label for="sqMemoInput">Notes / Special Instructions</label>
+          <input type="text" id="sqMemoInput" placeholder="Site access, color codes, custom notes...">
+        </div>
+        <div class="pw-modal-actions" style="flex-wrap: wrap;">
+          <button type="button" class="settings-action-btn" id="cancelSaveQuoteBtn">Cancel</button>
+          <button type="button" class="settings-action-btn" id="updateExistingQuoteBtn" style="display: none; background: #eff6ff; border-color: #93c5fd; color: #1d4ed8;">🔄 Overwrite Loaded Quote</button>
+          <button type="button" class="settings-action-btn primary" id="confirmSaveQuoteBtn">💾 Save as New Quote</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quote Detail / Print Modal -->
+    <div class="pw-modal-backdrop" id="quoteDetailModal">
+      <div class="pw-modal-card" style="max-width: 680px; max-height: 90vh; overflow-y: auto;">
+        <div class="pw-modal-title" style="display: flex; align-items: center; justify-content: space-between;">
+          <span id="qdModalTitle">📄 Quote Details</span>
+          <span class="q-no-badge" id="qdModalQuoteNo">QT-000</span>
+        </div>
+        <div id="qdModalBody" style="font-size: 0.82rem; color: #1e293b; line-height: 1.55;"></div>
+        <div class="pw-modal-actions" style="margin-top: 1rem;">
+          <button type="button" class="settings-action-btn" id="closeQuoteDetailBtn">Close</button>
+          <button type="button" class="settings-action-btn" id="copyDetailQuoteTextBtn">📋 Copy Text</button>
+          <button type="button" class="settings-action-btn" id="printQuoteDetailBtn">🖨️ Print / PDF</button>
+          <button type="button" class="settings-action-btn primary" id="loadFromDetailModalBtn">📂 Load into Calculator</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Supabase Cloud DB Configuration & Setup Guide Modal -->
+    <div class="pw-modal-backdrop" id="supabaseConfigModal">
+      <div class="pw-modal-card" style="max-width: 620px; max-height: 92vh; overflow-y: auto;">
+        <div class="pw-modal-title">☁️ Supabase Cloud Database Setup</div>
+        <div class="pw-modal-desc">
+          Enter your Supabase <strong>Project URL</strong> and <strong>Publishable / Anon Key</strong> to sync Saved Quotes and Price Tables across desktop and mobile devices in real time.
+        </div>
+        <div class="form-group">
+          <label for="sbUrlInput">1. Supabase Project URL</label>
+          <input type="text" id="sbUrlInput" placeholder="https://xxxxxxxxxxxx.supabase.co" autocomplete="off">
+        </div>
+        <div class="form-group">
+          <label for="sbAnonKeyInput">2. Supabase Publishable / Anon Public Key</label>
+          <input type="text" id="sbAnonKeyInput" placeholder="sb_publishable_... or eyJhbGciOiJIUzI1NiIs..." autocomplete="off">
+        </div>
+        <div id="sbConnectionTestMsg" style="display: none; font-size: 0.78rem; font-weight: 700; padding: 0.5rem 0.7rem; border-radius: 8px; margin-bottom: 0.75rem;"></div>
+
+        <!-- Cloud Price Table Sync Controls -->
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 0.65rem 0.8rem; margin-bottom: 0.85rem;">
+          <div style="font-size: 0.76rem; font-weight: 800; color: #0f172a; margin-bottom: 0.35rem;">⚙️ Cloud Price Table Sync</div>
+          <div style="display: flex; gap: 0.45rem; flex-wrap: wrap;">
+            <button type="button" class="settings-action-btn" id="pushPriceDbToCloudBtn" style="font-size: 0.74rem;">⬆️ Push Local Prices to Cloud DB</button>
+            <button type="button" class="settings-action-btn" id="pullPriceDbFromCloudBtn" style="font-size: 0.74rem;">⬇️ Pull Latest Prices from Cloud DB</button>
+          </div>
+        </div>
+
+        <!-- 1-Click SQL Table Creation Guide -->
+        <div style="border-top: 1px solid #e2e8f0; padding-top: 0.75rem;">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.4rem;">
+            <span style="font-size: 0.76rem; font-weight: 800; color: #334155;">🛠️ One-Time Setup: Supabase Table Creation SQL (Paste in SQL Editor & Run)</span>
+            <button type="button" class="settings-action-btn" id="copySupabaseSqlBtn" style="padding: 0.25rem 0.55rem; font-size: 0.7rem;">📋 Copy SQL</button>
+          </div>
+          <div class="sql-code-box" id="supabaseSetupSqlBox">create table if not exists public.quotes (
+  id text primary key,
+  quote_no text not null,
+  status text default 'draft',
+  client_name text not null,
+  client_phone text default '',
+  site_address text default '',
+  author text default '',
+  memo text default '',
+  category text not null,
+  product_key text not null,
+  product_title text not null,
+  width_mm numeric not null,
+  proj_mm numeric not null,
+  total_price numeric not null,
+  summary_badge text default '',
+  breakdown_items jsonb default '[]'::jsonb,
+  form_state jsonb not null,
+  created_at timestamptz default now(),
+  updated_at timestamptz default now()
+);
+
+create table if not exists public.app_settings (
+  id text primary key,
+  payload jsonb not null,
+  updated_at timestamptz default now()
+);
+
+alter table public.quotes enable row level security;
+alter table public.app_settings enable row level security;
+
+drop policy if exists "Allow public access quotes" on public.quotes;
+create policy "Allow public access quotes" on public.quotes for all using (true) with check (true);
+
+drop policy if exists "Allow public access settings" on public.app_settings;
+create policy "Allow public access settings" on public.app_settings for all using (true) with check (true);
+
+grant usage on schema public to anon, authenticated;
+grant all on table public.quotes to anon, authenticated, service_role;
+grant all on table public.app_settings to anon, authenticated, service_role;
+notify pgrst, 'reload schema';</div>
+        </div>
+
+        <div class="pw-modal-actions">
+          <button type="button" class="settings-action-btn danger" id="disconnectSupabaseBtn" style="margin-right: auto;">Disconnect (Switch to Local)</button>
+          <button type="button" class="settings-action-btn" id="closeSupabaseConfigBtn">Close</button>
+          <button type="button" class="settings-action-btn primary" id="saveSupabaseConfigBtn">🔌 Test Connection & Save</button>
         </div>
       </div>
     </div>
@@ -3133,10 +1649,10 @@
             3000: { 900: 535, 1200: 717, 1500: 758, 1800: 799, 2100: 841, 2400: 882, 2700: 934, 3000: 976, 3300: 1089, 3600: 1202, 3900: 1228, 4200: 1338, 4800: 1477, 5400: 1739 }
           },
           motors: {
-            ace:    { name: "ACE",    prices: [180, 180, 180, 180, 180, 180, 180, 180, 180, 180, 180, 180, 180, 180] },
-            becker: { name: "Becker", prices: [390, 390, 390, 390, 390, 390, 390, 390, 390, 390, 390, 390, 390, 390] },
-            alpha:  { name: "Alpha",  prices: [110, 110, 110, 110, 110, 110, 110, 110, 110, 110, 110, 110, 110, 110] },
-            somfy:  { name: "Somfy",  prices: [500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500] }
+            ace:    { name: "ACE",    shortName: "ACE",    subDesc: "+$180", prices: [180, 180, 180, 180, 180, 180, 180, 180, 180, 180, 180, 180, 180, 180] },
+            alpha:  { name: "Alpha",  shortName: "Alpha",  subDesc: "+$110", prices: [110, 110, 110, 110, 110, 110, 110, 110, 110, 110, 110, 110, 110, 110] },
+            becker: { name: "Becker", shortName: "Becker", subDesc: "+$390", prices: [390, 390, 390, 390, 390, 390, 390, 390, 390, 390, 390, 390, 390, 390] },
+            somfy:  { name: "Somfy",  shortName: "Somfy",  subDesc: "+$500", prices: [500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500] }
           },
           standardColours: ["Black", "White", "Charcoal", "Woodland Grey"],
           powderCoat: {
@@ -3174,10 +1690,10 @@
             3000: { 900: 589, 1200: 778, 1500: 827, 1800: 876, 2100: 925, 2400: 974, 2700: 1022, 3000: 1071, 3300: 1141, 3600: 1211, 3900: 1281, 4200: 1435, 4800: 1587, 5400: 1851 }
           },
           motors: {
-            ace:    { name: "ACE",    prices: [180, 180, 180, 180, 180, 180, 180, 180, 180, 180, 180, 180, 180, 180] },
-            becker: { name: "Becker", prices: [390, 390, 390, 390, 390, 390, 390, 390, 390, 390, 390, 390, 390, 390] },
-            alpha:  { name: "Alpha",  prices: [110, 110, 110, 110, 110, 110, 110, 110, 110, 110, 110, 110, 110, 110] },
-            somfy:  { name: "Somfy",  prices: [500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500] }
+            ace:    { name: "ACE",    shortName: "ACE",    subDesc: "+$180", prices: [180, 180, 180, 180, 180, 180, 180, 180, 180, 180, 180, 180, 180, 180] },
+            alpha:  { name: "Alpha",  shortName: "Alpha",  subDesc: "+$110", prices: [110, 110, 110, 110, 110, 110, 110, 110, 110, 110, 110, 110, 110, 110] },
+            becker: { name: "Becker", shortName: "Becker", subDesc: "+$390", prices: [390, 390, 390, 390, 390, 390, 390, 390, 390, 390, 390, 390, 390, 390] },
+            somfy:  { name: "Somfy",  shortName: "Somfy",  subDesc: "+$500", prices: [500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500] }
           },
           standardColours: ["Black", "White", "Charcoal", "Woodland Grey"],
           powderCoat: {
@@ -3208,10 +1724,10 @@
             3000: { 900: 448, 1200: 619, 1500: 649, 1800: 675, 2100: 704, 2400: 733, 2700: 786, 3000: 821, 3300: 914, 3600: 1007, 3900: 1020, 4200: 1118, 4800: 1231, 5400: 1485 }
           },
           motors: {
-            ace:    { name: "ACE",    prices: [180, 180, 180, 180, 180, 180, 180, 180, 180, 180, 180, 180, 180, 180] },
-            becker: { name: "Becker", prices: [390, 390, 390, 390, 390, 390, 390, 390, 390, 390, 390, 390, 390, 390] },
-            alpha:  { name: "Alpha",  prices: [110, 110, 110, 110, 110, 110, 110, 110, 110, 110, 110, 110, 110, 110] },
-            somfy:  { name: "Somfy",  prices: [500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500] }
+            ace:    { name: "ACE",    shortName: "ACE",    subDesc: "+$180", prices: [180, 180, 180, 180, 180, 180, 180, 180, 180, 180, 180, 180, 180, 180] },
+            alpha:  { name: "Alpha",  shortName: "Alpha",  subDesc: "+$110", prices: [110, 110, 110, 110, 110, 110, 110, 110, 110, 110, 110, 110, 110, 110] },
+            becker: { name: "Becker", shortName: "Becker", subDesc: "+$390", prices: [390, 390, 390, 390, 390, 390, 390, 390, 390, 390, 390, 390, 390, 390] },
+            somfy:  { name: "Somfy",  shortName: "Somfy",  subDesc: "+$500", prices: [500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500] }
           },
           standardColours: ["Black", "White", "Charcoal", "Woodland Grey"],
           powderCoat: {
@@ -3242,10 +1758,10 @@
             3000: { 900: 516, 1200: 697, 1500: 736, 1800: 774, 2100: 814, 2400: 854, 2700: 906, 3000: 946, 3300: 1056, 3600: 1166, 3900: 1189, 4200: 1297, 4800: 1433, 5400: 1694 }
           },
           motors: {
-            ace:    { name: "ACE",    prices: [180, 180, 180, 180, 180, 180, 180, 180, 180, 180, 180, 180, 180, 180] },
-            becker: { name: "Becker", prices: [390, 390, 390, 390, 390, 390, 390, 390, 390, 390, 390, 390, 390, 390] },
-            alpha:  { name: "Alpha",  prices: [110, 110, 110, 110, 110, 110, 110, 110, 110, 110, 110, 110, 110, 110] },
-            somfy:  { name: "Somfy",  prices: [500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500] }
+            ace:    { name: "ACE",    shortName: "ACE",    subDesc: "+$180", prices: [180, 180, 180, 180, 180, 180, 180, 180, 180, 180, 180, 180, 180, 180] },
+            alpha:  { name: "Alpha",  shortName: "Alpha",  subDesc: "+$110", prices: [110, 110, 110, 110, 110, 110, 110, 110, 110, 110, 110, 110, 110, 110] },
+            becker: { name: "Becker", shortName: "Becker", subDesc: "+$390", prices: [390, 390, 390, 390, 390, 390, 390, 390, 390, 390, 390, 390, 390, 390] },
+            somfy:  { name: "Somfy",  shortName: "Somfy",  subDesc: "+$500", prices: [500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500] }
           },
           standardColours: ["Black", "White", "Charcoal", "Woodland Grey"],
           powderCoat: {
@@ -3276,10 +1792,10 @@
             3000: { 900: 369, 1200: 531, 1500: 552, 1800: 574, 2100: 597, 2400: 619, 2700: 671, 3000: 703, 3300: 786, 3600: 869, 3900: 875, 4200: 966, 4800: 1064, 5400: 1315 }
           },
           motors: {
-            ace:    { name: "ACE",    prices: [180, 180, 180, 180, 180, 180, 180, 180, 180, 180, 180, 180, 180, 180] },
-            becker: { name: "Becker", prices: [390, 390, 390, 390, 390, 390, 390, 390, 390, 390, 390, 390, 390, 390] },
-            alpha:  { name: "Alpha",  prices: [110, 110, 110, 110, 110, 110, 110, 110, 110, 110, 110, 110, 110, 110] },
-            somfy:  { name: "Somfy",  prices: [500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500] }
+            ace:    { name: "ACE",    shortName: "ACE",    subDesc: "+$180", prices: [180, 180, 180, 180, 180, 180, 180, 180, 180, 180, 180, 180, 180, 180] },
+            alpha:  { name: "Alpha",  shortName: "Alpha",  subDesc: "+$110", prices: [110, 110, 110, 110, 110, 110, 110, 110, 110, 110, 110, 110, 110, 110] },
+            becker: { name: "Becker", shortName: "Becker", subDesc: "+$390", prices: [390, 390, 390, 390, 390, 390, 390, 390, 390, 390, 390, 390, 390, 390] },
+            somfy:  { name: "Somfy",  shortName: "Somfy",  subDesc: "+$500", prices: [500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500] }
           },
           standardColours: ["Black", "White", "Charcoal", "Woodland Grey"],
           powderCoat: {
@@ -3355,10 +1871,10 @@
             3000: { 900: 359, 1200: 518, 1500: 535, 1800: 551, 2100: 570, 2400: 589, 2700: 641, 3000: 670, 3300: 747, 3600: 823, 3900: 825, 4200: 912, 4800: 1004, 5400: 1251 }
           },
           motors: {
-            ace:    { name: "ACE",    prices: [180, 180, 180, 180, 180, 180, 180, 180, 180, 180, 180, 180, 180, 180] },
-            becker: { name: "Becker", prices: [390, 390, 390, 390, 390, 390, 390, 390, 390, 390, 390, 390, 390, 390] },
-            alpha:  { name: "Alpha",  prices: [110, 110, 110, 110, 110, 110, 110, 110, 110, 110, 110, 110, 110, 110] },
-            somfy:  { name: "Somfy",  prices: [500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500] }
+            ace:    { name: "ACE",    shortName: "ACE",    subDesc: "+$180", prices: [180, 180, 180, 180, 180, 180, 180, 180, 180, 180, 180, 180, 180, 180] },
+            alpha:  { name: "Alpha",  shortName: "Alpha",  subDesc: "+$110", prices: [110, 110, 110, 110, 110, 110, 110, 110, 110, 110, 110, 110, 110, 110] },
+            becker: { name: "Becker", shortName: "Becker", subDesc: "+$390", prices: [390, 390, 390, 390, 390, 390, 390, 390, 390, 390, 390, 390, 390, 390] },
+            somfy:  { name: "Somfy",  shortName: "Somfy",  subDesc: "+$500", prices: [500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500] }
           },
           standardColours: ["Black", "White", "Charcoal", "Woodland Grey"],
           powderCoat: {
@@ -3389,10 +1905,10 @@
             3000: { 900: 506, 1200: 683, 1500: 719, 1800: 751, 2100: 787, 2400: 824, 2700: 876, 3000: 913, 3300: 1017, 3600: 1120, 3900: 1140, 4200: 1244, 4800: 1373, 5400: 1630 }
           },
           motors: {
-            ace:    { name: "ACE",    prices: [180, 180, 180, 180, 180, 180, 180, 180, 180, 180, 180, 180, 180, 180] },
-            becker: { name: "Becker", prices: [390, 390, 390, 390, 390, 390, 390, 390, 390, 390, 390, 390, 390, 390] },
-            alpha:  { name: "Alpha",  prices: [110, 110, 110, 110, 110, 110, 110, 110, 110, 110, 110, 110, 110, 110] },
-            somfy:  { name: "Somfy",  prices: [500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500] }
+            ace:    { name: "ACE",    shortName: "ACE",    subDesc: "+$180", prices: [180, 180, 180, 180, 180, 180, 180, 180, 180, 180, 180, 180, 180, 180] },
+            alpha:  { name: "Alpha",  shortName: "Alpha",  subDesc: "+$110", prices: [110, 110, 110, 110, 110, 110, 110, 110, 110, 110, 110, 110, 110, 110] },
+            becker: { name: "Becker", shortName: "Becker", subDesc: "+$390", prices: [390, 390, 390, 390, 390, 390, 390, 390, 390, 390, 390, 390, 390, 390] },
+            somfy:  { name: "Somfy",  shortName: "Somfy",  subDesc: "+$500", prices: [500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500] }
           },
           standardColours: ["Black", "White", "Charcoal", "Woodland Grey"],
           powderCoat: {
@@ -8407,7 +6923,10 @@
       calculatePrice(true);
     });
 
-    document.getElementById('resetBtn').addEventListener('click', function() {
+    function resetCalculatorConfiguration(resetToDefaultCategory = false) {
+      if (resetToDefaultCategory && activeCategory !== 'FAA') {
+        setCategory('FAA');
+      }
       if (activeCategory === 'DROP A') {
         setDropAGroup('GENIUS', false);
         populateDropASubModels();
@@ -8466,12 +6985,21 @@
       if (activeCategory === 'OZTECH') populateDimmerOptions();
       document.getElementById('fabricTraySelect').value = 'no';
 
+      const jobLabelInput = document.getElementById('jobItemLabelInput');
+      const jobQtyInput = document.getElementById('jobItemQtyInput');
+      if (jobLabelInput) jobLabelInput.value = '';
+      if (jobQtyInput) jobQtyInput.value = '1';
+
       renderBracketOptions();
       renderBracketReference();
       renderSensorOptions();
       updateInputHints();
       renderTable();
       calculatePrice(false);
+    }
+
+    document.getElementById('resetBtn').addEventListener('click', function() {
+      resetCalculatorConfiguration(false);
     });
 
     document.getElementById('widthInput').addEventListener('input', function() {
@@ -8722,7 +7250,7 @@
         syncSharedOztechRefs();
         const statusEl = document.getElementById('settingsStatusPill');
         if (statusEl) {
-          statusEl.textContent = '✓ 사용자 수정 가격표 적용 중 (Saved in Browser)';
+          statusEl.textContent = '✓ Custom Price Data Active (Saved in Browser)';
         }
         return true;
       } catch (err) {
@@ -8738,10 +7266,10 @@
         const statusEl = document.getElementById('settingsStatusPill');
         if (statusEl) {
           const nowStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-          statusEl.textContent = `✓ 자동 저장됨 (${nowStr})`;
+          statusEl.textContent = `✓ Auto-Saved (${nowStr})`;
         }
         if (showMsg) {
-          alert('✅ 수정된 가격 테이블이 브라우저에 저장되었으며 계산기에 즉시 반영되었습니다.');
+          alert('✅ Updated price tables saved to browser and applied to the calculator.');
         }
       } catch (err) {
         console.error('Failed to save custom DB:', err);
@@ -8766,16 +7294,114 @@
     }
 
     const SETTINGS_PW_STORAGE_KEY = 'system_price_calc_admin_pw_v1';
+    const DEALER_ACCOUNTS_STORAGE_KEY = 'system_price_calc_dealers_v1';
     let isSettingsUnlocked = false;
+    let activeAccessRole = null; // 'admin' | 'dealer' | null
+    let activeDealerInfo = null; // { code: '...', name: '...' }
+    let dealerAccounts = [];
+    let pendingProtectedTargetMode = 'settings';
 
     function getAdminPassword() {
       return localStorage.getItem(SETTINGS_PW_STORAGE_KEY) || '1234';
     }
 
-    function openSettingsPasswordModal() {
+    function loadDealersFromLocal() {
+      try {
+        const raw = localStorage.getItem(DEALER_ACCOUNTS_STORAGE_KEY);
+        dealerAccounts = raw ? JSON.parse(raw) : [];
+        if (!Array.isArray(dealerAccounts)) dealerAccounts = [];
+      } catch (e) {
+        dealerAccounts = [];
+      }
+    }
+
+    function saveDealersToLocal() {
+      try {
+        localStorage.setItem(DEALER_ACCOUNTS_STORAGE_KEY, JSON.stringify(dealerAccounts));
+      } catch (e) {
+        console.error('Failed to save dealer accounts locally:', e);
+      }
+    }
+
+    async function pushDealersAndAuthToCloud() {
+      if (!isSupabaseConfigured()) return;
+      try {
+        await supabaseFetch('app_settings?on_conflict=id', {
+          method: 'POST',
+          headers: { 'Prefer': 'resolution=merge-duplicates,return=minimal' },
+          body: JSON.stringify({
+            id: 'dealer_accounts_v1',
+            payload: {
+              masterPw: getAdminPassword(),
+              dealers: dealerAccounts
+            },
+            updated_at: new Date().toISOString()
+          })
+        });
+      } catch (e) {
+        console.warn('Could not sync dealer accounts to cloud:', e);
+      }
+    }
+
+    async function pullDealersAndAuthFromCloud() {
+      if (!isSupabaseConfigured()) return;
+      try {
+        const rows = await supabaseFetch('app_settings?id=eq.dealer_accounts_v1&select=*');
+        if (Array.isArray(rows) && rows.length > 0 && rows[0].payload) {
+          const p = rows[0].payload;
+          if (Array.isArray(p.dealers)) {
+            dealerAccounts = p.dealers;
+            saveDealersToLocal();
+          }
+          if (p.masterPw && typeof p.masterPw === 'string') {
+            localStorage.setItem(SETTINGS_PW_STORAGE_KEY, p.masterPw);
+          }
+        }
+      } catch (e) {
+        console.warn('Could not pull dealer accounts from cloud:', e);
+      }
+    }
+
+    function resolveAccessCode(rawInput) {
+      const entered = String(rawInput || '').trim();
+      if (!entered) return null;
+      if (entered === getAdminPassword()) {
+        return { role: 'admin', code: 'ADMIN', name: 'HQ Master Admin' };
+      }
+      const matchedDealer = dealerAccounts.find(
+        d => String(d.code || '').trim().toLowerCase() === entered.toLowerCase()
+      );
+      if (matchedDealer) {
+        return { role: 'dealer', code: matchedDealer.code, name: matchedDealer.name };
+      }
+      return null;
+    }
+
+    function openSettingsPasswordModal(targetMode = 'settings') {
+      pendingProtectedTargetMode = targetMode;
       const modal = document.getElementById('settingsPasswordModal');
+      const titleEl = document.getElementById('settingsPwModalTitle');
+      const descEl = document.getElementById('settingsPwModalDesc');
+      const labelEl = document.getElementById('settingsPasswordInputLabel');
       const inp = document.getElementById('settingsPasswordInput');
       const err = document.getElementById('settingsPwErrorMsg');
+
+      if (targetMode === 'settings') {
+        if (titleEl) titleEl.textContent = '🔒 Master Admin Password Required';
+        if (descEl) {
+          descEl.innerHTML = `Only the <strong>Master Admin Password</strong> can unlock Price Settings & Dealer Code Management.<br><span style="font-size: 0.74rem; color: #64748b;">(Dealer access codes cannot open Price Settings)</span>`;
+        }
+        if (labelEl) labelEl.textContent = 'Master Admin Password';
+        if (inp) inp.placeholder = 'Enter Master Admin password';
+      } else {
+        if (titleEl) titleEl.textContent = '🔒 Company Access Code Required';
+        if (descEl) {
+          descEl.innerHTML = `Enter your assigned <strong>Dealer Access Code</strong> to view your company's quotes, or enter the <strong>Master Admin Password</strong>.<br><span style="font-size: 0.74rem; color: #64748b;">(Each dealer can only view their own company's saved quotes)</span>`;
+        }
+        if (labelEl) labelEl.textContent = 'Dealer Access Code / Admin Password';
+        if (inp) inp.placeholder = 'Enter dealer code or admin password';
+      }
+
       if (err) err.style.display = 'none';
       if (inp) inp.value = '';
       if (modal) modal.classList.add('open');
@@ -8787,52 +7413,98 @@
       if (modal) modal.classList.remove('open');
     }
 
-    function verifySettingsPassword() {
+    async function verifySettingsPassword() {
       const inp = document.getElementById('settingsPasswordInput');
       const err = document.getElementById('settingsPwErrorMsg');
-      const entered = inp ? inp.value : '';
-      if (entered === getAdminPassword()) {
-        isSettingsUnlocked = true;
-        closeSettingsPasswordModal();
-        switchPageMode('settings', true);
-      } else {
-        if (err) err.style.display = 'block';
-        if (inp) {
-          inp.select();
-          inp.focus();
-        }
+      const entered = inp ? inp.value.trim() : '';
+
+      // Pull latest dealer codes from Supabase first if configured
+      if (isSupabaseConfigured()) {
+        await pullDealersAndAuthFromCloud();
       }
+
+      const resolved = resolveAccessCode(entered);
+      if (!resolved) {
+        if (err) {
+          err.textContent = '⚠️ Invalid access code or password. Please check with HQ.';
+          err.style.display = 'block';
+        }
+        if (inp) { inp.select(); inp.focus(); }
+        return;
+      }
+
+      if (pendingProtectedTargetMode === 'settings' && resolved.role !== 'admin') {
+        if (err) {
+          err.textContent = '⚠️ Dealer codes cannot access Price Settings. Master Admin password is required.';
+          err.style.display = 'block';
+        }
+        if (inp) { inp.select(); inp.focus(); }
+        return;
+      }
+
+      isSettingsUnlocked = true;
+      activeAccessRole = resolved.role;
+      activeDealerInfo = { code: resolved.code, name: resolved.name };
+      updateQuoteCountBadge();
+      closeSettingsPasswordModal();
+      switchPageMode(pendingProtectedTargetMode || 'settings', true);
     }
 
     function switchPageMode(mode, bypassPwCheck = false) {
       const calcView = document.getElementById('calculatorPageView');
+      const quotesView = document.getElementById('quotesPageView');
       const settingsView = document.getElementById('settingsPageView');
       const navCalcBtn = document.getElementById('navCalcBtn');
+      const navQuotesBtn = document.getElementById('navQuotesBtn');
       const navSettingsBtn = document.getElementById('navSettingsBtn');
 
       if (mode === 'settings') {
-        if (!bypassPwCheck && !isSettingsUnlocked) {
-          openSettingsPasswordModal();
+        if (!bypassPwCheck && (!isSettingsUnlocked || activeAccessRole !== 'admin')) {
+          openSettingsPasswordModal('settings');
           return;
         }
         calcView.style.display = 'none';
+        if (quotesView) quotesView.style.display = 'none';
         settingsView.style.display = 'block';
         navCalcBtn.classList.remove('active');
+        if (navQuotesBtn) navQuotesBtn.classList.remove('active');
         navSettingsBtn.classList.add('active');
         renderSettingsEditor();
+      } else if (mode === 'quotes') {
+        if (!bypassPwCheck && (!isSettingsUnlocked || !activeAccessRole)) {
+          openSettingsPasswordModal('quotes');
+          return;
+        }
+        calcView.style.display = 'none';
+        if (quotesView) quotesView.style.display = 'block';
+        settingsView.style.display = 'none';
+        navCalcBtn.classList.remove('active');
+        if (navQuotesBtn) navQuotesBtn.classList.add('active');
+        navSettingsBtn.classList.remove('active');
+        updateQuotesRoleUI();
+        renderSavedQuotesList();
+        syncQuotesFromSupabase(false);
       } else {
-        isSettingsUnlocked = false; // Re-lock when returning to calculator
+        isSettingsUnlocked = false;
+        activeAccessRole = null;
+        activeDealerInfo = null;
+        updateQuoteCountBadge();
         calcView.style.display = 'block';
+        if (quotesView) quotesView.style.display = 'none';
         settingsView.style.display = 'none';
         navCalcBtn.classList.add('active');
+        if (navQuotesBtn) navQuotesBtn.classList.remove('active');
         navSettingsBtn.classList.remove('active');
         refreshCalculatorFromDb();
       }
     }
 
     document.getElementById('navCalcBtn').addEventListener('click', () => switchPageMode('calc'));
+    document.getElementById('navQuotesBtn')?.addEventListener('click', () => switchPageMode('quotes'));
     document.getElementById('navSettingsBtn').addEventListener('click', () => switchPageMode('settings'));
     document.getElementById('lockSettingsBtn')?.addEventListener('click', () => switchPageMode('calc'));
+    document.getElementById('lockQuotesBtn')?.addEventListener('click', () => switchPageMode('calc'));
+    document.getElementById('switchDealerCodeBtn')?.addEventListener('click', () => openSettingsPasswordModal('quotes'));
 
     document.getElementById('confirmSettingsPwBtn')?.addEventListener('click', verifySettingsPassword);
     document.getElementById('cancelSettingsPwBtn')?.addEventListener('click', closeSettingsPasswordModal);
@@ -8871,30 +7543,120 @@
       if (e.target === this) closeChangePwModal();
     });
 
-    document.getElementById('saveChangePwBtn')?.addEventListener('click', function() {
+    document.getElementById('saveChangePwBtn')?.addEventListener('click', async function() {
       const curPw = document.getElementById('currentPwInput').value;
       const newPw = document.getElementById('newPwInput').value.trim();
       const confPw = document.getElementById('confirmNewPwInput').value.trim();
 
       if (curPw !== getAdminPassword()) {
-        changePwErr.textContent = '⚠️ 현재 암호가 일치하지 않습니다.';
+        changePwErr.textContent = '⚠️ Current master password is incorrect.';
         changePwErr.style.display = 'block';
         return;
       }
       if (!newPw || newPw.length < 2) {
-        changePwErr.textContent = '⚠️ 새 암호를 2자 이상 입력해주세요.';
+        changePwErr.textContent = '⚠️ New password must be at least 2 characters.';
         changePwErr.style.display = 'block';
         return;
       }
       if (newPw !== confPw) {
-        changePwErr.textContent = '⚠️ 새 암호와 확인 암호가 일치하지 않습니다.';
+        changePwErr.textContent = '⚠️ New password and confirmation do not match.';
         changePwErr.style.display = 'block';
         return;
       }
 
       localStorage.setItem(SETTINGS_PW_STORAGE_KEY, newPw);
+      await pushDealersAndAuthToCloud();
       closeChangePwModal();
-      alert('✅ 관리자 암호가 성공적으로 변경되었습니다.');
+      alert('✅ Master Admin password updated and synced successfully.');
+    });
+
+    // Dealer Access Codes Manager Modal Logic (Master Admin)
+    function renderDealerManagerList() {
+      const listEl = document.getElementById('dmDealerListContainer');
+      if (!listEl) return;
+      if (dealerAccounts.length === 0) {
+        listEl.innerHTML = `<div style="text-align:center; padding: 1.2rem; color: #64748b; background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 8px; font-size: 0.78rem;">
+          No dealer codes registered yet. Add a company name and access code above.
+        </div>`;
+        return;
+      }
+      listEl.innerHTML = dealerAccounts.map((d, idx) => {
+        const qCount = savedQuotes.filter(
+          q => String(q.form_state?.dealerCode || '').toLowerCase() === String(d.code || '').toLowerCase()
+        ).length;
+        return `<div style="display:flex; align-items:center; justify-content:space-between; gap:0.5rem; padding:0.5rem 0.7rem; background:#ffffff; border:1px solid #e2e8f0; border-radius:8px; font-size:0.78rem;">
+          <div>
+            <strong style="color:#0f172a;">🏢 ${escapeHtml(d.name)}</strong>
+            <span style="margin-left:0.4rem; background:#eff6ff; color:#1d4ed8; border:1px solid #bfdbfe; padding:0.1rem 0.45rem; border-radius:5px; font-family:monospace; font-weight:800;">🔑 ${escapeHtml(d.code)}</span>
+            <span style="margin-left:0.35rem; color:#64748b; font-size:0.72rem;">(${qCount} quote${qCount === 1 ? '' : 's'})</span>
+          </div>
+          <button type="button" class="settings-action-btn danger" data-dm-del="${idx}" style="padding:0.25rem 0.55rem; font-size:0.7rem;">Delete</button>
+        </div>`;
+      }).join('');
+    }
+
+    function openDealerManagerModal() {
+      renderDealerManagerList();
+      const nameInp = document.getElementById('dmDealerNameInput');
+      const codeInp = document.getElementById('dmDealerCodeInput');
+      if (nameInp) nameInp.value = '';
+      if (codeInp) codeInp.value = '';
+      document.getElementById('dealerManagerModal')?.classList.add('open');
+      setTimeout(() => nameInp?.focus(), 50);
+    }
+
+    function closeDealerManagerModal() {
+      document.getElementById('dealerManagerModal')?.classList.remove('open');
+    }
+
+    document.getElementById('openDealerManagerModalBtn')?.addEventListener('click', openDealerManagerModal);
+    document.getElementById('closeDealerManagerBtn')?.addEventListener('click', closeDealerManagerModal);
+    document.getElementById('dealerManagerModal')?.addEventListener('click', function(e) {
+      if (e.target === this) closeDealerManagerModal();
+    });
+
+    document.getElementById('dmAddDealerBtn')?.addEventListener('click', async function() {
+      const nameInp = document.getElementById('dmDealerNameInput');
+      const codeInp = document.getElementById('dmDealerCodeInput');
+      const name = (nameInp?.value || '').trim();
+      const code = (codeInp?.value || '').trim();
+
+      if (!name || !code) {
+        alert('Please enter both Company / Dealer Name and Access Code.');
+        return;
+      }
+      if (code === getAdminPassword()) {
+        alert('⚠️ Dealer Access Code cannot be identical to the Master Admin Password.');
+        return;
+      }
+
+      const existingIdx = dealerAccounts.findIndex(
+        d => d.code.toLowerCase() === code.toLowerCase() || d.name.toLowerCase() === name.toLowerCase()
+      );
+      if (existingIdx !== -1) {
+        dealerAccounts[existingIdx] = { name, code, updatedAt: new Date().toISOString() };
+      } else {
+        dealerAccounts.push({ name, code, createdAt: new Date().toISOString() });
+      }
+
+      saveDealersToLocal();
+      renderDealerManagerList();
+      await pushDealersAndAuthToCloud();
+      if (nameInp) nameInp.value = '';
+      if (codeInp) codeInp.value = '';
+    });
+
+    document.getElementById('dmDealerListContainer')?.addEventListener('click', async function(e) {
+      const btn = e.target.closest('button[data-dm-del]');
+      if (!btn) return;
+      const idx = parseInt(btn.dataset.dmDel, 10);
+      const target = dealerAccounts[idx];
+      if (!target) return;
+      if (!confirm(`Remove dealer access code "${target.code}" for "${target.name}"?`)) return;
+      dealerAccounts.splice(idx, 1);
+      saveDealersToLocal();
+      renderDealerManagerList();
+      await pushDealersAndAuthToCloud();
     });
 
     function populateSettingsFilters() {
@@ -8961,50 +7723,50 @@
 
       let options = [];
       if (activeSettingsCategory === 'FAA') {
-        options.push({ value: 'complete', label: '1. Complete System 기본 가격표 (Projection × Width)' });
-        options.push({ value: 'kit', label: '2. KIT Only 기본 가격표 (Projection × Width)' });
-        options.push({ value: 'powderCoat', label: '3. 파우더코팅 가격표 (Standard / Non-Standard by Width)' });
+        options.push({ value: 'complete', label: '1. Complete System Base Matrix (Projection × Width)' });
+        options.push({ value: 'kit', label: '2. KIT Only Base Matrix (Projection × Width)' });
+        options.push({ value: 'powderCoat', label: '3. Powder Coat Prices (Standard / Non-Standard by Width)' });
         if (product && product.fabricTray) {
-          options.push({ value: 'fabricTray', label: '4. 패브릭 트레이 가격표 (Fabric Tray by Width)' });
+          options.push({ value: 'fabricTray', label: '4. Fabric Tray Prices (by Width)' });
         }
-        options.push({ value: 'faaMotors', label: '5. FAA 공통 모터 가격표 (ACE / Alpha / Becker / Somfy)' });
-        options.push({ value: 'faaLed', label: '6. FAA 공통 LED 가격표 (ARM LED / Maxi LED)' });
+        options.push({ value: 'faaMotors', label: '5. Shared FAA Motor Prices (ACE / Alpha / Becker / Somfy)' });
+        options.push({ value: 'faaLed', label: '6. Shared FAA LED Prices (ARM LED / Maxi LED)' });
       } else if (activeSettingsCategory === 'DROP A') {
-        options.push({ value: 'prices', label: '1. Manual Gear 기본 가격표 (Drop × Width)' });
+        options.push({ value: 'prices', label: '1. Manual Gear Base Matrix (Drop × Width)' });
         if (product && product.springPrices) {
-          options.push({ value: 'springPrices', label: '2. Spring 작동 가격표 (Drop × Width)' });
+          options.push({ value: 'springPrices', label: '2. Spring Operation Matrix (Drop × Width)' });
         }
         if (product && product.motorisedPrices) {
-          options.push({ value: 'motorisedPrices', label: '3. Motorised (ACE 포함) 가격표 (Drop × Width)' });
+          options.push({ value: 'motorisedPrices', label: '3. Motorised (ACE Included) Matrix (Drop × Width)' });
         }
         if (product && product.motors) {
-          options.push({ value: 'dropAMotors', label: '4. 제품별 모터 단가 (Motors)' });
+          options.push({ value: 'dropAMotors', label: '4. Model Motor Prices (by Width)' });
         }
         if (product && product.powderCoat) {
-          options.push({ value: 'dropAPowderCoat', label: '5. 파우더코팅 단가 / 요율 (Powder Coat)' });
+          options.push({ value: 'dropAPowderCoat', label: '5. Powder Coat Prices / Multiplier Rates' });
         }
       } else if (activeSettingsCategory === 'OZTECH') {
-        options.push({ value: 'single', label: '1. SINGLE MODULE (1BAY) 가격표 (Projection × Width)' });
-        options.push({ value: 'double', label: '2. DOUBLE MODULE (2BAY) 가격표 (Projection × Width)' });
-        options.push({ value: 'triple', label: '3. TRIPLE MODULE (3BAY) 가격표 (Projection × Width)' });
+        options.push({ value: 'single', label: '1. SINGLE MODULE (1BAY) Matrix (Projection × Width)' });
+        options.push({ value: 'double', label: '2. DOUBLE MODULE (2BAY) Matrix (Projection × Width)' });
+        options.push({ value: 'triple', label: '3. TRIPLE MODULE (3BAY) Matrix (Projection × Width)' });
         if (product && product.additionalRafter) {
-          options.push({ value: 'additionalRafter', label: '4. PLAZA Additional Rafter 가격표 (by Projection)' });
+          options.push({ value: 'additionalRafter', label: '4. PLAZA Additional Rafter Prices (by Projection)' });
         }
-        options.push({ value: 'oztechFullPc', label: '5. OZTECH 공통 FULL 파우더코팅 가격표 & Duratec 요율' });
-        options.push({ value: 'oztechUniled', label: '6. OZTECH 공통 Standard LED (UNILED) 가격표 & 디머' });
-        options.push({ value: 'oztechMaxiLed', label: '7. OZTECH 공통 MAXI LED 가격표 & 디머' });
-        options.push({ value: 'oztechGutterLed', label: '8. OZTECH 공통 Full Width LED Gutter 가격표' });
+        options.push({ value: 'oztechFullPc', label: '5. Shared OZTECH FULL Powder Coat Matrix & Duratec Rate' });
+        options.push({ value: 'oztechUniled', label: '6. Shared OZTECH Standard LED (UNILED) Matrix & Dimmer' });
+        options.push({ value: 'oztechMaxiLed', label: '7. Shared OZTECH MAXI LED Matrix & Dimmer' });
+        options.push({ value: 'oztechGutterLed', label: '8. Shared OZTECH Full Width LED Gutter Prices' });
       } else if (activeSettingsCategory === 'LOUVRE') {
-        options.push({ value: 'prices', label: '1. 루버 기본 시스템 가격표 (Projection × Width)' });
-        options.push({ value: 'ledPrices', label: '2. Gutter LED 가격표 (Projection × Width)' });
-        options.push({ value: 'louvreMotors', label: '3. 루버 모터 추가금 설정 (Motors)' });
+        options.push({ value: 'prices', label: '1. Louvre Base System Matrix (Projection × Width)' });
+        options.push({ value: 'ledPrices', label: '2. Gutter LED Matrix (Projection × Width)' });
+        options.push({ value: 'louvreMotors', label: '3. Louvre Motor Surcharges' });
       } else if (activeSettingsCategory === 'COMMON') {
         options = [
-          { value: 'fabrics', label: '1. FAA / DROP A 원단 단가표 (Fabrics $/sqm)' },
-          { value: 'oztechFabrics', label: '2. OZTECH 루프 원단 단가 및 원단폭 (OZTECH Fabrics $/sqm & Width)' },
-          { value: 'sensorAndRemotes', label: '3. 모터 브랜드별 센서 & 리모컨 가격표 (Sensors & Remotes)' },
-          { value: 'bracketsAndExtras', label: '4. FAA 브라켓 & 하드웨어 추가옵션 가격표 (Brackets & Extras)' },
-          { value: 'geniusBrackets', label: '5. DROP A (GENIUS) 브라켓 가격표 (Genius Brackets)' }
+          { value: 'fabrics', label: '1. FAA / DROP A Fabric Rates ($/sqm)' },
+          { value: 'oztechFabrics', label: '2. OZTECH Roof Fabric Rates & Widths ($/sqm & mm)' },
+          { value: 'sensorAndRemotes', label: '3. Sensors & Remotes by Motor Brand' },
+          { value: 'bracketsAndExtras', label: '4. FAA Brackets & Hardware Extras' },
+          { value: 'geniusBrackets', label: '5. DROP A (GENIUS) Brackets' }
         ];
       }
 
@@ -9026,7 +7788,7 @@
       document.getElementById('settingsActiveTableMeta').textContent = meta;
 
       if (!matrixObj) {
-        return `<div style="padding: 2rem; text-align: center; color: var(--text-muted);">이 테이블 데이터가 존재하지 않습니다.</div>`;
+        return `<div style="padding: 2rem; text-align: center; color: var(--text-muted);">No table data available for this selection.</div>`;
       }
 
       let html = `<table class="editable-matrix-table"><thead><tr><th>${rowUnitLabel}</th>`;
@@ -9059,7 +7821,7 @@
         if (tableType === 'complete') {
           container.innerHTML = buildMatrixEditorHtml(
             `📊 ${product.name} — Complete System Price Table`,
-            '단위: USD ($) • 0 입력 시 제작 불가(N/A)',
+            'Unit: AUD ($) • Enter 0 for Unavailable (N/A)',
             product.projections,
             product.widths,
             product.prices
@@ -9071,7 +7833,7 @@
           const kw = product.kitWidths || product.widths;
           container.innerHTML = buildMatrixEditorHtml(
             `📊 ${product.name} — KIT Only Price Table`,
-            '단위: USD ($) • 0 입력 시 제작 불가(N/A)',
+            'Unit: AUD ($) • Enter 0 for Unavailable (N/A)',
             product.projections,
             kw,
             product.kitPrices
@@ -9081,7 +7843,7 @@
         }
         if (tableType === 'powderCoat') {
           document.getElementById('settingsActiveTableTitle').textContent = `🎨 ${product.name} — Powder Coat Price Table`;
-          document.getElementById('settingsActiveTableMeta').textContent = 'Width 구간별 Standard / Non-Standard 파우더코팅 단가 ($)';
+          document.getElementById('settingsActiveTableMeta').textContent = 'Standard / Non-Standard powder coat prices by width bracket ($)';
           const widths = product.widths;
           let html = `<table class="editable-matrix-table"><thead><tr><th>Tier \\ Width</th>`;
           widths.forEach(w => { html += `<th>${w.toLocaleString()} mm</th>`; });
@@ -9113,7 +7875,7 @@
         }
         if (tableType === 'fabricTray' && product.fabricTray) {
           document.getElementById('settingsActiveTableTitle').textContent = `🛠️ ${product.name} — Fabric Tray Price Table`;
-          document.getElementById('settingsActiveTableMeta').textContent = 'Width 구간별 패브릭 트레이 추가 금액 ($)';
+          document.getElementById('settingsActiveTableMeta').textContent = 'Fabric Tray surcharge by width bracket ($)';
           const widths = product.widths;
           let html = `<table class="editable-matrix-table"><thead><tr><th>Option \\ Width</th>`;
           widths.forEach(w => { html += `<th>${w.toLocaleString()} mm</th>`; });
@@ -9136,8 +7898,8 @@
           return;
         }
         if (tableType === 'faaMotors') {
-          document.getElementById('settingsActiveTableTitle').textContent = `⚙️ FAA 공통 — Motor Surcharge Table (by Width)`;
-          document.getElementById('settingsActiveTableMeta').textContent = 'FAA 표준 11개 Width 구간별 모터 추가 금액 ($)';
+          document.getElementById('settingsActiveTableTitle').textContent = `⚙️ Shared FAA — Motor Surcharge Table (by Width)`;
+          document.getElementById('settingsActiveTableMeta').textContent = 'Motor surcharges across the 11 standard FAA width brackets ($)';
           const stdWidths = DB.products.titan_open.widths;
           let html = `<table class="editable-matrix-table"><thead><tr><th>Motor Brand \\ Width</th>`;
           stdWidths.forEach(w => { html += `<th>${w.toLocaleString()} mm</th>`; });
@@ -9165,8 +7927,8 @@
           return;
         }
         if (tableType === 'faaLed') {
-          document.getElementById('settingsActiveTableTitle').textContent = `💡 FAA 공통 — LED Lighting Price Table (by Width)`;
-          document.getElementById('settingsActiveTableMeta').textContent = 'FAA 표준 11개 Width 구간별 ARM LED / Maxi LED 단가 ($)';
+          document.getElementById('settingsActiveTableTitle').textContent = `💡 Shared FAA — LED Lighting Price Table (by Width)`;
+          document.getElementById('settingsActiveTableMeta').textContent = 'ARM LED / Maxi LED prices across the 11 standard FAA width brackets ($)';
           const stdWidths = DB.products.titan_open.widths;
           let html = `<table class="editable-matrix-table"><thead><tr><th>LED & Motor \\ Width</th>`;
           stdWidths.forEach(w => { html += `<th>${w.toLocaleString()} mm</th>`; });
@@ -9204,13 +7966,13 @@
         if (tableType === 'prices' || tableType === 'springPrices' || tableType === 'motorisedPrices') {
           const mat = product[tableType];
           const labelMap = {
-            prices: 'Manual Gear 기본 가격표',
-            springPrices: 'Spring 작동 가격표',
-            motorisedPrices: 'Motorised (ACE 포함) 가격표'
+            prices: 'Manual Gear Base Matrix',
+            springPrices: 'Spring Operation Matrix',
+            motorisedPrices: 'Motorised (ACE Included) Matrix'
           };
           container.innerHTML = buildMatrixEditorHtml(
             `📊 ${product.name} — ${labelMap[tableType]}`,
-            '단위: USD ($) • 행: Drop(mm) / 열: Width(mm)',
+            'Unit: AUD ($) • Rows: Drop (mm) / Cols: Width (mm)',
             product.projections,
             product.widths,
             mat,
@@ -9221,7 +7983,7 @@
         }
         if (tableType === 'dropAMotors' && product.motors) {
           document.getElementById('settingsActiveTableTitle').textContent = `⚙️ ${product.name} — Motor Prices`;
-          document.getElementById('settingsActiveTableMeta').textContent = '모터 브랜드별 추가 금액 ($)';
+          document.getElementById('settingsActiveTableMeta').textContent = 'Motor surcharges by brand and width bracket ($)';
           const widths = product.widths;
           let html = `<table class="editable-matrix-table"><thead><tr><th>Motor Brand</th>`;
           widths.forEach(w => { html += `<th>${w.toLocaleString()} mm</th>`; });
@@ -9250,7 +8012,7 @@
         }
         if (tableType === 'dropAPowderCoat' && product.powderCoat) {
           document.getElementById('settingsActiveTableTitle').textContent = `🎨 ${product.name} — Powder Coat Settings`;
-          document.getElementById('settingsActiveTableMeta').textContent = '파우더코팅 단가 또는 Base 대비 요율 수정';
+          document.getElementById('settingsActiveTableMeta').textContent = 'Powder coat flat prices or Base multiplier rates';
           if (product.powderCoat.mode === 'multiplier') {
             let html = `<table class="editable-matrix-table"><thead><tr><th>Option Key</th><th>Label</th><th>Multiplier Rate (Base × Rate)</th></tr></thead><tbody>`;
             Object.entries(product.powderCoat.options).forEach(([k, optObj]) => {
@@ -9308,7 +8070,7 @@
           const mat = product.modulePrices ? product.modulePrices[tableType] : null;
           container.innerHTML = buildMatrixEditorHtml(
             `📊 ${product.name} — ${modCfg.label} Price Table`,
-            `단위: USD ($) • 행: Projection(mm) / 열: Width(mm)${modelKey === 'oztech_izi_slope_standard' ? ' • (IZI와 가격표 공유됨)' : ''}`,
+            `Unit: AUD ($) • Rows: Projection (mm) / Cols: Width (mm)${modelKey === 'oztech_izi_slope_standard' ? ' • (Shared matrix with IZI)' : ''}`,
             product.projections,
             cols,
             mat
@@ -9318,7 +8080,7 @@
         }
         if (tableType === 'additionalRafter' && product.additionalRafter) {
           document.getElementById('settingsActiveTableTitle').textContent = `🔩 ${product.name} — Additional Rafter Price Table`;
-          document.getElementById('settingsActiveTableMeta').textContent = 'Projection별 Additional Rafter 단가 ($)';
+          document.getElementById('settingsActiveTableMeta').textContent = 'Additional Rafter unit price by Projection ($)';
           let html = `<table class="editable-matrix-table"><thead><tr><th>Projection (mm)</th><th>Additional Rafter Price ($)</th></tr></thead><tbody>`;
           Object.keys(product.additionalRafter).forEach(proj => {
             const val = product.additionalRafter[proj];
@@ -9344,11 +8106,11 @@
           let html = `<div style="padding: 0.75rem 1rem; background:#eff6ff; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:0.75rem;">
             <strong style="font-size:0.82rem;">Duratec Surcharge Rate (Base × Rate):</strong>
             <input type="number" step="0.001" id="ozDuratecRateInput" class="price-cell-input" style="width:100px !important;" value="${pcDb.duratecRate}">
-            <span style="font-size:0.76rem; color:var(--text-muted);">(기본값: 0.128 = 12.8%)</span>
+            <span style="font-size:0.76rem; color:var(--text-muted);">(Default: 0.128 = 12.8%)</span>
           </div>`;
           html += buildMatrixEditorHtml(
-            `🎨 OZTECH 공통 — FULL Powder Coating Price Table`,
-            'FULL 선택 시 추가되는 사이즈별 파우더코팅 단가 ($)',
+            `🎨 Shared OZTECH — FULL Powder Coating Price Table`,
+            'FULL powder coating surcharge by dimensions ($)',
             pcDb.projections,
             pcDb.widths,
             pcDb.prices
@@ -9372,8 +8134,8 @@
             <span style="font-size:0.76rem; color:var(--text-muted);">(${ledDb.dimmerNote})</span>
           </div>`;
           html += buildMatrixEditorHtml(
-            `💡 OZTECH 공통 — ${ledDb.name} Price Table`,
-            '단위: USD ($) • 0 입력 시 해당 사이즈 불가(N/A)',
+            `💡 Shared OZTECH — ${ledDb.name} Price Table`,
+            'Unit: AUD ($) • Enter 0 for Unavailable (N/A)',
             DB.oztechLedLighting.projections,
             DB.oztechLedLighting.widths,
             ledDb.prices
@@ -9390,8 +8152,8 @@
         }
         if (tableType === 'oztechGutterLed') {
           const gDb = DB.oztechLedLighting.gutter_led;
-          document.getElementById('settingsActiveTableTitle').textContent = `💡 OZTECH 공통 — Full Width LED Gutter Price Table`;
-          document.getElementById('settingsActiveTableMeta').textContent = 'Width 구간별 Gutter LED 추가 금액 ($)';
+          document.getElementById('settingsActiveTableTitle').textContent = `💡 Shared OZTECH — Full Width LED Gutter Price Table`;
+          document.getElementById('settingsActiveTableMeta').textContent = 'Gutter LED surcharge by width bracket ($)';
           let html = `<table class="editable-matrix-table"><thead><tr><th>Option \\ Width</th>`;
           DB.oztechLedLighting.widths.forEach(w => { html += `<th>${w.toLocaleString()} mm</th>`; });
           html += `</tr></thead><tbody><tr><td class="row-label-cell">Full Width LED Gutter ($)</td>`;
@@ -9417,7 +8179,7 @@
         if (tableType === 'prices') {
           container.innerHTML = buildMatrixEditorHtml(
             `📊 ${product.name} — System Base Price Table`,
-            '단위: USD ($) • 행: Projection(mm) / 열: Width(mm)',
+            'Unit: AUD ($) • Rows: Projection (mm) / Cols: Width (mm)',
             product.projections,
             product.widths,
             product.prices
@@ -9430,7 +8192,7 @@
           const lp = Object.keys(product.ledPrices || {}).map(Number).sort((a, b) => a - b);
           container.innerHTML = buildMatrixEditorHtml(
             `💡 ${product.name} — Gutter LED Price Table`,
-            '단위: USD ($)',
+            'Unit: AUD ($)',
             lp,
             lw,
             product.ledPrices
@@ -9440,7 +8202,7 @@
         }
         if (tableType === 'louvreMotors' && product.motors) {
           document.getElementById('settingsActiveTableTitle').textContent = `⚙️ ${product.name} — Motor Prices`;
-          document.getElementById('settingsActiveTableMeta').textContent = '모터 브랜드별 추가 금액 ($)';
+          document.getElementById('settingsActiveTableMeta').textContent = 'Motor surcharges by brand and width bracket ($)';
           const widths = product.widths;
           let html = `<table class="editable-matrix-table"><thead><tr><th>Motor Brand</th>`;
           widths.forEach(w => { html += `<th>${w.toLocaleString()} mm</th>`; });
@@ -9469,8 +8231,8 @@
 
       if (activeSettingsCategory === 'COMMON') {
         if (tableType === 'fabrics') {
-          document.getElementById('settingsActiveTableTitle').textContent = `🧵 FAA / DROP A — 원단 단가표 (Fabrics $/sqm)`;
-          document.getElementById('settingsActiveTableMeta').textContent = '단위: $/sqm';
+          document.getElementById('settingsActiveTableTitle').textContent = `🧵 FAA / DROP A — Fabric Rates ($/sqm)`;
+          document.getElementById('settingsActiveTableMeta').textContent = 'Unit: $/sqm';
           let html = `<table class="editable-matrix-table"><thead><tr><th>Category</th><th>Fabric Name</th><th>Rate ($/sqm)</th></tr></thead><tbody>`;
           Object.entries(DB.fabrics).forEach(([fKey, fObj]) => {
             html += `<tr>
@@ -9492,8 +8254,8 @@
           return;
         }
         if (tableType === 'oztechFabrics') {
-          document.getElementById('settingsActiveTableTitle').textContent = `🧵 OZTECH — 루프 원단 단가 및 원단폭 (OZTECH Fabrics)`;
-          document.getElementById('settingsActiveTableMeta').textContent = '단위: 원단폭(mm) 및 단가($/sqm)';
+          document.getElementById('settingsActiveTableTitle').textContent = `🧵 OZTECH — Roof Fabric Rates & Widths`;
+          document.getElementById('settingsActiveTableMeta').textContent = 'Unit: Fabric Width (mm) & Rate ($/sqm)';
           let html = `<table class="editable-matrix-table"><thead><tr><th>Category</th><th>Fabric Name</th><th>Fabric Width (mm)</th><th>Rate ($/sqm)</th></tr></thead><tbody>`;
           Object.entries(DB.oztechFabrics).forEach(([fKey, fObj]) => {
             html += `<tr>
@@ -9518,8 +8280,8 @@
           return;
         }
         if (tableType === 'sensorAndRemotes') {
-          document.getElementById('settingsActiveTableTitle').textContent = `📡 모터 브랜드별 센서 & 리모컨 가격표 (Sensors & Remotes)`;
-          document.getElementById('settingsActiveTableMeta').textContent = '단위: USD ($)';
+          document.getElementById('settingsActiveTableTitle').textContent = `📡 Sensors & Remotes by Motor Brand`;
+          document.getElementById('settingsActiveTableMeta').textContent = 'Unit: AUD ($)';
           let html = `<table class="editable-matrix-table"><thead><tr><th>Motor Brand</th><th>Item Name</th><th>Price ($)</th></tr></thead><tbody>`;
           Object.entries(DB.sensorAndRemotes).forEach(([brand, list]) => {
             list.forEach((item, idx) => {
@@ -9545,9 +8307,9 @@
         if (tableType === 'bracketsAndExtras' || tableType === 'geniusBrackets') {
           const targetArr = DB[tableType];
           document.getElementById('settingsActiveTableTitle').textContent = tableType === 'bracketsAndExtras'
-            ? `🔩 FAA 브라켓 & 하드웨어 추가옵션 가격표`
-            : `🔩 DROP A (GENIUS) 브라켓 가격표`;
-          document.getElementById('settingsActiveTableMeta').textContent = '단위: USD ($)';
+            ? `🔩 FAA Brackets & Hardware Extras`
+            : `🔩 DROP A (GENIUS) Brackets`;
+          document.getElementById('settingsActiveTableMeta').textContent = 'Unit: AUD ($)';
           let html = `<table class="editable-matrix-table"><thead><tr><th>ID</th><th>Bracket / Extra Name</th><th>Unit Price ($)</th></tr></thead><tbody>`;
           targetArr.forEach((item, idx) => {
             html += `<tr>
@@ -9616,7 +8378,7 @@
       const mode = document.getElementById('bulkAdjustMode').value;
       const rawVal = parseFloat(document.getElementById('bulkAdjustValue').value);
       if (isNaN(rawVal) || rawVal === 0) {
-        alert('일괄 적용할 퍼센트(%) 또는 금액($)을 입력해주세요.');
+        alert('Please enter a non-zero percentage (%) or dollar amount ($) to apply.');
         return;
       }
       const inputs = document.querySelectorAll('#settingsEditorContainer .price-cell-input');
@@ -9635,7 +8397,7 @@
         inp.dispatchEvent(new Event('input'));
         count++;
       });
-      alert(`✅ 현재 표시된 테이블의 ${count}개 항목에 일괄 조정이 적용되었습니다.`);
+      alert(`✅ Bulk adjustment applied to ${count} cells in the active table.`);
     });
 
     // Save Button
@@ -9669,9 +8431,9 @@
           saveCustomDbToStorage();
           renderSettingsEditor();
           refreshCalculatorFromDb();
-          alert('✅ JSON 가격 데이터 파일을 성공적으로 불러와 적용했습니다.');
+          alert('✅ JSON price database imported and applied successfully.');
         } catch (err) {
-          alert('⚠️ 유효한 JSON 파일이 아닙니다.');
+          alert('⚠️ Invalid JSON file.');
         }
       };
       reader.readAsText(file);
@@ -9680,16 +8442,1568 @@
 
     // Reset to Factory Default Button
     document.getElementById('resetDefaultDbBtn').addEventListener('click', function() {
-      if (!confirm('모든 가격 테이블과 옵션 단가를 처음 초기값으로 복원하시겠습니까?')) return;
+      if (!confirm('Reset all price tables and option rates back to factory defaults?')) return;
       localStorage.removeItem(CUSTOM_DB_STORAGE_KEY);
       deepMergeDb(DB, JSON.parse(JSON.stringify(DEFAULT_DB_SNAPSHOT)));
       syncSharedOztechRefs();
       const statusEl = document.getElementById('settingsStatusPill');
-      if (statusEl) statusEl.textContent = '✓ 초기 기본 데이터로 복원됨';
+      if (statusEl) statusEl.textContent = '✓ Factory Default Data Restored';
       renderSettingsEditor();
       refreshCalculatorFromDb();
-      alert('✅ 모든 가격표가 초기 기본값으로 복원되었습니다.');
+      alert('✅ All price tables have been restored to factory defaults.');
     });
+
+    // =========================================================================
+    // SAVED QUOTES & SUPABASE CLOUD DB INTEGRATION MODULE
+    // =========================================================================
+    const QUOTES_STORAGE_KEY = 'system_price_calc_saved_quotes_v1';
+    const SUPABASE_CONFIG_KEY = 'system_price_calc_supabase_cfg_v1';
+    const LAST_AUTHOR_KEY = 'system_price_calc_last_author_v1';
+
+    // Default Supabase credentials (pre-filled with Project URL & Publishable Key)
+    const DEFAULT_SUPABASE_CONFIG = {
+      url: 'https://qzenlwoqbumyfrjdqqra.supabase.co',
+      anonKey: 'sb_publishable_nkzv-jlVfDOgGKnIPGytPQ_RexxXkp2'
+    };
+
+    let savedQuotes = [];
+    let currentEditingQuoteId = null;
+    let currentDetailModalQuoteId = null;
+    let currentJobItems = [];
+    let currentEditingJobItemIndex = null;
+
+    function normalizeSupabaseUrl(rawUrl) {
+      return String(rawUrl || '')
+        .trim()
+        .replace(/\/+$/, '')
+        .replace(/\/rest\/v1$/i, '');
+    }
+
+    function getSupabaseConfig() {
+      try {
+        const raw = localStorage.getItem(SUPABASE_CONFIG_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (parsed && (parsed.url || parsed.anonKey)) {
+            return {
+              url: normalizeSupabaseUrl(parsed.url || DEFAULT_SUPABASE_CONFIG.url),
+              anonKey: (parsed.anonKey || DEFAULT_SUPABASE_CONFIG.anonKey || '').trim()
+            };
+          }
+        }
+      } catch (e) {}
+      return {
+        url: normalizeSupabaseUrl(DEFAULT_SUPABASE_CONFIG.url),
+        anonKey: (DEFAULT_SUPABASE_CONFIG.anonKey || '').trim()
+      };
+    }
+
+    function isSupabaseConfigured() {
+      const cfg = getSupabaseConfig();
+      return Boolean(cfg.url && cfg.anonKey);
+    }
+
+    function updateCloudStatusUI(customLabel = null, isConnectedOverride = null) {
+      const pill = document.getElementById('cloudDbStatusPill');
+      if (!pill) return;
+      const connected = isConnectedOverride !== null ? isConnectedOverride : isSupabaseConfigured();
+      pill.classList.toggle('connected', connected);
+      if (customLabel) {
+        pill.textContent = customLabel;
+      } else {
+        pill.textContent = connected
+          ? '🟢 Supabase Cloud Connected'
+          : '⚪ Local Mode (Browser Storage)';
+      }
+    }
+
+    function loadQuotesFromLocal() {
+      try {
+        const raw = localStorage.getItem(QUOTES_STORAGE_KEY);
+        savedQuotes = raw ? JSON.parse(raw) : [];
+        if (!Array.isArray(savedQuotes)) savedQuotes = [];
+      } catch (e) {
+        savedQuotes = [];
+      }
+      updateQuoteCountBadge();
+    }
+
+    function saveQuotesToLocal() {
+      try {
+        localStorage.setItem(QUOTES_STORAGE_KEY, JSON.stringify(savedQuotes));
+      } catch (e) {
+        console.error('Failed to save quotes locally:', e);
+      }
+      updateQuoteCountBadge();
+    }
+
+    function getVisibleQuotesForSession() {
+      if (activeAccessRole === 'admin') {
+        return savedQuotes;
+      }
+      if (activeAccessRole === 'dealer' && activeDealerInfo && activeDealerInfo.code) {
+        const targetCode = String(activeDealerInfo.code).trim().toLowerCase();
+        return savedQuotes.filter(
+          q => String(q.form_state?.dealerCode || '').trim().toLowerCase() === targetCode
+        );
+      }
+      return [];
+    }
+
+    function updateQuoteCountBadge() {
+      const badge = document.getElementById('navQuoteCountBadge');
+      if (!badge) return;
+      if (!isSettingsUnlocked || !activeAccessRole) {
+        badge.textContent = '🔒';
+      } else {
+        badge.textContent = getVisibleQuotesForSession().length;
+      }
+    }
+
+    function updateQuotesRoleUI() {
+      const roleBadge = document.getElementById('activeAccessRoleBadge');
+      const sbBtn = document.getElementById('openSupabaseConfigModalBtn');
+      const dealerFilterGrp = document.getElementById('quoteDealerFilterGroup');
+      const dealerFilterSel = document.getElementById('quoteDealerFilter');
+      const filterBar = document.getElementById('quotesFilterBar');
+
+      if (activeAccessRole === 'admin') {
+        if (roleBadge) {
+          roleBadge.textContent = '👑 Master Admin (All Dealers View)';
+          roleBadge.style.background = '#eff6ff';
+          roleBadge.style.color = '#1d4ed8';
+          roleBadge.style.borderColor = '#93c5fd';
+        }
+        if (sbBtn) sbBtn.style.display = 'inline-flex';
+        if (dealerFilterGrp) dealerFilterGrp.style.display = 'block';
+        if (filterBar) filterBar.style.gridTemplateColumns = '1.8fr 1fr 1fr 1fr';
+
+        if (dealerFilterSel) {
+          const prev = dealerFilterSel.value || 'ALL';
+          const dealerMap = new Map();
+          dealerMap.set('ADMIN', '👑 HQ Master Admin');
+          dealerAccounts.forEach(d => {
+            if (d.code) dealerMap.set(d.code.toUpperCase(), `🏢 ${d.name} (${d.code})`);
+          });
+          savedQuotes.forEach(q => {
+            const dc = q.form_state?.dealerCode;
+            const dn = q.form_state?.dealerName;
+            if (dc && !dealerMap.has(String(dc).toUpperCase())) {
+              dealerMap.set(String(dc).toUpperCase(), `🏢 ${dn || dc} (${dc})`);
+            }
+          });
+
+          dealerFilterSel.innerHTML = `<option value="ALL">All Dealers & HQ (${savedQuotes.length})</option>`;
+          dealerMap.forEach((label, codeKey) => {
+            const opt = document.createElement('option');
+            opt.value = codeKey;
+            opt.textContent = label;
+            dealerFilterSel.appendChild(opt);
+          });
+          if (Array.from(dealerFilterSel.options).some(o => o.value === prev)) {
+            dealerFilterSel.value = prev;
+          }
+        }
+      } else if (activeAccessRole === 'dealer' && activeDealerInfo) {
+        if (roleBadge) {
+          roleBadge.textContent = `🏢 Dealer: ${activeDealerInfo.name}`;
+          roleBadge.style.background = '#ecfdf5';
+          roleBadge.style.color = '#047857';
+          roleBadge.style.borderColor = '#6ee7b7';
+        }
+        if (sbBtn) sbBtn.style.display = 'none';
+        if (dealerFilterGrp) dealerFilterGrp.style.display = 'none';
+        if (filterBar) filterBar.style.gridTemplateColumns = '2fr 1fr 1fr';
+      }
+    }
+
+    function generateQuoteNo() {
+      const now = new Date();
+      const yyyy = now.getFullYear();
+      const mm = String(now.getMonth() + 1).padStart(2, '0');
+      const dd = String(now.getDate()).padStart(2, '0');
+      const prefix = `QT-${yyyy}${mm}${dd}-`;
+      const todayQuotes = savedQuotes.filter(q => (q.quote_no || '').startsWith(prefix));
+      const nextNum = String(todayQuotes.length + 1).padStart(3, '0');
+      return `${prefix}${nextNum}`;
+    }
+
+    function parsePriceTextToNumber(txt) {
+      if (!txt) return 0;
+      const cleaned = String(txt).replace(/[^0-9.-]/g, '');
+      const num = parseFloat(cleaned);
+      return isNaN(num) ? 0 : num;
+    }
+
+    function captureVisibleBreakdownItems() {
+      const items = [];
+      document.querySelectorAll('#breakdownBox .breakdown-row').forEach(row => {
+        if (row.style.display === 'none') return;
+        const spans = row.querySelectorAll('span');
+        if (spans.length >= 2) {
+          items.push({
+            label: spans[0].textContent.trim(),
+            priceText: spans[1].textContent.trim()
+          });
+        }
+      });
+      return items;
+    }
+
+    function captureCalculatorFormState() {
+      const sensors = [];
+      document.querySelectorAll('.sensor-checkbox:checked').forEach(cb => sensors.push(cb.value));
+
+      const brackets = [];
+      document.querySelectorAll('.bracket-checkbox:checked').forEach(cb => {
+        const qtyInput = document.getElementById(`qty-${cb.value}`);
+        brackets.push({
+          id: cb.value,
+          qty: parseInt(qtyInput?.value, 10) || 1
+        });
+      });
+
+      return {
+        activeCategory,
+        productSelect: document.getElementById('productSelect')?.value || 'titan_open',
+        supplyTypeSelect: document.getElementById('supplyTypeSelect')?.value || 'complete',
+        dropAGroupSelect: document.getElementById('dropAGroupSelect')?.value || 'GENIUS',
+        dropASubSelect: document.getElementById('dropASubSelect')?.value || 'genius_zip',
+        louvreProductSelect: document.getElementById('louvreProductSelect')?.value || 'grand_louvre',
+        oztechGroupSelect: document.getElementById('oztechGroupSelect')?.value || 'IZI',
+        oztechSubSelect: document.getElementById('oztechSubSelect')?.value || 'oztech_izi_standard',
+        oztechModuleSelect: document.getElementById('oztechModuleSelect')?.value || 'single',
+        oztechOverhangCheck: Boolean(document.getElementById('oztechOverhangCheck')?.checked),
+        oztechFrontHeightInput: document.getElementById('oztechFrontHeightInput')?.value || '2250',
+        oztechBackHeightInput: document.getElementById('oztechBackHeightInput')?.value || '2750',
+        oztechNoPostCheck: Boolean(document.getElementById('oztechNoPostCheck')?.checked),
+        oztechNoPostQty: document.getElementById('oztechNoPostQty')?.value || '2',
+        oztechGutterCoverCheck: Boolean(document.getElementById('oztechGutterCoverCheck')?.checked),
+        louvreNoPostCheck: Boolean(document.getElementById('louvreNoPostCheck')?.checked),
+        louvreNoPostQty: document.getElementById('louvreNoPostQty')?.value || '4',
+        widthInput: document.getElementById('widthInput')?.value || '3800',
+        projSelect: document.getElementById('projSelect')?.value || '2600',
+        projInput: document.getElementById('projInput')?.value || '2000',
+        fabricSelect: document.getElementById('fabricSelect')?.value || '',
+        operationSelect: document.getElementById('operationSelect')?.value || 'manual',
+        motorSelect: document.getElementById('motorSelect')?.value || 'ace',
+        powderCoatSelect: document.getElementById('powderCoatSelect')?.value || '',
+        oztechPcTypeSelect: document.getElementById('oztechPcTypeSelect')?.value || 'frame',
+        ledSelect: document.getElementById('ledSelect')?.value || 'none',
+        oztechGutterLedCheck: Boolean(document.getElementById('oztechGutterLedCheck')?.checked),
+        louvreDimmerSelect: document.getElementById('louvreDimmerSelect')?.value || 'no',
+        fabricTraySelect: document.getElementById('fabricTraySelect')?.value || 'no',
+        discountInput: document.getElementById('discountInput')?.value || '0',
+        onsiteAssemblyCheck: Boolean(document.getElementById('onsiteAssemblyCheck')?.checked),
+        sensors,
+        brackets
+      };
+    }
+
+    function getEnteredProjection() {
+      return activeCategory === 'FAA'
+        ? (parseFloat(document.getElementById('projSelect')?.value) || 0)
+        : (parseFloat(document.getElementById('projInput')?.value) || 0);
+    }
+
+    function getCurrentCalculationSnapshot() {
+      calculatePrice(false);
+      const resultBox = document.getElementById('resultBox');
+      const priceText = document.getElementById('resultPrice')?.textContent || '-';
+      const isValid = resultBox && resultBox.classList.contains('active') && priceText.startsWith('$');
+      const totalPrice = isValid ? parsePriceTextToNumber(priceText) : 0;
+      const product = getCurrentProduct();
+      const rawWidth = parseFloat(document.getElementById('widthInput')?.value) || 0;
+      const rawProj = getEnteredProjection();
+
+      return {
+        isValid,
+        totalPrice,
+        priceText,
+        category: activeCategory,
+        productKey: getCurrentProductKey(),
+        productTitle: document.getElementById('resultProductTag')?.textContent || (product ? product.name : activeCategory),
+        widthMm: rawWidth,
+        projMm: rawProj,
+        summaryBadge: document.getElementById('resultBadge')?.textContent || '',
+        breakdownItems: captureVisibleBreakdownItems(),
+        formState: captureCalculatorFormState()
+      };
+    }
+
+    function getJobGrandTotal(items = currentJobItems) {
+      return (items || []).reduce((sum, it) => {
+        const unit = Number(it.unitPrice) || 0;
+        const qty = Math.max(1, parseInt(it.qty, 10) || 1);
+        return sum + unit * qty;
+      }, 0);
+    }
+
+    function renderJobItemsUI() {
+      const box = document.getElementById('jobItemsBox');
+      const listEl = document.getElementById('jobItemsList');
+      const headerTitle = document.getElementById('jobItemsHeaderTitle');
+      const grandLabel = document.getElementById('jobGrandTotalLabel');
+      const grandVal = document.getElementById('jobGrandTotalValue');
+      const addBtn = document.getElementById('addJobItemBtn');
+      const saveBtn = document.getElementById('openSaveQuoteModalBtn');
+
+      if (addBtn) {
+        addBtn.textContent = currentEditingJobItemIndex !== null
+          ? `✓ Update Item #${currentEditingJobItemIndex + 1}`
+          : '➕ Add Item';
+      }
+
+      if (!box || !listEl) return;
+
+      if (currentJobItems.length === 0) {
+        box.style.display = 'none';
+        listEl.innerHTML = '';
+        if (saveBtn) saveBtn.textContent = '💾 Save Quote';
+        return;
+      }
+
+      box.style.display = 'block';
+      const totalUnits = currentJobItems.reduce((acc, it) => acc + (Math.max(1, parseInt(it.qty, 10) || 1)), 0);
+      const grandTotal = getJobGrandTotal(currentJobItems);
+
+      if (headerTitle) {
+        headerTitle.textContent = `🧾 Current Quote Items (${currentJobItems.length})`;
+      }
+      if (grandLabel) {
+        grandLabel.textContent = `Grand Total (${currentJobItems.length} Line${currentJobItems.length === 1 ? '' : 's'} • ${totalUnits} Unit${totalUnits === 1 ? '' : 's'})`;
+      }
+      if (grandVal) {
+        grandVal.textContent = `$${formatMoney(grandTotal)}`;
+      }
+      if (saveBtn) {
+        saveBtn.textContent = `💾 Save Quote (${currentJobItems.length} Item${currentJobItems.length === 1 ? '' : 's'})`;
+      }
+
+      listEl.innerHTML = currentJobItems.map((it, idx) => {
+        const qty = Math.max(1, parseInt(it.qty, 10) || 1);
+        const lineSub = (Number(it.unitPrice) || 0) * qty;
+        const isEditing = currentEditingJobItemIndex === idx;
+        return `<div class="job-item-row ${isEditing ? 'is-editing-item' : ''}" data-jidx="${idx}">
+          <div class="job-item-left">
+            <div class="job-item-title">
+              <span>#${idx + 1}</span>
+              ${it.itemLabel ? `<span class="job-item-tag">${escapeHtml(it.itemLabel)}</span>` : ''}
+              <span>${escapeHtml(it.productTitle)}</span>
+            </div>
+            <div class="job-item-sub">
+              ${Number(it.widthMm).toLocaleString()} × ${Number(it.projMm).toLocaleString()} mm • Unit $${formatMoney(Number(it.unitPrice) || 0)}
+            </div>
+          </div>
+          <div class="job-item-right">
+            <input type="number" min="1" max="99" class="job-item-qty-input" data-jaction="qty" data-jidx="${idx}" value="${qty}" title="Quantity">
+            <span class="job-item-price">$${formatMoney(lineSub)}</span>
+            <button type="button" class="job-item-mini-btn" data-jaction="edit" data-jidx="${idx}" title="Load into calculator to edit">${isEditing ? 'Editing' : 'Edit'}</button>
+            <button type="button" class="job-item-mini-btn" data-jaction="delete" data-jidx="${idx}" style="color:#dc2626; border-color:#fecaca;" title="Remove item">✕</button>
+          </div>
+        </div>`;
+      }).join('');
+    }
+
+    function addOrUpdateJobItem() {
+      const snap = getCurrentCalculationSnapshot();
+      if (!snap.isValid) {
+        alert('⚠️ Please configure valid dimensions and options before adding an item to the quote.');
+        return;
+      }
+
+      const labelInput = document.getElementById('jobItemLabelInput');
+      const qtyInput = document.getElementById('jobItemQtyInput');
+      const itemLabel = (labelInput?.value || '').trim();
+      const qty = Math.max(1, parseInt(qtyInput?.value, 10) || 1);
+
+      const itemObj = {
+        id: (currentEditingJobItemIndex !== null && currentJobItems[currentEditingJobItemIndex])
+          ? currentJobItems[currentEditingJobItemIndex].id
+          : ('ji_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6)),
+        itemLabel,
+        qty,
+        unitPrice: snap.totalPrice,
+        lineTotal: snap.totalPrice * qty,
+        category: snap.category,
+        productKey: snap.productKey,
+        productTitle: snap.productTitle,
+        widthMm: snap.widthMm,
+        projMm: snap.projMm,
+        summaryBadge: snap.summaryBadge,
+        breakdownItems: snap.breakdownItems,
+        formState: snap.formState
+      };
+
+      if (currentEditingJobItemIndex !== null && currentJobItems[currentEditingJobItemIndex]) {
+        currentJobItems[currentEditingJobItemIndex] = itemObj;
+        currentEditingJobItemIndex = null;
+      } else {
+        currentJobItems.push(itemObj);
+      }
+
+      if (labelInput) labelInput.value = '';
+      if (qtyInput) qtyInput.value = '1';
+      renderJobItemsUI();
+    }
+
+    function updateEditingBannerUI() {
+      const banner = document.getElementById('editingQuoteBanner');
+      const textEl = document.getElementById('editingQuoteBannerText');
+      if (!banner || !textEl) return;
+      if (!currentEditingQuoteId) {
+        banner.style.display = 'none';
+        return;
+      }
+      const q = savedQuotes.find(item => item.id === currentEditingQuoteId);
+      if (!q) {
+        currentEditingQuoteId = null;
+        banner.style.display = 'none';
+        return;
+      }
+      banner.style.display = 'flex';
+      textEl.textContent = `✏️ Editing Quote: ${q.quote_no} (${q.client_name})`;
+    }
+
+    document.getElementById('clearEditingQuoteBtn')?.addEventListener('click', function() {
+      currentEditingQuoteId = null;
+      currentJobItems = [];
+      currentEditingJobItemIndex = null;
+      updateEditingBannerUI();
+      renderJobItemsUI();
+    });
+
+    // Apply a single item's formState back into the calculator controls
+    function applyFormStateToCalculator(st, fallbackCategory = 'FAA') {
+      if (!st) return;
+
+      // 1. Switch category
+      setCategory(st.activeCategory || fallbackCategory || 'FAA');
+
+      // 2. Restore Product Model & Sub-Type per category
+      if (st.activeCategory === 'FAA') {
+        setFaaModel(st.productSelect || 'titan_open', false);
+        setFaaSupplyType(st.supplyTypeSelect || 'complete', true);
+        if (st.projSelect) document.getElementById('projSelect').value = st.projSelect;
+      } else if (st.activeCategory === 'DROP A') {
+        setDropAGroup(st.dropAGroupSelect || 'GENIUS', false);
+        populateDropASubModels();
+        setDropASubModel(st.dropASubSelect || 'genius_zip', false);
+      } else if (st.activeCategory === 'LOUVRE') {
+        setLouvreModel(st.louvreProductSelect || 'grand_louvre', false);
+      } else if (st.activeCategory === 'OZTECH') {
+        setOztechGroup(st.oztechGroupSelect || 'IZI', false);
+        populateOztechSubModels();
+        if (st.oztechSubSelect) {
+          setOztechSubModel(st.oztechSubSelect, false);
+        }
+        if (st.oztechModuleSelect) {
+          document.getElementById('oztechModuleSelect').value = st.oztechModuleSelect;
+        }
+        const ovCheck = document.getElementById('oztechOverhangCheck');
+        if (ovCheck) ovCheck.checked = Boolean(st.oztechOverhangCheck);
+        if (st.oztechFrontHeightInput !== undefined) {
+          document.getElementById('oztechFrontHeightInput').value = st.oztechFrontHeightInput;
+        }
+        if (st.oztechBackHeightInput !== undefined) {
+          document.getElementById('oztechBackHeightInput').value = st.oztechBackHeightInput;
+        }
+        updateOztechModuleHints();
+      }
+
+      // 3. Restore Dimensions
+      if (st.widthInput !== undefined) document.getElementById('widthInput').value = st.widthInput;
+      if (st.projInput !== undefined) document.getElementById('projInput').value = st.projInput;
+
+      // 4. Restore Posts & Gutter Cover
+      const ozNoPostCheck = document.getElementById('oztechNoPostCheck');
+      if (ozNoPostCheck) ozNoPostCheck.checked = Boolean(st.oztechNoPostCheck);
+      if (st.oztechNoPostQty !== undefined) document.getElementById('oztechNoPostQty').value = st.oztechNoPostQty;
+      const ozGutterCover = document.getElementById('oztechGutterCoverCheck');
+      if (ozGutterCover) ozGutterCover.checked = Boolean(st.oztechGutterCoverCheck);
+
+      const lvNoPostCheck = document.getElementById('louvreNoPostCheck');
+      if (lvNoPostCheck) lvNoPostCheck.checked = Boolean(st.louvreNoPostCheck);
+      if (st.louvreNoPostQty !== undefined && document.getElementById('louvreNoPostQty')) {
+        document.getElementById('louvreNoPostQty').value = st.louvreNoPostQty;
+      }
+
+      // 5. Repopulate dynamic dropdowns for current model, then set values
+      populateFabricOptions(false);
+      if (st.fabricSelect) document.getElementById('fabricSelect').value = st.fabricSelect;
+
+      populateOperationOptions(false);
+      if (st.operationSelect) document.getElementById('operationSelect').value = st.operationSelect;
+      populateMotorOptions(false);
+      if (st.motorSelect) {
+        const motorSel = document.getElementById('motorSelect');
+        motorSel.value = st.motorSelect;
+        document.querySelectorAll('#oztechMotorTabs .oztech-motor-btn').forEach(b => {
+          b.classList.toggle('active', b.dataset.motor === st.motorSelect);
+        });
+      }
+
+      populatePowderCoatOptions();
+      if (st.powderCoatSelect) document.getElementById('powderCoatSelect').value = st.powderCoatSelect;
+      if (st.oztechPcTypeSelect) {
+        const ozPcSel = document.getElementById('oztechPcTypeSelect');
+        if (ozPcSel) ozPcSel.value = st.oztechPcTypeSelect;
+      }
+
+      populateLedOptions();
+      if (st.ledSelect) document.getElementById('ledSelect').value = st.ledSelect;
+      updateOztechMainLedUI();
+
+      const ozGutterLedCheck = document.getElementById('oztechGutterLedCheck');
+      if (ozGutterLedCheck) ozGutterLedCheck.checked = Boolean(st.oztechGutterLedCheck);
+      updateOztechGutterLedUI();
+
+      populateDimmerOptions();
+      if (st.louvreDimmerSelect && document.getElementById('louvreDimmerSelect')) {
+        document.getElementById('louvreDimmerSelect').value = st.louvreDimmerSelect;
+      }
+
+      if (st.fabricTraySelect && document.getElementById('fabricTraySelect')) {
+        document.getElementById('fabricTraySelect').value = st.fabricTraySelect;
+      }
+
+      // 6. Restore Sensors & Brackets
+      renderSensorOptions();
+      if (Array.isArray(st.sensors)) {
+        document.querySelectorAll('.sensor-checkbox').forEach(cb => {
+          cb.checked = st.sensors.includes(cb.value);
+          cb.closest('.checkbox-item')?.classList.toggle('checked', cb.checked);
+        });
+      }
+
+      renderBracketOptions();
+      if (Array.isArray(st.brackets)) {
+        const bMap = new Map(st.brackets.map(b => [b.id, b.qty]));
+        document.querySelectorAll('.bracket-checkbox').forEach(cb => {
+          const matchedQty = bMap.get(cb.value);
+          cb.checked = matchedQty !== undefined;
+          cb.closest('.checkbox-item')?.classList.toggle('checked', cb.checked);
+          const qInp = document.getElementById(`qty-${cb.value}`);
+          if (qInp && matchedQty !== undefined) qInp.value = matchedQty;
+        });
+      }
+
+      // 7. Restore Discount & On-Site Assembly
+      if (st.discountInput !== undefined) document.getElementById('discountInput').value = st.discountInput;
+      const onsiteCheck = document.getElementById('onsiteAssemblyCheck');
+      if (onsiteCheck) onsiteCheck.checked = Boolean(st.onsiteAssemblyCheck);
+      updateOnsiteAssemblyUI();
+
+      // 8. Recalculate
+      updateInputHints();
+      renderTable();
+      calculatePrice(false);
+    }
+
+    // Restore a saved quote's complete state (single or multi-item) back into the calculator
+    function loadQuoteIntoCalculator(quote) {
+      if (!quote || !quote.form_state) return;
+      const st = quote.form_state;
+      currentEditingQuoteId = quote.id;
+      currentEditingJobItemIndex = null;
+
+      if (Array.isArray(st.items) && st.items.length > 0) {
+        currentJobItems = JSON.parse(JSON.stringify(st.items));
+        const firstItem = currentJobItems[0];
+        if (firstItem && firstItem.formState) {
+          applyFormStateToCalculator(firstItem.formState, firstItem.category || quote.category);
+        } else {
+          applyFormStateToCalculator(st, quote.category);
+        }
+      } else {
+        currentJobItems = [];
+        applyFormStateToCalculator(st, quote.category);
+      }
+
+      const labelInput = document.getElementById('jobItemLabelInput');
+      const qtyInput = document.getElementById('jobItemQtyInput');
+      if (labelInput) labelInput.value = '';
+      if (qtyInput) qtyInput.value = '1';
+
+      renderJobItemsUI();
+      updateEditingBannerUI();
+      switchPageMode('calc');
+    }
+
+    // Supabase REST API Helper Functions
+    async function supabaseFetch(path, options = {}) {
+      const cfg = getSupabaseConfig();
+      if (!cfg.url || !cfg.anonKey) {
+        throw new Error('Supabase Project URL or API Key is not configured.');
+      }
+      const makeHeaders = (includeBearer) => ({
+        'apikey': cfg.anonKey,
+        ...(includeBearer ? { 'Authorization': `Bearer ${cfg.anonKey}` } : {}),
+        'Content-Type': 'application/json',
+        ...(options.headers || {})
+      });
+
+      let response = await fetch(`${cfg.url}/rest/v1/${path}`, {
+        ...options,
+        headers: makeHeaders(true)
+      });
+
+      // Fallback without Authorization header if non-JWT publishable key was rejected by PostgREST JWT parser
+      if ((response.status === 401 || response.status === 403) && !cfg.anonKey.startsWith('eyJ')) {
+        response = await fetch(`${cfg.url}/rest/v1/${path}`, {
+          ...options,
+          headers: makeHeaders(false)
+        });
+      }
+
+      if (!response.ok) {
+        const errText = await response.text();
+        throw new Error(`Supabase Error (${response.status}): ${errText}`);
+      }
+      const text = await response.text();
+      return text ? JSON.parse(text) : null;
+    }
+
+    async function syncQuotesFromSupabase(showAlertOnSuccess = false) {
+      if (!isSupabaseConfigured()) {
+        updateCloudStatusUI('⚪ Local Mode (Browser Storage)', false);
+        return;
+      }
+      try {
+        updateCloudStatusUI('🔄 Syncing with Supabase...', true);
+        await pullDealersAndAuthFromCloud();
+        const remoteQuotes = await supabaseFetch('quotes?select=*&order=updated_at.desc');
+        if (Array.isArray(remoteQuotes)) {
+          // Merge local unsynced quotes if any, prioritizing remote records
+          const remoteMap = new Map(remoteQuotes.map(q => [q.id, q]));
+          for (const localQ of savedQuotes) {
+            if (!remoteMap.has(localQ.id)) {
+              try {
+                await upsertQuoteToSupabase(localQ);
+                remoteMap.set(localQ.id, localQ);
+              } catch (e) {
+                console.warn('Could not push local quote during sync:', e);
+              }
+            }
+          }
+          savedQuotes = Array.from(remoteMap.values()).sort((a, b) =>
+            new Date(b.updated_at || b.created_at || 0) - new Date(a.updated_at || a.created_at || 0)
+          );
+          saveQuotesToLocal();
+          updateQuotesRoleUI();
+          renderSavedQuotesList();
+        }
+        updateCloudStatusUI('🟢 Supabase Cloud Connected', true);
+        if (showAlertOnSuccess) {
+          const visibleCount = getVisibleQuotesForSession().length;
+          alert(`✅ Synced with Supabase Cloud DB (${visibleCount} quote${visibleCount === 1 ? '' : 's'} in your view).`);
+        }
+      } catch (err) {
+        console.error('Supabase sync error:', err);
+        updateCloudStatusUI('⚠️ Cloud Sync Error (Check Setup)', false);
+        if (showAlertOnSuccess) {
+          alert(`⚠️ Supabase sync failed:\n${err.message}\n\n(For first-time setup, please run the table creation SQL inside 'Supabase DB Setup' in your Supabase SQL Editor.)`);
+        }
+      }
+    }
+
+    async function upsertQuoteToSupabase(quoteObj) {
+      if (!isSupabaseConfigured()) return false;
+      await supabaseFetch('quotes?on_conflict=id', {
+        method: 'POST',
+        headers: {
+          'Prefer': 'resolution=merge-duplicates,return=minimal'
+        },
+        body: JSON.stringify(quoteObj)
+      });
+      return true;
+    }
+
+    async function deleteQuoteFromSupabase(quoteId) {
+      if (!isSupabaseConfigured()) return false;
+      await supabaseFetch(`quotes?id=eq.${encodeURIComponent(quoteId)}`, {
+        method: 'DELETE'
+      });
+      return true;
+    }
+
+    // Build unified save payload for single-item or multi-item quotes
+    function buildEffectiveSavePayload() {
+      let itemsToSave = [];
+
+      if (currentJobItems.length > 0) {
+        itemsToSave = currentJobItems.map(it => {
+          const qty = Math.max(1, parseInt(it.qty, 10) || 1);
+          const unitPrice = Number(it.unitPrice) || 0;
+          return {
+            ...it,
+            qty,
+            unitPrice,
+            lineTotal: unitPrice * qty
+          };
+        });
+      } else {
+        const snap = getCurrentCalculationSnapshot();
+        if (!snap.isValid) {
+          return { isValid: false };
+        }
+        const labelVal = (document.getElementById('jobItemLabelInput')?.value || '').trim();
+        const qtyVal = Math.max(1, parseInt(document.getElementById('jobItemQtyInput')?.value, 10) || 1);
+        itemsToSave = [{
+          id: 'ji_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+          itemLabel: labelVal,
+          qty: qtyVal,
+          unitPrice: snap.totalPrice,
+          lineTotal: snap.totalPrice * qtyVal,
+          category: snap.category,
+          productKey: snap.productKey,
+          productTitle: snap.productTitle,
+          widthMm: snap.widthMm,
+          projMm: snap.projMm,
+          summaryBadge: snap.summaryBadge,
+          breakdownItems: snap.breakdownItems,
+          formState: snap.formState
+        }];
+      }
+
+      const grandTotal = getJobGrandTotal(itemsToSave);
+      const uniqueCats = Array.from(new Set(itemsToSave.map(i => i.category)));
+      const first = itemsToSave[0];
+      const isMulti = itemsToSave.length > 1 || first.qty > 1 || Boolean(first.itemLabel);
+
+      let productTitle = first.productTitle;
+      if (itemsToSave.length > 1) {
+        productTitle = `${itemsToSave.length} Items • ${first.productTitle} + ${itemsToSave.length - 1} more`;
+      } else {
+        productTitle = `${first.itemLabel ? '[' + first.itemLabel + '] ' : ''}${first.productTitle}${first.qty > 1 ? ' ×' + first.qty : ''}`;
+      }
+
+      const summaryBadge = itemsToSave.length > 1
+        ? itemsToSave.map((it, idx) => `#${idx + 1}${it.itemLabel ? ' [' + it.itemLabel + ']' : ''} ${it.productTitle} (${Number(it.widthMm).toLocaleString()}×${Number(it.projMm).toLocaleString()}mm) ×${it.qty}`).join(' | ')
+        : first.summaryBadge;
+
+      const breakdownItems = isMulti
+        ? itemsToSave.map((it, idx) => ({
+            label: `#${idx + 1}${it.itemLabel ? ' [' + it.itemLabel + ']' : ''} ${it.productTitle} (${Number(it.widthMm).toLocaleString()}×${Number(it.projMm).toLocaleString()}mm) ×${it.qty}`,
+            priceText: `$${formatMoney((Number(it.unitPrice) || 0) * it.qty)}`
+          }))
+        : first.breakdownItems;
+
+      return {
+        isValid: true,
+        isMulti,
+        items: itemsToSave,
+        totalPrice: grandTotal,
+        priceText: `$${formatMoney(grandTotal)}`,
+        category: uniqueCats.length === 1 ? uniqueCats[0] : 'MULTI',
+        productKey: itemsToSave.length === 1 ? first.productKey : 'multi_item_job',
+        productTitle,
+        widthMm: first.widthMm,
+        projMm: first.projMm,
+        summaryBadge,
+        breakdownItems,
+        formState: {
+          ...first.formState,
+          isMultiItem: isMulti,
+          items: itemsToSave
+        }
+      };
+    }
+
+    function updateSqVerifiedDealerBadge() {
+      const codeInp = document.getElementById('sqDealerCodeInput');
+      const badge = document.getElementById('sqVerifiedDealerBadge');
+      if (!codeInp || !badge) return;
+      const val = codeInp.value.trim();
+      if (!val) {
+        badge.textContent = 'Enter code to verify';
+        badge.style.color = '#64748b';
+        return;
+      }
+      const res = resolveAccessCode(val);
+      if (res) {
+        badge.textContent = res.role === 'admin' ? `✓ 👑 ${res.name}` : `✓ 🏢 ${res.name}`;
+        badge.style.color = '#059669';
+      } else {
+        badge.textContent = '⚠️ Unrecognized code';
+        badge.style.color = '#dc2626';
+      }
+    }
+
+    document.getElementById('sqDealerCodeInput')?.addEventListener('input', updateSqVerifiedDealerBadge);
+
+    // Open Save Quote Modal
+    async function openSaveQuoteModal() {
+      const payload = buildEffectiveSavePayload();
+      if (!payload.isValid) {
+        alert('⚠️ Please configure a valid product price (or add items to the quote) before saving.');
+        return;
+      }
+
+      if (isSupabaseConfigured()) {
+        pullDealersAndAuthFromCloud();
+      }
+
+      const previewEl = document.getElementById('saveQuoteSummaryPreview');
+      if (previewEl) {
+        const subDesc = payload.items.length > 1
+          ? `${payload.items.length} Line Items (${payload.items.reduce((a, b) => a + b.qty, 0)} Units Total)`
+          : `${payload.productTitle} (${Number(payload.widthMm).toLocaleString()} × ${Number(payload.projMm).toLocaleString()} mm)`;
+        previewEl.innerHTML = `<div style="display:flex; justify-content:space-between; align-items:center; gap:0.5rem;">
+          <span>${escapeHtml(subDesc)}</span>
+          <span style="color:#059669; font-size:1.05rem;">${payload.priceText}</span>
+        </div>`;
+      }
+
+      const existing = currentEditingQuoteId
+        ? savedQuotes.find(q => q.id === currentEditingQuoteId)
+        : null;
+
+      const updateBtn = document.getElementById('updateExistingQuoteBtn');
+      const saveNewBtn = document.getElementById('confirmSaveQuoteBtn');
+      const dealerCodeInp = document.getElementById('sqDealerCodeInput');
+      if (dealerCodeInp) {
+        dealerCodeInp.value = '';
+      }
+      updateSqVerifiedDealerBadge();
+
+      if (existing) {
+        document.getElementById('sqQuoteNoInput').value = existing.quote_no || generateQuoteNo();
+        document.getElementById('sqStatusSelect').value = existing.status || 'draft';
+        document.getElementById('sqClientNameInput').value = existing.client_name || '';
+        document.getElementById('sqClientPhoneInput').value = existing.client_phone || '';
+        document.getElementById('sqSiteAddressInput').value = existing.site_address || '';
+        document.getElementById('sqAuthorInput').value = existing.author || '';
+        document.getElementById('sqMemoInput').value = existing.memo || '';
+        if (updateBtn) updateBtn.style.display = 'inline-flex';
+        if (saveNewBtn) saveNewBtn.textContent = '➕ Save as New Quote';
+      } else {
+        document.getElementById('sqQuoteNoInput').value = generateQuoteNo();
+        document.getElementById('sqStatusSelect').value = 'draft';
+        document.getElementById('sqClientNameInput').value = '';
+        document.getElementById('sqClientPhoneInput').value = '';
+        document.getElementById('sqSiteAddressInput').value = '';
+        document.getElementById('sqAuthorInput').value = '';
+        document.getElementById('sqMemoInput').value = '';
+        if (updateBtn) updateBtn.style.display = 'none';
+        if (saveNewBtn) saveNewBtn.textContent = '💾 Save Quote';
+      }
+
+      document.getElementById('saveQuoteModal')?.classList.add('open');
+      setTimeout(() => document.getElementById('sqDealerCodeInput')?.focus(), 50);
+    }
+
+    function closeSaveQuoteModal() {
+      document.getElementById('saveQuoteModal')?.classList.remove('open');
+    }
+
+    async function handleSaveQuoteSubmit(isUpdateExisting = false) {
+      const payload = buildEffectiveSavePayload();
+      if (!payload.isValid) return;
+
+      const enteredDealerCode = (document.getElementById('sqDealerCodeInput')?.value || '').trim();
+      if (!enteredDealerCode) {
+        alert('Please enter your Company / Dealer Access Code.');
+        document.getElementById('sqDealerCodeInput')?.focus();
+        return;
+      }
+
+      let resolvedDealer = resolveAccessCode(enteredDealerCode);
+      if (!resolvedDealer && isSupabaseConfigured()) {
+        await pullDealersAndAuthFromCloud();
+        resolvedDealer = resolveAccessCode(enteredDealerCode);
+      }
+      if (!resolvedDealer) {
+        alert('⚠️ Invalid Company / Dealer Access Code. Please check your assigned dealer code with HQ.');
+        document.getElementById('sqDealerCodeInput')?.focus();
+        return;
+      }
+
+      const clientName = document.getElementById('sqClientNameInput').value.trim();
+      if (!clientName) {
+        alert('Please enter the Client / Customer Name.');
+        document.getElementById('sqClientNameInput').focus();
+        return;
+      }
+
+      const quoteNoInput = document.getElementById('sqQuoteNoInput').value.trim() || generateQuoteNo();
+      const status = document.getElementById('sqStatusSelect').value || 'draft';
+      const clientPhone = document.getElementById('sqClientPhoneInput').value.trim();
+      const siteAddress = document.getElementById('sqSiteAddressInput').value.trim();
+      const author = document.getElementById('sqAuthorInput').value.trim();
+      const memo = document.getElementById('sqMemoInput').value.trim();
+
+      const enrichedFormState = {
+        ...payload.formState,
+        dealerCode: resolvedDealer.code,
+        dealerName: resolvedDealer.name
+      };
+
+      const nowIso = new Date().toISOString();
+      let targetQuote = null;
+
+      if (isUpdateExisting && currentEditingQuoteId) {
+        const idx = savedQuotes.findIndex(q => q.id === currentEditingQuoteId);
+        if (idx !== -1) {
+          targetQuote = {
+            ...savedQuotes[idx],
+            quote_no: quoteNoInput,
+            status,
+            client_name: clientName,
+            client_phone: clientPhone,
+            site_address: siteAddress,
+            author,
+            memo,
+            category: payload.category,
+            product_key: payload.productKey,
+            product_title: payload.productTitle,
+            width_mm: payload.widthMm,
+            proj_mm: payload.projMm,
+            total_price: payload.totalPrice,
+            summary_badge: payload.summaryBadge,
+            breakdown_items: payload.breakdownItems,
+            form_state: enrichedFormState,
+            updated_at: nowIso
+          };
+          savedQuotes[idx] = targetQuote;
+        }
+      }
+
+      if (!targetQuote) {
+        const newId = 'q_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7);
+        const quoteNo = (isUpdateExisting || !currentEditingQuoteId) ? quoteNoInput : generateQuoteNo();
+        targetQuote = {
+          id: newId,
+          quote_no: quoteNo,
+          status,
+          client_name: clientName,
+          client_phone: clientPhone,
+          site_address: siteAddress,
+          author,
+          memo,
+          category: payload.category,
+          product_key: payload.productKey,
+          product_title: payload.productTitle,
+          width_mm: payload.widthMm,
+          proj_mm: payload.projMm,
+          total_price: payload.totalPrice,
+          summary_badge: payload.summaryBadge,
+          breakdown_items: payload.breakdownItems,
+          form_state: enrichedFormState,
+          created_at: nowIso,
+          updated_at: nowIso
+        };
+        savedQuotes.unshift(targetQuote);
+      }
+
+      // Reset all entered calculator inputs, job items, and editing state after saving
+      currentEditingQuoteId = null;
+      currentJobItems = [];
+      currentEditingJobItemIndex = null;
+      resetCalculatorConfiguration(true);
+      renderJobItemsUI();
+      updateEditingBannerUI();
+
+      saveQuotesToLocal();
+      closeSaveQuoteModal();
+
+      if (isSupabaseConfigured()) {
+        try {
+          await upsertQuoteToSupabase(targetQuote);
+          updateCloudStatusUI('🟢 Supabase Cloud Connected', true);
+          alert(`✅ Quote (${targetQuote.quote_no}) saved under [${resolvedDealer.name}]. Calculator has been reset for a new quote.`);
+        } catch (err) {
+          console.error('Supabase save error:', err);
+          alert(`⚠️ Saved locally in browser, but failed to upload to Supabase Cloud:\n${err.message}`);
+        }
+      } else {
+        alert(`✅ Quote (${targetQuote.quote_no}) saved under [${resolvedDealer.name}]. Calculator has been reset for a new quote.`);
+      }
+    }
+
+    // Build Plain-Text Quote Summary for Clipboard Copy
+    function buildQuotePlainText(quoteObj = null) {
+      if (quoteObj) {
+        const lines = [
+          `[QUOTE SUMMARY — ${quoteObj.quote_no}]`,
+          `• Client: ${quoteObj.client_name}${quoteObj.client_phone ? ' (' + quoteObj.client_phone + ')' : ''}`,
+          ...(quoteObj.site_address ? [`• Site: ${quoteObj.site_address}`] : []),
+          `----------------------------------------`
+        ];
+        const multiItems = quoteObj.form_state?.items;
+        if (Array.isArray(multiItems) && multiItems.length > 0) {
+          multiItems.forEach((it, idx) => {
+            const qty = Math.max(1, parseInt(it.qty, 10) || 1);
+            const sub = (Number(it.unitPrice) || 0) * qty;
+            lines.push(`#${idx + 1}${it.itemLabel ? ' [' + it.itemLabel + ']' : ''} ${it.productTitle}`);
+            lines.push(`   Size: ${Number(it.widthMm).toLocaleString()} × ${Number(it.projMm).toLocaleString()} mm | Qty: ${qty} | Unit: $${formatMoney(Number(it.unitPrice) || 0)} | Subtotal: $${formatMoney(sub)}`);
+            (it.breakdownItems || []).forEach(b => {
+              lines.push(`   - ${b.label}: ${b.priceText}`);
+            });
+          });
+        } else {
+          lines.push(`• Product: ${quoteObj.product_title}`);
+          lines.push(`• Size: ${Number(quoteObj.width_mm).toLocaleString()} × ${Number(quoteObj.proj_mm).toLocaleString()} mm`);
+          (quoteObj.breakdown_items || []).forEach(item => {
+            lines.push(`- ${item.label}: ${item.priceText}`);
+          });
+        }
+        lines.push(`----------------------------------------`);
+        lines.push(`GRAND TOTAL ESTIMATED PRICE: $${formatMoney(Number(quoteObj.total_price) || 0)}`);
+        if (quoteObj.memo) lines.push(`• Notes: ${quoteObj.memo}`);
+        return lines.join('\n');
+      }
+
+      const payload = buildEffectiveSavePayload();
+      if (!payload.isValid) return '';
+      const lines = [`[SYSTEM PRICE ESTIMATE]`, `----------------------------------------`];
+      payload.items.forEach((it, idx) => {
+        const qty = Math.max(1, parseInt(it.qty, 10) || 1);
+        const sub = (Number(it.unitPrice) || 0) * qty;
+        lines.push(`#${idx + 1}${it.itemLabel ? ' [' + it.itemLabel + ']' : ''} ${it.productTitle}`);
+        lines.push(`   Size: ${Number(it.widthMm).toLocaleString()} × ${Number(it.projMm).toLocaleString()} mm | Qty: ${qty} | Unit: $${formatMoney(Number(it.unitPrice) || 0)} | Subtotal: $${formatMoney(sub)}`);
+        (it.breakdownItems || []).forEach(b => {
+          lines.push(`   - ${b.label}: ${b.priceText}`);
+        });
+      });
+      lines.push(`----------------------------------------`);
+      lines.push(`GRAND TOTAL ESTIMATED PRICE: ${payload.priceText}`);
+      return lines.join('\n');
+    }
+
+    // Render Saved Quotes List & KPIs
+    function renderSavedQuotesList() {
+      const container = document.getElementById('quotesListContainer');
+      if (!container) return;
+
+      updateQuotesRoleUI();
+      const visibleQuotes = getVisibleQuotesForSession();
+
+      const searchVal = (document.getElementById('quoteSearchInput')?.value || '').trim().toLowerCase();
+      const catFilter = document.getElementById('quoteCategoryFilter')?.value || 'ALL';
+      const statusFilter = document.getElementById('quoteStatusFilter')?.value || 'ALL';
+      const dealerFilter = document.getElementById('quoteDealerFilter')?.value || 'ALL';
+
+      // Update KPIs across visible quotes for current role/dealer
+      const totalCount = visibleQuotes.length;
+      const activeCount = visibleQuotes.filter(q => q.status === 'draft' || q.status === 'sent').length;
+      const approvedCount = visibleQuotes.filter(q => q.status === 'approved').length;
+      const totalVol = visibleQuotes.reduce((acc, q) => acc + (Number(q.total_price) || 0), 0);
+
+      const elTotal = document.getElementById('kpiTotalQuotes');
+      const elActive = document.getElementById('kpiActiveQuotes');
+      const elApproved = document.getElementById('kpiApprovedQuotes');
+      const elAmount = document.getElementById('kpiTotalAmount');
+      if (elTotal) elTotal.textContent = totalCount;
+      if (elActive) elActive.textContent = activeCount;
+      if (elApproved) elApproved.textContent = approvedCount;
+      if (elAmount) elAmount.textContent = `$${formatMoney(totalVol)}`;
+
+      const filtered = visibleQuotes.filter(q => {
+        if (activeAccessRole === 'admin' && dealerFilter !== 'ALL') {
+          const qCode = String(q.form_state?.dealerCode || 'ADMIN').toUpperCase();
+          if (qCode !== dealerFilter) return false;
+        }
+        if (catFilter !== 'ALL' && q.category !== catFilter) {
+          const itemCats = Array.isArray(q.form_state?.items) ? q.form_state.items.map(i => i.category) : [];
+          if (!itemCats.includes(catFilter)) return false;
+        }
+        if (statusFilter !== 'ALL' && q.status !== statusFilter) return false;
+        if (searchVal) {
+          const itemHay = Array.isArray(q.form_state?.items)
+            ? q.form_state.items.map(i => `${i.itemLabel || ''} ${i.productTitle || ''}`).join(' ')
+            : '';
+          const hay = [
+            q.quote_no,
+            q.client_name,
+            q.client_phone,
+            q.site_address,
+            q.author,
+            q.memo,
+            q.product_title,
+            q.summary_badge,
+            q.form_state?.dealerName || '',
+            q.form_state?.dealerCode || '',
+            itemHay
+          ].join(' ').toLowerCase();
+          if (!hay.includes(searchVal)) return false;
+        }
+        return true;
+      });
+
+      if (filtered.length === 0) {
+        container.innerHTML = `<div style="text-align:center; padding: 2.5rem 1rem; color: var(--text-muted); background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 10px;">
+          <div style="font-size: 1.6rem; margin-bottom: 0.4rem;">📭</div>
+          <div style="font-weight: 700; color: #334155;">No saved quotes found for your account or filter criteria.</div>
+          <div style="font-size: 0.78rem; margin-top: 0.25rem;">Click <strong>[💾 Save Quote]</strong> in the Calculator summary card to save a single or multi-item quote.</div>
+        </div>`;
+        return;
+      }
+
+      container.innerHTML = filtered.map(q => {
+        const dateStr = q.updated_at
+          ? new Date(q.updated_at).toLocaleString([], { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' })
+          : '';
+        const statusClass = `q-status-${q.status || 'draft'}`;
+        const itemsArr = Array.isArray(q.form_state?.items) ? q.form_state.items : [];
+        const specLineHtml = itemsArr.length > 1
+          ? `<strong>🧾 ${itemsArr.length} Items (${itemsArr.reduce((s, i) => s + (parseInt(i.qty, 10) || 1), 0)} Units)</strong> — ${escapeHtml(q.summary_badge || '')}`
+          : `<strong>📐 ${Number(q.width_mm).toLocaleString()} × ${Number(q.proj_mm).toLocaleString()} mm</strong>${q.summary_badge ? ` — ${escapeHtml(q.summary_badge)}` : ''}`;
+        const dealerBadgeHtml = q.form_state?.dealerName
+          ? `<span style="background:#e0e7ff; color:#1e40af; border:1px solid #c7d2fe; border-radius:999px; padding:0.15rem 0.5rem; font-size:0.7rem; font-weight:700;">🏢 ${escapeHtml(q.form_state.dealerName)}</span>`
+          : '';
+
+        return `<div class="quote-item-card" data-qid="${q.id}">
+          <div class="quote-item-top">
+            <div class="quote-item-badges">
+              <span class="q-no-badge">${escapeHtml(q.quote_no || 'QT')}</span>
+              ${dealerBadgeHtml}
+              <span class="q-cat-badge">${escapeHtml(q.product_title || q.category)}</span>
+              <select class="q-status-select ${statusClass}" data-action="status" data-qid="${q.id}">
+                <option value="draft" ${q.status === 'draft' ? 'selected' : ''}>Draft</option>
+                <option value="sent" ${q.status === 'sent' ? 'selected' : ''}>Sent</option>
+                <option value="approved" ${q.status === 'approved' ? 'selected' : ''}>Approved</option>
+                <option value="hold" ${q.status === 'hold' ? 'selected' : ''}>On Hold</option>
+              </select>
+            </div>
+            <span style="font-size: 0.72rem; color: #64748b; font-weight: 600;">
+              ${q.author ? `👤 ${escapeHtml(q.author)} • ` : ''}${dateStr}
+            </span>
+          </div>
+
+          <div class="quote-item-body">
+            <div class="quote-client-info">
+              <div class="quote-client-name">
+                <span>${escapeHtml(q.client_name || 'Unnamed Client')}</span>
+                ${q.client_phone ? `<span style="font-size:0.78rem; font-weight:600; color:#475569;">📞 ${escapeHtml(q.client_phone)}</span>` : ''}
+              </div>
+              ${q.site_address ? `<div class="quote-client-meta">📍 ${escapeHtml(q.site_address)}</div>` : ''}
+              <div class="quote-spec-summary">${specLineHtml}</div>
+              ${q.memo ? `<div class="quote-memo-box">💬 ${escapeHtml(q.memo)}</div>` : ''}
+            </div>
+
+            <div class="quote-price-actions">
+              <div class="quote-item-price">$${formatMoney(Number(q.total_price) || 0)}</div>
+              <div class="quote-item-btns">
+                <button type="button" class="settings-action-btn primary" data-action="load" data-qid="${q.id}" style="padding: 0.36rem 0.65rem; font-size: 0.74rem;">📂 Load</button>
+                <button type="button" class="settings-action-btn" data-action="detail" data-qid="${q.id}" style="padding: 0.36rem 0.6rem; font-size: 0.74rem;">📄 Details / Print</button>
+                <button type="button" class="settings-action-btn danger" data-action="delete" data-qid="${q.id}" style="padding: 0.36rem 0.55rem; font-size: 0.74rem;">🗑️</button>
+              </div>
+            </div>
+          </div>
+        </div>`;
+      }).join('');
+    }
+
+    function escapeHtml(str) {
+      return String(str || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    // Open Quote Detail / Print Modal
+    function openQuoteDetailModal(quoteId) {
+      const q = savedQuotes.find(item => item.id === quoteId);
+      if (!q) return;
+      currentDetailModalQuoteId = q.id;
+
+      document.getElementById('qdModalQuoteNo').textContent = q.quote_no || 'QT';
+      const dateStr = q.updated_at ? new Date(q.updated_at).toLocaleString() : '-';
+      const itemsArr = Array.isArray(q.form_state?.items) ? q.form_state.items : [];
+
+      let bodyItemsHtml = '';
+      if (itemsArr.length > 0) {
+        bodyItemsHtml = itemsArr.map((it, idx) => {
+          const qty = Math.max(1, parseInt(it.qty, 10) || 1);
+          const unitP = Number(it.unitPrice) || 0;
+          const subP = unitP * qty;
+          const bRows = (it.breakdownItems || []).map(b => `
+            <div style="display:flex; justify-content:space-between; padding: 0.24rem 0; border-bottom: 1px dashed #e2e8f0; font-size:0.76rem; color:#475569;">
+              <span>${escapeHtml(b.label)}</span>
+              <span>${escapeHtml(b.priceText)}</span>
+            </div>
+          `).join('');
+
+          return `<div style="border:1px solid #cbd5e1; border-radius:9px; padding:0.65rem 0.85rem; margin-bottom:0.65rem; background:#ffffff;">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.5rem; margin-bottom:0.35rem;">
+              <div>
+                <div style="font-weight:800; color:#1d4ed8; font-size:0.86rem;">
+                  Item #${idx + 1}${it.itemLabel ? ` — [${escapeHtml(it.itemLabel)}]` : ''}: ${escapeHtml(it.productTitle)}
+                </div>
+                <div style="font-size:0.76rem; color:#475569;">
+                  Dimensions: <strong>${Number(it.widthMm).toLocaleString()} mm (W) × ${Number(it.projMm).toLocaleString()} mm (P)</strong> • Qty: <strong>${qty}</strong> × $${formatMoney(unitP)}
+                </div>
+              </div>
+              <div style="font-weight:800; color:#0f172a; font-size:0.9rem; white-space:nowrap;">
+                $${formatMoney(subP)}
+              </div>
+            </div>
+            ${bRows}
+          </div>`;
+        }).join('');
+      } else {
+        const rowsHtml = (q.breakdown_items || []).map(item => `
+          <div style="display:flex; justify-content:space-between; padding: 0.38rem 0; border-bottom: 1px dashed #e2e8f0;">
+            <span>${escapeHtml(item.label)}</span>
+            <strong style="color:#0f172a;">${escapeHtml(item.priceText)}</strong>
+          </div>
+        `).join('');
+        bodyItemsHtml = `
+          <div style="margin-bottom:0.75rem;">
+            <div style="font-weight:800; color:#1d4ed8; font-size:0.9rem;">${escapeHtml(q.product_title)}</div>
+            <div style="font-size:0.8rem; color:#475569;">Dimensions: <strong>${Number(q.width_mm).toLocaleString()} mm (W) × ${Number(q.proj_mm).toLocaleString()} mm (P)</strong></div>
+          </div>
+          <div style="border:1px solid #cbd5e1; border-radius:9px; padding:0.65rem 0.85rem; margin-bottom:0.65rem;">
+            ${rowsHtml}
+          </div>
+        `;
+      }
+
+      document.getElementById('qdModalBody').innerHTML = `
+        <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:9px; padding:0.75rem 0.9rem; margin-bottom:0.85rem;">
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 0.4rem; font-size:0.8rem;">
+            <div><strong>Client:</strong> ${escapeHtml(q.client_name)}</div>
+            <div><strong>Phone:</strong> ${escapeHtml(q.client_phone || '-')}</div>
+            <div><strong>Site Address:</strong> ${escapeHtml(q.site_address || '-')}</div>
+            <div><strong>Sales Rep / Date:</strong> ${escapeHtml(q.author || '-')} (${dateStr})</div>
+            ${q.form_state?.dealerName ? `<div style="grid-column: 1 / -1; color:#1e40af;"><strong>Company / Dealer:</strong> 🏢 ${escapeHtml(q.form_state.dealerName)} (${escapeHtml(q.form_state.dealerCode || '')})</div>` : ''}
+          </div>
+          ${q.memo ? `<div style="margin-top:0.45rem; padding-top:0.45rem; border-top:1px solid #e2e8f0; color:#475569;"><strong>Notes:</strong> ${escapeHtml(q.memo)}</div>` : ''}
+        </div>
+        ${bodyItemsHtml}
+        <div style="border:1.5px solid #059669; background:#ecfdf5; border-radius:9px; padding:0.7rem 0.9rem; display:flex; justify-content:space-between; align-items:center; font-size:1.05rem; font-weight:800; color:#047857;">
+          <span>Grand Total Estimated Price</span>
+          <span>$${formatMoney(Number(q.total_price) || 0)}</span>
+        </div>
+      `;
+      document.getElementById('quoteDetailModal')?.classList.add('open');
+    }
+
+    // Multi-Item Job Builder Event Listeners
+    document.getElementById('addJobItemBtn')?.addEventListener('click', addOrUpdateJobItem);
+    document.getElementById('jobItemLabelInput')?.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        addOrUpdateJobItem();
+      }
+    });
+    document.getElementById('clearJobItemsBtn')?.addEventListener('click', function() {
+      if (currentJobItems.length === 0) return;
+      if (!confirm('Clear all items from the current quote list?')) return;
+      currentJobItems = [];
+      currentEditingJobItemIndex = null;
+      renderJobItemsUI();
+    });
+    document.getElementById('jobItemsList')?.addEventListener('click', function(e) {
+      const btn = e.target.closest('button[data-jaction]');
+      if (!btn) return;
+      const action = btn.dataset.jaction;
+      const idx = parseInt(btn.dataset.jidx, 10);
+      if (isNaN(idx) || !currentJobItems[idx]) return;
+
+      if (action === 'edit') {
+        currentEditingJobItemIndex = idx;
+        const it = currentJobItems[idx];
+        const labelInput = document.getElementById('jobItemLabelInput');
+        const qtyInput = document.getElementById('jobItemQtyInput');
+        if (labelInput) labelInput.value = it.itemLabel || '';
+        if (qtyInput) qtyInput.value = it.qty || 1;
+        if (it.formState) {
+          applyFormStateToCalculator(it.formState, it.category);
+        }
+        renderJobItemsUI();
+      } else if (action === 'delete') {
+        currentJobItems.splice(idx, 1);
+        if (currentEditingJobItemIndex === idx) {
+          currentEditingJobItemIndex = null;
+        } else if (currentEditingJobItemIndex !== null && currentEditingJobItemIndex > idx) {
+          currentEditingJobItemIndex--;
+        }
+        renderJobItemsUI();
+      }
+    });
+    document.getElementById('jobItemsList')?.addEventListener('change', function(e) {
+      const inp = e.target.closest('input[data-jaction="qty"]');
+      if (!inp) return;
+      const idx = parseInt(inp.dataset.jidx, 10);
+      if (isNaN(idx) || !currentJobItems[idx]) return;
+      const newQty = Math.max(1, parseInt(inp.value, 10) || 1);
+      currentJobItems[idx].qty = newQty;
+      currentJobItems[idx].lineTotal = (Number(currentJobItems[idx].unitPrice) || 0) * newQty;
+      renderJobItemsUI();
+    });
+
+    // Event Listeners for Save Quote & Detail Modals
+    document.getElementById('openSaveQuoteModalBtn')?.addEventListener('click', openSaveQuoteModal);
+    document.getElementById('cancelSaveQuoteBtn')?.addEventListener('click', closeSaveQuoteModal);
+    document.getElementById('confirmSaveQuoteBtn')?.addEventListener('click', () => handleSaveQuoteSubmit(false));
+    document.getElementById('updateExistingQuoteBtn')?.addEventListener('click', () => handleSaveQuoteSubmit(true));
+    document.getElementById('saveQuoteModal')?.addEventListener('click', function(e) {
+      if (e.target === this) closeSaveQuoteModal();
+    });
+
+    document.getElementById('copyQuoteTextBtn')?.addEventListener('click', function() {
+      const txt = buildQuotePlainText(null);
+      if (!txt) {
+        alert('⚠️ No valid quote estimate available to copy.');
+        return;
+      }
+      navigator.clipboard.writeText(txt).then(() => {
+        alert('📋 Quote summary copied to clipboard.');
+      });
+    });
+
+    document.getElementById('closeQuoteDetailBtn')?.addEventListener('click', () => {
+      document.getElementById('quoteDetailModal')?.classList.remove('open');
+    });
+    document.getElementById('quoteDetailModal')?.addEventListener('click', function(e) {
+      if (e.target === this) this.classList.remove('open');
+    });
+    document.getElementById('copyDetailQuoteTextBtn')?.addEventListener('click', function() {
+      const q = savedQuotes.find(item => item.id === currentDetailModalQuoteId);
+      if (!q) return;
+      navigator.clipboard.writeText(buildQuotePlainText(q)).then(() => {
+        alert('📋 Quote details copied to clipboard.');
+      });
+    });
+    document.getElementById('printQuoteDetailBtn')?.addEventListener('click', function() {
+      window.print();
+    });
+    document.getElementById('loadFromDetailModalBtn')?.addEventListener('click', function() {
+      const q = savedQuotes.find(item => item.id === currentDetailModalQuoteId);
+      if (!q) return;
+      document.getElementById('quoteDetailModal')?.classList.remove('open');
+      loadQuoteIntoCalculator(q);
+    });
+
+    // Event delegation for Saved Quotes List Actions
+    document.getElementById('quotesListContainer')?.addEventListener('click', async function(e) {
+      const btn = e.target.closest('button[data-action]');
+      if (!btn) return;
+      const action = btn.dataset.action;
+      const qid = btn.dataset.qid;
+      const quote = savedQuotes.find(q => q.id === qid);
+      if (!quote) return;
+
+      if (action === 'load') {
+        loadQuoteIntoCalculator(quote);
+      } else if (action === 'detail') {
+        openQuoteDetailModal(qid);
+      } else if (action === 'delete') {
+        if (!confirm(`Delete saved quote "${quote.quote_no} — ${quote.client_name}"?`)) return;
+        savedQuotes = savedQuotes.filter(q => q.id !== qid);
+        if (currentEditingQuoteId === qid) {
+          currentEditingQuoteId = null;
+          updateEditingBannerUI();
+        }
+        saveQuotesToLocal();
+        renderSavedQuotesList();
+        if (isSupabaseConfigured()) {
+          try {
+            await deleteQuoteFromSupabase(qid);
+          } catch (err) {
+            console.warn('Supabase delete error:', err);
+          }
+        }
+      }
+    });
+
+    document.getElementById('quotesListContainer')?.addEventListener('change', async function(e) {
+      const sel = e.target.closest('select[data-action="status"]');
+      if (!sel) return;
+      const qid = sel.dataset.qid;
+      const quote = savedQuotes.find(q => q.id === qid);
+      if (!quote) return;
+      quote.status = sel.value;
+      quote.updated_at = new Date().toISOString();
+      saveQuotesToLocal();
+      renderSavedQuotesList();
+      if (isSupabaseConfigured()) {
+        try {
+          await upsertQuoteToSupabase(quote);
+        } catch (err) {
+          console.warn('Failed to update status on Supabase:', err);
+        }
+      }
+    });
+
+    document.getElementById('quoteSearchInput')?.addEventListener('input', renderSavedQuotesList);
+    document.getElementById('quoteCategoryFilter')?.addEventListener('change', renderSavedQuotesList);
+    document.getElementById('quoteStatusFilter')?.addEventListener('change', renderSavedQuotesList);
+    document.getElementById('quoteDealerFilter')?.addEventListener('change', renderSavedQuotesList);
+    document.getElementById('syncQuotesBtn')?.addEventListener('click', () => syncQuotesFromSupabase(true));
+
+    // Export Saved Quotes to CSV (Excel) — exports only quotes visible to the active dealer/admin
+    document.getElementById('exportQuotesCsvBtn')?.addEventListener('click', function() {
+      const exportList = getVisibleQuotesForSession();
+      if (exportList.length === 0) {
+        alert('No saved quotes available to export for your account.');
+        return;
+      }
+      const headers = ['Quote No', 'Company / Dealer', 'Status', 'Date', 'Client Name', 'Phone', 'Site Address', 'Sales Rep', 'Category', 'Product / Job Summary', 'Items Count', 'Width(mm)', 'Projection(mm)', 'Total Price($)', 'Itemized Summary', 'Notes'];
+      const csvRows = [headers.join(',')];
+      exportList.forEach(q => {
+        const itemCount = Array.isArray(q.form_state?.items) ? q.form_state.items.length : 1;
+        const row = [
+          q.quote_no,
+          q.form_state?.dealerName || '',
+          q.status,
+          q.updated_at ? new Date(q.updated_at).toLocaleDateString() : '',
+          q.client_name,
+          q.client_phone,
+          q.site_address,
+          q.author,
+          q.category,
+          q.product_title,
+          itemCount,
+          q.width_mm,
+          q.proj_mm,
+          q.total_price,
+          q.summary_badge,
+          q.memo
+        ].map(v => `"${String(v ?? '').replace(/"/g, '""')}"`);
+        csvRows.push(row.join(','));
+      });
+      const blob = new Blob(['\uFEFF' + csvRows.join('\n')], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `saved_quotes_${new Date().toISOString().slice(0, 10)}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    });
+
+    // Supabase Config Modal Handlers
+    function openSupabaseConfigModal() {
+      if (activeAccessRole !== 'admin') {
+        alert('🔒 Only HQ Master Admin can modify Cloud DB connection settings.');
+        return;
+      }
+      const cfg = getSupabaseConfig();
+      document.getElementById('sbUrlInput').value = cfg.url || '';
+      document.getElementById('sbAnonKeyInput').value = cfg.anonKey || '';
+      const msgEl = document.getElementById('sbConnectionTestMsg');
+      if (msgEl) msgEl.style.display = 'none';
+      document.getElementById('supabaseConfigModal')?.classList.add('open');
+    }
+
+    function closeSupabaseConfigModal() {
+      document.getElementById('supabaseConfigModal')?.classList.remove('open');
+    }
+
+    document.getElementById('openSupabaseConfigModalBtn')?.addEventListener('click', openSupabaseConfigModal);
+    document.getElementById('openSupabaseFromSettingsBtn')?.addEventListener('click', openSupabaseConfigModal);
+    document.getElementById('cloudDbStatusPill')?.addEventListener('click', openSupabaseConfigModal);
+    document.getElementById('closeSupabaseConfigBtn')?.addEventListener('click', closeSupabaseConfigModal);
+    document.getElementById('supabaseConfigModal')?.addEventListener('click', function(e) {
+      if (e.target === this) closeSupabaseConfigModal();
+    });
+
+    document.getElementById('copySupabaseSqlBtn')?.addEventListener('click', function() {
+      const sql = document.getElementById('supabaseSetupSqlBox')?.textContent || '';
+      navigator.clipboard.writeText(sql).then(() => {
+        alert('📋 Supabase table setup SQL copied to clipboard.\nPaste it into [SQL Editor] in your Supabase dashboard and click [Run].');
+      });
+    });
+
+    document.getElementById('saveSupabaseConfigBtn')?.addEventListener('click', async function() {
+      const url = normalizeSupabaseUrl(document.getElementById('sbUrlInput').value);
+      const anonKey = document.getElementById('sbAnonKeyInput').value.trim();
+      const msgEl = document.getElementById('sbConnectionTestMsg');
+
+      if (!url || !anonKey) {
+        alert('Please enter both the Supabase Project URL and Publishable / Anon Public Key.');
+        return;
+      }
+
+      localStorage.setItem(SUPABASE_CONFIG_KEY, JSON.stringify({ url, anonKey }));
+      if (msgEl) {
+        msgEl.style.display = 'block';
+        msgEl.style.background = '#eff6ff';
+        msgEl.style.color = '#1d4ed8';
+        msgEl.textContent = '🔄 Testing connection to Supabase server and verifying tables...';
+      }
+
+      try {
+        await supabaseFetch('quotes?select=id&limit=1');
+        if (msgEl) {
+          msgEl.style.background = '#ecfdf5';
+          msgEl.style.color = '#047857';
+          msgEl.textContent = '✅ Connected! Real-time sync with Supabase Cloud DB is now active.';
+        }
+        await syncQuotesFromSupabase(false);
+      } catch (err) {
+        if (msgEl) {
+          msgEl.style.background = '#fef2f2';
+          msgEl.style.color = '#b91c1c';
+          msgEl.textContent = `⚠️ Server response error: Please click [📋 Copy SQL] below and run the setup SQL in your Supabase SQL Editor first. (${err.message})`;
+        }
+      }
+    });
+
+    document.getElementById('disconnectSupabaseBtn')?.addEventListener('click', function() {
+      if (!confirm('Disconnect from Supabase Cloud and switch to local browser storage mode?')) return;
+      localStorage.removeItem(SUPABASE_CONFIG_KEY);
+      updateCloudStatusUI('⚪ Local Mode (Browser Storage)', false);
+      closeSupabaseConfigModal();
+    });
+
+    // Cloud Price Table Push / Pull via public.app_settings
+    document.getElementById('pushPriceDbToCloudBtn')?.addEventListener('click', async function() {
+      if (!isSupabaseConfigured()) {
+        alert('Please configure and connect your Supabase Project URL and Key first.');
+        return;
+      }
+      try {
+        syncSharedOztechRefs();
+        await supabaseFetch('app_settings', {
+          method: 'POST',
+          headers: { 'Prefer': 'resolution=merge-duplicates,return=minimal' },
+          body: JSON.stringify({
+            id: 'price_db_v1',
+            payload: DB,
+            updated_at: new Date().toISOString()
+          })
+        });
+        alert('✅ Price table configuration uploaded to Supabase Cloud DB.');
+      } catch (err) {
+        alert(`⚠️ Failed to upload price tables: ${err.message}`);
+      }
+    });
+
+    document.getElementById('pullPriceDbFromCloudBtn')?.addEventListener('click', async function() {
+      if (!isSupabaseConfigured()) {
+        alert('Please configure and connect your Supabase Project URL and Key first.');
+        return;
+      }
+      try {
+        const rows = await supabaseFetch('app_settings?id=eq.price_db_v1&select=*');
+        if (!Array.isArray(rows) || rows.length === 0 || !rows[0].payload) {
+          alert('No price table data has been uploaded to Cloud DB yet.');
+          return;
+        }
+        deepMergeDb(DB, rows[0].payload);
+        saveCustomDbToStorage();
+        renderSettingsEditor();
+        refreshCalculatorFromDb();
+        alert('✅ Latest price tables pulled from Supabase Cloud DB and applied.');
+      } catch (err) {
+        alert(`⚠️ Failed to pull price tables: ${err.message}`);
+      }
+    });
+
+    // Initialize Local Quotes, Dealer Accounts & Cloud Status on Startup
+    loadDealersFromLocal();
+    loadQuotesFromLocal();
+    updateCloudStatusUI();
+    if (isSupabaseConfigured()) {
+      pullDealersAndAuthFromCloud();
+      syncQuotesFromSupabase(false);
+    }
 
     // Load any saved custom DB from localStorage & initialize Settings Filters
     loadCustomDbFromStorage();
