@@ -419,17 +419,19 @@
                     <option value="tint_10">Tint 1.0mm ($20/sqm)</option>
                   </optgroup>
                   <optgroup label="Shade Mesh">
-                    <option value="viewshade_fg_95">Viewshade Fiberglass 95 ($0/sqm)</option>
-                    <option value="viewshade_fg_99">Viewshade Fiberglass 99 ($5/sqm)</option>
+                    <option value="ds_95">DS95 ($0/sqm)</option>
+                    <option value="ds_99">DS99 ($5/sqm)</option>
                     <option value="skyline_94">Skyline 94 ($5/sqm)</option>
                     <option value="skyline_99">Skyline 99 ($10/sqm)</option>
                     <option value="vistaweave_plus">Vistaweave Plus ($10/sqm)</option>
                     <option value="visiontex_plus">Visiontex Plus ($10/sqm)</option>
+                    <option value="viewshade_fg_95">Viewshade Fiberglass 95 ($15/sqm)</option>
                     <option value="vistaweave_99">Vistaweave 99 ($15/sqm)</option>
                     <option value="visiontex_ultra">Visiontex Ultra ($15/sqm)</option>
                     <option value="visiontex_extreme">Visiontex Extreme ($15/sqm)</option>
                     <option value="outlook_mode">Outlook Mode ($15/sqm)</option>
                     <option value="outlook_privacy">Outlook Privacy ($15/sqm)</option>
+                    <option value="viewshade_fg_97">Viewshade Fiberglass 97 ($20/sqm)</option>
                     <option value="vistaweave_max">Vistaweave Max ($20/sqm)</option>
                     <option value="outlook_zero">Outlook Zero ($20/sqm)</option>
                   </optgroup>
@@ -3423,17 +3425,19 @@ notify pgrst, 'reload schema';</div>
         tint_075:               { category: "Clear PVC",  name: "Tint 0.75mm",             rate: 15 },
         clear_10:               { category: "Clear PVC",  name: "Clear 1.0mm",             rate: 20 },
         tint_10:                { category: "Clear PVC",  name: "Tint 1.0mm",              rate: 20 },
-        viewshade_fg_95:        { category: "Shade Mesh", name: "Viewshade Fiberglass 95", rate: 0 },
-        viewshade_fg_99:        { category: "Shade Mesh", name: "Viewshade Fiberglass 99", rate: 5 },
+        ds_95:                  { category: "Shade Mesh", name: "DS95",                    rate: 0 },
+        ds_99:                  { category: "Shade Mesh", name: "DS99",                    rate: 5 },
         skyline_94:             { category: "Shade Mesh", name: "Skyline 94",              rate: 5 },
         skyline_99:             { category: "Shade Mesh", name: "Skyline 99",              rate: 10 },
         vistaweave_plus:        { category: "Shade Mesh", name: "Vistaweave Plus",         rate: 10 },
         visiontex_plus:         { category: "Shade Mesh", name: "Visiontex Plus",          rate: 10 },
+        viewshade_fg_95:        { category: "Shade Mesh", name: "Viewshade Fiberglass 95", rate: 15 },
         vistaweave_99:          { category: "Shade Mesh", name: "Vistaweave 99",           rate: 15 },
         visiontex_ultra:        { category: "Shade Mesh", name: "Visiontex Ultra",         rate: 15 },
         visiontex_extreme:      { category: "Shade Mesh", name: "Visiontex Extreme",       rate: 15 },
         outlook_mode:           { category: "Shade Mesh", name: "Outlook Mode",            rate: 15 },
         outlook_privacy:        { category: "Shade Mesh", name: "Outlook Privacy",         rate: 15 },
+        viewshade_fg_97:        { category: "Shade Mesh", name: "Viewshade Fiberglass 97", rate: 20 },
         vistaweave_max:         { category: "Shade Mesh", name: "Vistaweave Max",          rate: 20 },
         outlook_zero:           { category: "Shade Mesh", name: "Outlook Zero",            rate: 20 }
       },
@@ -4699,13 +4703,17 @@ notify pgrst, 'reload schema';</div>
         const validKeys = Object.keys(DB.oztechFabrics);
         fabricSelect.value = (!resetToDefault && validKeys.includes(prevVal)) ? prevVal : 'oz_solscape';
       } else {
-        const categories = ['Acrylic', 'Canvas', 'Clear PVC', 'Shade Mesh'];
+        const categories = activeCategory === 'DROP A'
+          ? ['Shade Mesh', 'Clear PVC']
+          : ['Acrylic', 'Canvas', 'Clear PVC', 'Shade Mesh'];
+        const validKeys = [];
         categories.forEach(cat => {
           const group = document.createElement('optgroup');
           group.label = cat;
           Object.entries(DB.fabrics)
             .filter(([, f]) => f.category === cat)
             .forEach(([fKey, fData]) => {
+              validKeys.push(fKey);
               const opt = document.createElement('option');
               opt.value = fKey;
               opt.textContent = `${fData.name} ($${fData.rate}/sqm)`;
@@ -4713,8 +4721,10 @@ notify pgrst, 'reload schema';</div>
             });
           fabricSelect.appendChild(group);
         });
-        const validKeys = Object.keys(DB.fabrics);
-        fabricSelect.value = (!resetToDefault && validKeys.includes(prevVal)) ? prevVal : 'solscape';
+        const defaultFabricKey = activeCategory === 'DROP A' ? 'ds_95' : 'solscape';
+        fabricSelect.value = (!resetToDefault && validKeys.includes(prevVal))
+          ? prevVal
+          : (validKeys.includes(defaultFabricKey) ? defaultFabricKey : (validKeys[0] || ''));
       }
     }
 
@@ -5767,8 +5777,10 @@ notify pgrst, 'reload schema';</div>
           grid.appendChild(tbl);
         });
       } else {
-        grid.className = 'ref-grid-4';
-        const categories = ["Acrylic", "Canvas", "Clear PVC", "Shade Mesh"];
+        const categories = activeCategory === 'DROP A'
+          ? ["Shade Mesh", "Clear PVC"]
+          : ["Acrylic", "Canvas", "Clear PVC", "Shade Mesh"];
+        grid.className = activeCategory === 'DROP A' ? 'ref-grid-2' : 'ref-grid-4';
         categories.forEach(cat => {
           const tbl = document.createElement('table');
           const thead = document.createElement('thead');
@@ -7277,6 +7289,9 @@ notify pgrst, 'reload schema';</div>
       }
       if (DB.products.truscreen && (!DB.products.truscreen.motors || !DB.products.truscreen.motors.alpha)) {
         DB.products.truscreen.motors = JSON.parse(JSON.stringify(DEFAULT_DB_SNAPSHOT.products.truscreen.motors));
+      }
+      if (DB.fabrics && (!DB.fabrics.ds_95 || !DB.fabrics.viewshade_fg_97 || DB.fabrics.viewshade_fg_95?.rate === 0)) {
+        DB.fabrics = JSON.parse(JSON.stringify(DEFAULT_DB_SNAPSHOT.fabrics));
       }
     }
 
