@@ -1840,7 +1840,10 @@ notify pgrst, 'reload schema';</div>
             3000: { 900: 1039, 1200: 1112, 1500: 1186, 1800: 1260, 2100: 1333, 2400: 1407, 2700: 1481, 3000: 1554, 3300: 1628, 3600: 1702, 3900: 1775, 4200: 1849, 4800: 1996, 5400: 2143, 6000: 2291, 6500: 2414 }
           },
           motors: {
-            ace: { name: "ACE Obstacle Detection Motor (Included)", prices: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] }
+            ace:    { name: "ACE Obstacle Detection Motor (Included)",         shortName: "ACE",    subDesc: "Included (+$0)", prices: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
+            alpha:  { name: "Change Motor to Alpha (Including 1 Channel Remote)",  shortName: "Alpha",  subDesc: "+$150 Extra",    prices: [150, 150, 150, 150, 150, 150, 150, 150, 150, 150, 150, 150, 150, 150, 150, 150] },
+            becker: { name: "Change Motor to Becker (Including 1 Channel Remote)", shortName: "Becker", subDesc: "+$350 Extra",    prices: [350, 350, 350, 350, 350, 350, 350, 350, 350, 350, 350, 350, 350, 350, 350, 350] },
+            somfy:  { name: "Change Motor to Somfy (Including 1 Channel Remote)",  shortName: "Somfy",  subDesc: "+$650 Extra",    prices: [650, 650, 650, 650, 650, 650, 650, 650, 650, 650, 650, 650, 650, 650, 650, 650] }
           },
           standardColours: ["Black", "White", "Monument", "Woodland Grey", "Cream", "Paperbark"],
           powderCoat: {
@@ -3883,6 +3886,22 @@ notify pgrst, 'reload schema';</div>
       return null;
     }
 
+    function updateMotorButtonsUI() {
+      const opSelect = document.getElementById('operationSelect');
+      const motorSelect = document.getElementById('motorSelect');
+      const oztechMotorTabs = document.getElementById('oztechMotorTabs');
+      const opVal = opSelect ? opSelect.value : 'manual';
+      const isMotorised = opVal === 'motorised' || activeCategory === 'OZTECH' || activeCategory === 'LOUVRE';
+      const curMotor = motorSelect ? motorSelect.value : 'ace';
+
+      if (oztechMotorTabs) {
+        oztechMotorTabs.style.opacity = isMotorised ? '1' : '0.68';
+      }
+      document.querySelectorAll('#oztechMotorTabs .oztech-motor-btn').forEach(b => {
+        b.classList.toggle('active', isMotorised && b.dataset.motor === curMotor);
+      });
+    }
+
     function populateMotorOptions(resetToDefault = false) {
       const motorSelect = document.getElementById('motorSelect');
       const oztechMotorTabs = document.getElementById('oztechMotorTabs');
@@ -3908,39 +3927,53 @@ notify pgrst, 'reload schema';</div>
         motorSelect.value = validVals.includes(prevVal) ? prevVal : validVals[0] || 'ace';
       }
 
-      if (activeCategory === 'OZTECH') {
-        if (operationGroup) operationGroup.style.display = 'none';
-        if (motorGroup) motorGroup.style.gridColumn = '1 / -1';
-        if (motorFieldLabel) motorFieldLabel.textContent = 'Motor Brand (Motorised)';
-        motorSelect.style.display = 'none';
-        if (oztechMotorTabs) {
-          oztechMotorTabs.style.display = 'grid';
-          oztechMotorTabs.style.gridTemplateColumns = `repeat(${Math.min(validVals.length || 1, 4)}, 1fr)`;
-          oztechMotorTabs.innerHTML = '';
-          Object.entries(activeMotors).forEach(([mKey, mData]) => {
-            const btn = document.createElement('button');
-            btn.type = 'button';
-            btn.className = `sub-type-btn oztech-motor-btn${motorSelect.value === mKey ? ' active' : ''}`;
-            btn.dataset.motor = mKey;
-            btn.innerHTML = `<span>${mData.name}</span>`;
-            btn.addEventListener('click', function() {
-              motorSelect.value = mKey;
-              document.querySelectorAll('.oztech-motor-btn').forEach(b => {
-                b.classList.toggle('active', b.dataset.motor === mKey);
-              });
-              motorSelect.dispatchEvent(new Event('change'));
-            });
-            oztechMotorTabs.appendChild(btn);
+      if (operationGroup) {
+        operationGroup.style.gridColumn = '1 / -1';
+        operationGroup.style.display = activeCategory === 'OZTECH' ? 'none' : 'block';
+      }
+      if (motorGroup) {
+        motorGroup.style.gridColumn = '1 / -1';
+      }
+      if (motorFieldLabel) {
+        motorFieldLabel.textContent = activeCategory === 'OZTECH'
+          ? 'Motor Brand (Motorised)'
+          : 'Motor Brand';
+      }
+      motorSelect.style.display = 'none';
+
+      if (oztechMotorTabs) {
+        oztechMotorTabs.style.display = 'grid';
+        oztechMotorTabs.style.gridTemplateColumns = `repeat(${Math.min(validVals.length || 1, 4)}, 1fr)`;
+        oztechMotorTabs.innerHTML = '';
+        Object.entries(activeMotors).forEach(([mKey, mData]) => {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'sub-type-btn oztech-motor-btn';
+          btn.dataset.motor = mKey;
+          const btnTitle = mData.shortName || mData.name;
+          const btnSub = activeCategory === 'OZTECH' ? '' : (mData.subDesc || '');
+          btn.innerHTML = btnSub
+            ? `<span>${btnTitle}</span><span class="sub-type-desc">${btnSub}</span>`
+            : `<span>${btnTitle}</span>`;
+          btn.addEventListener('click', function() {
+            const opSelect = document.getElementById('operationSelect');
+            const wasNotMotorised = opSelect && opSelect.value !== 'motorised' && activeCategory !== 'OZTECH' && activeCategory !== 'LOUVRE';
+            if (wasNotMotorised) {
+              opSelect.value = 'motorised';
+              motorSelect.disabled = false;
+            }
+            motorSelect.value = mKey;
+            updateMotorButtonsUI();
+            if (wasNotMotorised && activeCategory === 'DROP A') {
+              renderTable();
+            }
+            motorSelect.dispatchEvent(new Event('change'));
           });
-        }
-      } else {
-        if (operationGroup) operationGroup.style.display = 'block';
-        if (motorGroup) motorGroup.style.gridColumn = '';
-        if (motorFieldLabel) motorFieldLabel.textContent = 'Motor Brand';
-        motorSelect.style.display = 'block';
-        if (oztechMotorTabs) oztechMotorTabs.style.display = 'none';
+          oztechMotorTabs.appendChild(btn);
+        });
       }
 
+      updateMotorButtonsUI();
       populateDimmerOptions();
     }
 
@@ -4137,6 +4170,7 @@ notify pgrst, 'reload schema';</div>
 
       populateMotorOptions(resetMotorToDefault);
       document.getElementById('motorSelect').disabled = opSelect.value !== 'motorised';
+      updateMotorButtonsUI();
     }
 
     function updateOztechGutterLedUI() {
@@ -6975,6 +7009,7 @@ notify pgrst, 'reload schema';</div>
         document.getElementById('motorSelect').value = 'ace';
         document.getElementById('motorSelect').disabled = true;
       }
+      updateMotorButtonsUI();
       populatePowderCoatOptions();
       document.getElementById('powderCoatSelect').selectedIndex = 0;
       const ozPcTypeSelect = document.getElementById('oztechPcTypeSelect');
@@ -7089,6 +7124,7 @@ notify pgrst, 'reload schema';</div>
     document.getElementById('operationSelect').addEventListener('change', function() {
       const isMotorised = this.value === 'motorised';
       document.getElementById('motorSelect').disabled = !isMotorised;
+      updateMotorButtonsUI();
       renderSensorOptions();
       if (activeCategory === 'DROP A') {
         renderTable();
@@ -7238,6 +7274,9 @@ notify pgrst, 'reload schema';</div>
     function syncSharedOztechRefs() {
       if (DB.products.oztech_izi_slope_standard && DB.products.oztech_izi_standard) {
         DB.products.oztech_izi_slope_standard.modulePrices = DB.products.oztech_izi_standard.modulePrices;
+      }
+      if (DB.products.truscreen && (!DB.products.truscreen.motors || !DB.products.truscreen.motors.alpha)) {
+        DB.products.truscreen.motors = JSON.parse(JSON.stringify(DEFAULT_DB_SNAPSHOT.products.truscreen.motors));
       }
     }
 
@@ -8938,10 +8977,9 @@ notify pgrst, 'reload schema';</div>
       if (st.motorSelect) {
         const motorSel = document.getElementById('motorSelect');
         motorSel.value = st.motorSelect;
-        document.querySelectorAll('#oztechMotorTabs .oztech-motor-btn').forEach(b => {
-          b.classList.toggle('active', b.dataset.motor === st.motorSelect);
-        });
       }
+      document.getElementById('motorSelect').disabled = document.getElementById('operationSelect').value !== 'motorised';
+      updateMotorButtonsUI();
 
       populatePowderCoatOptions();
       if (st.powderCoatSelect) document.getElementById('powderCoatSelect').value = st.powderCoatSelect;
