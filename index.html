@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>System Price Calculator</title>
   <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
 </head>
 <body>
 
@@ -344,8 +345,8 @@
                   <span class="unit">mm</span>
                 </div>
                 <div class="hint">
-                  <span id="oztechFrontHeightHint">* Base: 2,250 mm (2.25m) • Extra > 2.25m: +$78/m</span>
-                  <span class="tier-pill" id="oztechFrontHeightPill">2.25M (+$0)</span>
+                  <span id="oztechFrontHeightHint">* Front Height (Enter in mm e.g. 2250 or m e.g. 2.25)</span>
+                  <span class="tier-pill" id="oztechFrontHeightPill">2.25M</span>
                 </div>
               </div>
 
@@ -972,9 +973,14 @@
             <span class="settings-status-pill" id="settingsStatusPill">✓ Default Price Data Active</span>
             <button type="button" class="settings-action-btn primary" id="saveSettingsBtn">💾 Save to Browser</button>
             <button type="button" class="settings-action-btn" id="openDealerManagerModalBtn" style="background: #eff6ff; border-color: #93c5fd; color: #1d4ed8;">👥 Dealer Codes</button>
-            <button type="button" class="settings-action-btn" id="exportJsonBtn">📥 Export JSON</button>
-            <label class="settings-action-btn" style="margin: 0; cursor: pointer;">
-              📤 Import JSON
+            <button type="button" class="settings-action-btn" id="exportExcelBtn" style="background: #ecfdf5; border-color: #6ee7b7; color: #047857; font-weight: 800;">📊 Export Excel (.xlsx)</button>
+            <label class="settings-action-btn" style="margin: 0; cursor: pointer; background: #ecfdf5; border-color: #6ee7b7; color: #047857; font-weight: 800;">
+              📤 Import Excel (.xlsx)
+              <input type="file" id="importExcelInput" accept=".xlsx,.xls" style="display: none;">
+            </label>
+            <button type="button" class="settings-action-btn" id="exportJsonBtn" title="Backup raw JSON">📥 JSON</button>
+            <label class="settings-action-btn" style="margin: 0; cursor: pointer;" title="Restore raw JSON">
+              📤 JSON
               <input type="file" id="importJsonInput" accept=".json" style="display: none;">
             </label>
             <button type="button" class="settings-action-btn" id="openSupabaseFromSettingsBtn">☁️ Supabase DB Setup</button>
@@ -1117,9 +1123,9 @@
               <input type="text" id="dmDealerCodeInput" placeholder="e.g. ABC1234" autocomplete="off">
             </div>
           </div>
-          <button type="button" class="settings-action-btn primary" id="dmAddDealerBtn" style="width: 100%; justify-content: center;">➕ Register / Update Dealer Code</button>
+          <button type="button" class="settings-action-btn primary" id="dmAddDealerBtn" style="width: 100%; justify-content: center;">➕ Add New Dealer Code</button>
         </div>
-        <div style="font-size: 0.76rem; font-weight: 800; color: #334155; margin-bottom: 0.4rem;">Registered Dealer Accounts</div>
+        <div style="font-size: 0.76rem; font-weight: 800; color: #334155; margin-bottom: 0.4rem;">Registered Dealer Accounts (Click ✏️ Edit to change name or code)</div>
         <div id="dmDealerListContainer" style="display: flex; flex-direction: column; gap: 0.4rem; max-height: 260px; overflow-y: auto;"></div>
         <div class="pw-modal-actions" style="margin-top: 1rem;">
           <button type="button" class="settings-action-btn" id="closeDealerManagerBtn">Close</button>
@@ -3881,9 +3887,16 @@ notify pgrst, 'reload schema';</div>
       return null;
     }
 
+    const OZTECH_BRACKET_IDS = ['fascia_rafter_10', 'fascia_rafter_22', 'roof_tile_rafter'];
+
     function getActiveBrackets(product) {
       if (activeCategory === 'FAA') {
         return DB.bracketsAndExtras;
+      }
+      if (activeCategory === 'OZTECH') {
+        return OZTECH_BRACKET_IDS
+          .map(id => DB.bracketsAndExtras.find(b => b.id === id))
+          .filter(Boolean);
       }
       if (activeCategory === 'DROP A' && product && product.group === 'GENIUS') {
         return DB.geniusBrackets;
@@ -5712,6 +5725,21 @@ notify pgrst, 'reload schema';</div>
         });
 
         updateBracketVisibilityByProduct();
+      } else if (activeCategory === 'OZTECH') {
+        const tbl = document.createElement('table');
+        const thead = document.createElement('thead');
+        thead.innerHTML = `<tr><th colspan="2">OZTECH Additional Rafter Brackets & Sets</th></tr>`;
+        tbl.appendChild(thead);
+
+        const tbody = document.createElement('tbody');
+        activeBrackets.forEach(item => {
+          const tr = document.createElement('tr');
+          tr.id = `tr-brk-${item.id}`;
+          tr.innerHTML = `<td style="text-align:left; padding-left:0.75rem;">${item.name}</td><td>+$${item.price} Extra</td>`;
+          tbody.appendChild(tr);
+        });
+        tbl.appendChild(tbody);
+        grid.appendChild(tbl);
       } else {
         const tbl = document.createElement('table');
         const thead = document.createElement('thead');
@@ -6162,8 +6190,7 @@ notify pgrst, 'reload schema';</div>
       }
       document.getElementById('fabricBreakdownRow').classList.toggle('is-active-addon', fabricCost > 0);
 
-      // 2-C. OZTECH Front/Back Height Surcharge, Front Post Deduction (-$80/ea) & Gutter Cover (+$45/m)
-      let oztechHeightCost = 0;
+      // 2-C. OZTECH Front/Back Height Display (No Surcharge), Front Post Deduction (-$80/ea) & Gutter Cover (+$45/m)
       let oztechPostDeduction = 0;
       let oztechGutterCoverCost = 0;
       let ozStructBadgeDesc = '';
@@ -6177,46 +6204,34 @@ notify pgrst, 'reload schema';</div>
         if (oztechPostBreakdownRow) oztechPostBreakdownRow.style.display = 'flex';
         if (oztechGutterCoverBreakdownRow) oztechGutterCoverBreakdownRow.style.display = 'flex';
 
-        // 1) Front Height (Base 2.25m, +$78/m for extra height) & Back Height (IZI SLOPE uses single Height only)
+        // 1) Front Height & Back Height (Display only — no extra height surcharge; IZI SLOPE uses single Height only)
         const isIziSlope = product && product.group === 'IZI SLOPE';
         const frontHeightM = parseHeightMeters(document.getElementById('oztechFrontHeightInput')?.value);
         const backHeightM = parseHeightMeters(document.getElementById('oztechBackHeightInput')?.value);
         const frontHeightMm = Math.round(frontHeightM * 1000);
         const backHeightMm = Math.round(backHeightM * 1000);
-        const extraFrontM = Math.max(0, Math.round((frontHeightM - 2.25 + Number.EPSILON) * 1000) / 1000);
-        oztechHeightCost = extraFrontM > 0
-          ? Math.round((extraFrontM * 78 + Number.EPSILON) * 100) / 100
-          : 0;
 
         const frontPillEl = document.getElementById('oztechFrontHeightPill');
         const backPillEl = document.getElementById('oztechBackHeightPill');
         const frontHintEl = document.getElementById('oztechFrontHeightHint');
         if (frontPillEl) {
-          frontPillEl.textContent = `${frontHeightM.toFixed(2)}M (${oztechHeightCost > 0 ? '+$' + formatMoney(oztechHeightCost) : '+$0'})`;
+          frontPillEl.textContent = `${frontHeightM.toFixed(2)}M (${frontHeightMm.toLocaleString()} mm)`;
         }
         if (backPillEl) {
           backPillEl.textContent = `${backHeightM.toFixed(2)}M (${backHeightMm.toLocaleString()} mm)`;
         }
         if (frontHintEl) {
           const hLabel = isIziSlope ? 'Height' : 'Front Height';
-          frontHintEl.textContent = extraFrontM > 0
-            ? `* Extra ${hLabel}: +${extraFrontM.toFixed(2)}m (> 2.25m) × $78/m = +$${formatMoney(oztechHeightCost)}`
-            : '* Base: 2,250 mm (2.25m) • Extra > 2.25m: +$78/m';
+          frontHintEl.textContent = `* ${hLabel} (Enter in mm e.g. 2250 or m e.g. 2.25)`;
         }
 
         if (isIziSlope) {
-          document.getElementById('oztechHeightLabelText').textContent = extraFrontM > 0
-            ? `Height (${frontHeightM.toFixed(2)}m • +${extraFrontM.toFixed(2)}m)`
-            : `Height (${frontHeightM.toFixed(2)}m)`;
+          document.getElementById('oztechHeightLabelText').textContent = `Height (${frontHeightM.toFixed(2)}m)`;
         } else {
-          document.getElementById('oztechHeightLabelText').textContent = extraFrontM > 0
-            ? `Heights (${frontHeightM.toFixed(2)}m / ${backHeightM.toFixed(2)}m)`
-            : `Heights (${frontHeightM.toFixed(2)}m / ${backHeightM.toFixed(2)}m)`;
+          document.getElementById('oztechHeightLabelText').textContent = `Heights (${frontHeightM.toFixed(2)}m / ${backHeightM.toFixed(2)}m)`;
         }
-        document.getElementById('oztechHeightPriceText').textContent = oztechHeightCost > 0
-          ? `+$${formatMoney(oztechHeightCost)}`
-          : '+$0';
-        oztechHeightBreakdownRow?.classList.toggle('is-active-addon', oztechHeightCost > 0);
+        document.getElementById('oztechHeightPriceText').textContent = '+$0';
+        oztechHeightBreakdownRow?.classList.remove('is-active-addon');
 
         // 2) Front Post Exclusion (-$80/ea, editable quantity)
         const isNoPostChecked = Boolean(document.getElementById('oztechNoPostCheck')?.checked);
@@ -6708,7 +6723,7 @@ notify pgrst, 'reload schema';</div>
         bracketBreakdownRow.classList.toggle('is-active-addon', bracketCost > 0);
       }
 
-      const totalPrice = Math.round((basePrice - discountAmount + fabricCost + oztechHeightCost - oztechPostDeduction + oztechGutterCoverCost + motorCost + sensorCost + pcCost + ledCost + trayCost + bracketCost) * 100) / 100;
+      const totalPrice = Math.round((basePrice - discountAmount + fabricCost - oztechPostDeduction + oztechGutterCoverCost + motorCost + sensorCost + pcCost + ledCost + trayCost + bracketCost) * 100) / 100;
 
       const activeMotors = getActiveMotors(product);
       const motorNameForBadge = (activeMotors && activeMotors[motorKey])
@@ -7298,6 +7313,28 @@ notify pgrst, 'reload schema';</div>
       if (DB.products.truscreen && (!DB.products.truscreen.motors || !DB.products.truscreen.motors.alpha)) {
         DB.products.truscreen.motors = JSON.parse(JSON.stringify(DEFAULT_DB_SNAPSHOT.products.truscreen.motors));
       }
+      // Keep motor button subDesc badges in sync with updated prices
+      const refreshMotorSubDesc = (motorsObj, hasIncludedBase = false) => {
+        if (!motorsObj || typeof motorsObj !== 'object') return;
+        Object.values(motorsObj).forEach(m => {
+          if (!m || !Array.isArray(m.prices) || m.prices.length === 0 || m.subDesc === undefined) return;
+          const minP = Math.min(...m.prices);
+          const maxP = Math.max(...m.prices);
+          if (minP === maxP) {
+            m.subDesc = minP === 0
+              ? 'Included (+$0)'
+              : (hasIncludedBase ? `+$${minP} Extra` : `+$${minP}`);
+          } else {
+            m.subDesc = `+$${minP} ~ $${maxP}`;
+          }
+        });
+      };
+      refreshMotorSubDesc(DB.motors, false);
+      Object.values(DB.products).forEach(prod => {
+        if (prod && prod.motors) {
+          refreshMotorSubDesc(prod.motors, Boolean(prod.motorisedPrices || prod.category === 'LOUVRE'));
+        }
+      });
     }
 
     function loadCustomDbFromStorage() {
@@ -7647,6 +7684,8 @@ notify pgrst, 'reload schema';</div>
     });
 
     // Dealer Access Codes Manager Modal Logic (Master Admin)
+    let editingDealerIndex = null;
+
     function renderDealerManagerList() {
       const listEl = document.getElementById('dmDealerListContainer');
       if (!listEl) return;
@@ -7660,18 +7699,125 @@ notify pgrst, 'reload schema';</div>
         const qCount = savedQuotes.filter(
           q => String(q.form_state?.dealerCode || '').toLowerCase() === String(d.code || '').toLowerCase()
         ).length;
+
+        if (editingDealerIndex === idx) {
+          return `<div style="padding:0.65rem 0.75rem; background:#eff6ff; border:1.5px solid #93c5fd; border-radius:8px; font-size:0.78rem;">
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:0.5rem; margin-bottom:0.5rem;">
+              <div>
+                <label style="display:block; font-size:0.68rem; font-weight:800; color:#1e3a8a; margin-bottom:0.2rem;">Company / Dealer Name</label>
+                <input type="text" id="dmEditNameInput" value="${escapeHtml(d.name)}" style="width:100%; padding:0.38rem 0.55rem; border:1px solid #93c5fd; border-radius:6px; font-size:0.78rem; font-weight:700; background:#fff;" autocomplete="off">
+              </div>
+              <div>
+                <label style="display:block; font-size:0.68rem; font-weight:800; color:#1e3a8a; margin-bottom:0.2rem;">Access Code (Password)</label>
+                <input type="text" id="dmEditCodeInput" value="${escapeHtml(d.code)}" style="width:100%; padding:0.38rem 0.55rem; border:1px solid #93c5fd; border-radius:6px; font-size:0.78rem; font-family:monospace; font-weight:800; background:#fff;" autocomplete="off">
+              </div>
+            </div>
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:0.5rem;">
+              <span style="font-size:0.7rem; color:#1e40af; font-weight:600;">${qCount > 0 ? `ℹ️ ${qCount} saved quote${qCount === 1 ? '' : 's'} will automatically link to the updated code.` : 'Enter new name or access code and click Save.'}</span>
+              <div style="display:flex; gap:0.35rem; flex-shrink:0;">
+                <button type="button" class="settings-action-btn" data-dm-cancel="${idx}" style="padding:0.26rem 0.55rem; font-size:0.7rem;">Cancel</button>
+                <button type="button" class="settings-action-btn primary" data-dm-save="${idx}" style="padding:0.26rem 0.65rem; font-size:0.7rem;">💾 Save</button>
+              </div>
+            </div>
+          </div>`;
+        }
+
         return `<div style="display:flex; align-items:center; justify-content:space-between; gap:0.5rem; padding:0.5rem 0.7rem; background:#ffffff; border:1px solid #e2e8f0; border-radius:8px; font-size:0.78rem;">
           <div>
             <strong style="color:#0f172a;">🏢 ${escapeHtml(d.name)}</strong>
             <span style="margin-left:0.4rem; background:#eff6ff; color:#1d4ed8; border:1px solid #bfdbfe; padding:0.1rem 0.45rem; border-radius:5px; font-family:monospace; font-weight:800;">🔑 ${escapeHtml(d.code)}</span>
             <span style="margin-left:0.35rem; color:#64748b; font-size:0.72rem;">(${qCount} quote${qCount === 1 ? '' : 's'})</span>
           </div>
-          <button type="button" class="settings-action-btn danger" data-dm-del="${idx}" style="padding:0.25rem 0.55rem; font-size:0.7rem;">Delete</button>
+          <div style="display:flex; align-items:center; gap:0.35rem; flex-shrink:0;">
+            <button type="button" class="settings-action-btn" data-dm-edit="${idx}" style="padding:0.25rem 0.55rem; font-size:0.7rem; background:#f8fafc; color:#1d4ed8; border-color:#bfdbfe;">✏️ Edit</button>
+            <button type="button" class="settings-action-btn danger" data-dm-del="${idx}" style="padding:0.25rem 0.55rem; font-size:0.7rem;">Delete</button>
+          </div>
         </div>`;
       }).join('');
+
+      if (editingDealerIndex !== null) {
+        const editCodeEl = document.getElementById('dmEditCodeInput');
+        const editNameEl = document.getElementById('dmEditNameInput');
+        const onEditKey = (e) => {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            saveEditedDealerAccount(editingDealerIndex);
+          } else if (e.key === 'Escape') {
+            editingDealerIndex = null;
+            renderDealerManagerList();
+          }
+        };
+        editCodeEl?.addEventListener('keydown', onEditKey);
+        editNameEl?.addEventListener('keydown', onEditKey);
+        setTimeout(() => {
+          if (editCodeEl) {
+            editCodeEl.focus();
+            editCodeEl.select();
+          }
+        }, 30);
+      }
+    }
+
+    async function saveEditedDealerAccount(idx) {
+      const target = dealerAccounts[idx];
+      if (!target) return;
+      const newName = (document.getElementById('dmEditNameInput')?.value || '').trim();
+      const newCode = (document.getElementById('dmEditCodeInput')?.value || '').trim();
+
+      if (!newName || !newCode) {
+        alert('Please enter both Company / Dealer Name and Access Code.');
+        return;
+      }
+      if (newCode === getAdminPassword()) {
+        alert('⚠️ Dealer Access Code cannot be identical to the Master Admin Password.');
+        return;
+      }
+      const conflict = dealerAccounts.find(
+        (d, i) => i !== idx && (d.code.toLowerCase() === newCode.toLowerCase() || d.name.toLowerCase() === newName.toLowerCase())
+      );
+      if (conflict) {
+        alert(`⚠️ Another dealer account already uses that Company Name or Access Code ("${conflict.name}" / "${conflict.code}").`);
+        return;
+      }
+
+      const oldCode = target.code;
+      const oldName = target.name;
+      dealerAccounts[idx] = {
+        ...target,
+        name: newName,
+        code: newCode,
+        updatedAt: new Date().toISOString()
+      };
+
+      // Automatically migrate saved quotes belonging to the old code so no quotes are orphaned
+      const migratedQuotes = [];
+      if (oldCode.toLowerCase() !== newCode.toLowerCase() || oldName !== newName) {
+        savedQuotes.forEach(q => {
+          if (q.form_state && String(q.form_state.dealerCode || '').toLowerCase() === oldCode.toLowerCase()) {
+            q.form_state.dealerCode = newCode;
+            q.form_state.dealerName = newName;
+            migratedQuotes.push(q);
+          }
+        });
+        if (migratedQuotes.length > 0) {
+          saveQuotesToLocal();
+          if (isSupabaseConfigured()) {
+            Promise.allSettled(migratedQuotes.map(q => upsertQuoteToSupabase(q)));
+          }
+        }
+        if (activeAccessRole === 'dealer' && activeDealerInfo && activeDealerInfo.code.toLowerCase() === oldCode.toLowerCase()) {
+          activeDealerInfo = { name: newName, code: newCode };
+        }
+      }
+
+      editingDealerIndex = null;
+      saveDealersToLocal();
+      renderDealerManagerList();
+      await pushDealersAndAuthToCloud();
     }
 
     function openDealerManagerModal() {
+      editingDealerIndex = null;
       renderDealerManagerList();
       const nameInp = document.getElementById('dmDealerNameInput');
       const codeInp = document.getElementById('dmDealerCodeInput');
@@ -7682,6 +7828,7 @@ notify pgrst, 'reload schema';</div>
     }
 
     function closeDealerManagerModal() {
+      editingDealerIndex = null;
       document.getElementById('dealerManagerModal')?.classList.remove('open');
     }
 
@@ -7708,11 +7855,14 @@ notify pgrst, 'reload schema';</div>
         d => d.code.toLowerCase() === code.toLowerCase() || d.name.toLowerCase() === name.toLowerCase()
       );
       if (existingIdx !== -1) {
-        dealerAccounts[existingIdx] = { name, code, updatedAt: new Date().toISOString() };
-      } else {
-        dealerAccounts.push({ name, code, createdAt: new Date().toISOString() });
+        editingDealerIndex = existingIdx;
+        renderDealerManagerList();
+        alert(`ℹ️ "${dealerAccounts[existingIdx].name}" is already registered. Edit its name or access code directly in the highlighted row below and click [💾 Save].`);
+        return;
       }
 
+      dealerAccounts.push({ name, code, createdAt: new Date().toISOString() });
+      editingDealerIndex = null;
       saveDealersToLocal();
       renderDealerManagerList();
       await pushDealersAndAuthToCloud();
@@ -7721,12 +7871,30 @@ notify pgrst, 'reload schema';</div>
     });
 
     document.getElementById('dmDealerListContainer')?.addEventListener('click', async function(e) {
+      const editBtn = e.target.closest('button[data-dm-edit]');
+      if (editBtn) {
+        editingDealerIndex = parseInt(editBtn.dataset.dmEdit, 10);
+        renderDealerManagerList();
+        return;
+      }
+      const cancelBtn = e.target.closest('button[data-dm-cancel]');
+      if (cancelBtn) {
+        editingDealerIndex = null;
+        renderDealerManagerList();
+        return;
+      }
+      const saveBtn = e.target.closest('button[data-dm-save]');
+      if (saveBtn) {
+        await saveEditedDealerAccount(parseInt(saveBtn.dataset.dmSave, 10));
+        return;
+      }
       const btn = e.target.closest('button[data-dm-del]');
       if (!btn) return;
       const idx = parseInt(btn.dataset.dmDel, 10);
       const target = dealerAccounts[idx];
       if (!target) return;
       if (!confirm(`Remove dealer access code "${target.code}" for "${target.name}"?`)) return;
+      if (editingDealerIndex === idx) editingDealerIndex = null;
       dealerAccounts.splice(idx, 1);
       saveDealersToLocal();
       renderDealerManagerList();
@@ -7833,6 +8001,7 @@ notify pgrst, 'reload schema';</div>
         options.push({ value: 'oztechMaxiLed', label: '7. Shared OZTECH MAXI LED Matrix & Dimmer' });
         options.push({ value: 'oztechGutterLed', label: '8. Shared OZTECH Full Width LED Gutter Prices' });
         options.push({ value: 'oztechFabrics', label: '9. Shared OZTECH Roof Fabrics — Add / Edit / Delete ($/sqm & mm)' });
+        options.push({ value: 'oztechBrackets', label: '10. Shared OZTECH / FAA Rafter Brackets (10° / 22° / Roof Tile Set)' });
       } else if (activeSettingsCategory === 'LOUVRE') {
         options.push({ value: 'prices', label: '1. Louvre Base System Matrix (Projection × Width)' });
         options.push({ value: 'ledPrices', label: '2. Gutter LED Matrix (Projection × Width)' });
@@ -7842,7 +8011,7 @@ notify pgrst, 'reload schema';</div>
           { value: 'fabrics', label: '1. FAA / DROP A Fabrics — Add / Edit / Delete ($/sqm)' },
           { value: 'oztechFabrics', label: '2. OZTECH Roof Fabrics — Add / Edit / Delete ($/sqm & mm)' },
           { value: 'sensorAndRemotes', label: '3. Sensors & Remotes by Motor Brand' },
-          { value: 'bracketsAndExtras', label: '4. FAA Brackets & Hardware Extras' },
+          { value: 'bracketsAndExtras', label: '4. FAA / OZTECH Brackets & Hardware Extras' },
           { value: 'geniusBrackets', label: '5. DROP A (GENIUS) Brackets' }
         ];
       }
@@ -8461,6 +8630,32 @@ notify pgrst, 'reload schema';</div>
           });
           return;
         }
+        if (tableType === 'oztechBrackets') {
+          document.getElementById('settingsActiveTableTitle').textContent = `🔩 OZTECH — Additional Rafter Brackets & Sets`;
+          document.getElementById('settingsActiveTableMeta').textContent = 'Shared with FAA Brackets & Hardware Extras • Unit: AUD ($)';
+          let html = `<table class="editable-matrix-table"><thead><tr><th>ID</th><th>Bracket / Extra Name</th><th>Unit Price ($)</th></tr></thead><tbody>`;
+          OZTECH_BRACKET_IDS.forEach(bId => {
+            const idx = DB.bracketsAndExtras.findIndex(b => b.id === bId);
+            if (idx === -1) return;
+            const item = DB.bracketsAndExtras[idx];
+            html += `<tr>
+              <td class="row-label-cell">${item.id}</td>
+              <td style="text-align:left; padding:0.4rem 0.75rem; font-weight:600;">${item.name}</td>
+              <td><input type="number" step="any" class="price-cell-input" data-idx="${idx}" value="${item.price}"></td>
+            </tr>`;
+          });
+          html += `</tbody></table>`;
+          container.innerHTML = html;
+          container.querySelectorAll('.price-cell-input').forEach(inp => {
+            inp.addEventListener('input', function() {
+              DB.bracketsAndExtras[parseInt(this.dataset.idx, 10)].price = parseFloat(this.value) || 0;
+              this.classList.add('is-modified');
+              saveCustomDbToStorage();
+              refreshCalculatorFromDb();
+            });
+          });
+          return;
+        }
       }
 
       if (activeSettingsCategory === 'LOUVRE' && product) {
@@ -8642,6 +8837,604 @@ notify pgrst, 'reload schema';</div>
     // Save Button
     document.getElementById('saveSettingsBtn').addEventListener('click', function() {
       saveCustomDbToStorage(true);
+    });
+
+    // =========================================================================
+    // 📊 EXCEL (.XLSX) EXPORT & IMPORT FOR ALL PRICE TABLES
+    // =========================================================================
+    function ensureXlsxLibrary() {
+      if (typeof XLSX !== 'undefined') return Promise.resolve(XLSX);
+      return new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = 'https://unpkg.com/xlsx@0.18.5/dist/xlsx.full.min.js';
+        script.onload = () => (typeof XLSX !== 'undefined' ? resolve(XLSX) : reject(new Error('XLSX load failed')));
+        script.onerror = () => reject(new Error('Failed to load Excel library. Check your internet connection.'));
+        document.head.appendChild(script);
+      });
+    }
+
+    function appendSheetWithAutoCols(wb, sheetName, aoa) {
+      const ws = XLSX.utils.aoa_to_sheet(aoa);
+      const colMax = [];
+      aoa.forEach(row => {
+        if (!Array.isArray(row)) return;
+        row.forEach((cell, cIdx) => {
+          const len = cell === null || cell === undefined ? 0 : String(cell).length;
+          colMax[cIdx] = Math.max(colMax[cIdx] || 10, Math.min(44, len + 3));
+        });
+      });
+      ws['!cols'] = colMax.map(wch => ({ wch }));
+      XLSX.utils.book_append_sheet(wb, ws, sheetName.slice(0, 31));
+    }
+
+    function pushExcelMatrixBlock(aoa, targetId, title, rows, cols, matrixObj, cornerLabel = 'Projection \\ Width (mm)') {
+      if (!matrixObj || !Array.isArray(rows) || !Array.isArray(cols)) return;
+      aoa.push(['##TABLE', 'MATRIX', targetId, title]);
+      aoa.push([cornerLabel, ...cols]);
+      rows.forEach(r => {
+        const rowData = matrixObj[r] || {};
+        aoa.push([r, ...cols.map(c => (rowData[c] !== undefined ? rowData[c] : 0))]);
+      });
+      aoa.push([]);
+    }
+
+    async function exportPriceDbToExcel() {
+      try {
+        await ensureXlsxLibrary();
+        syncSharedOztechRefs();
+        const wb = XLSX.utils.book_new();
+
+        // 0. Guide Sheet
+        const guideAoa = [
+          ['SYSTEM PRICE CALCULATOR — EXCEL PRICE DATABASE (.XLSX)'],
+          ['Exported At', new Date().toLocaleString()],
+          [],
+          ['HOW TO UPDATE PRICES USING THIS EXCEL FILE'],
+          ['1. Select any sheet tab below (FAA, DROP A, OZTECH, LOUVRE, Fabrics, Sensors & Brackets) and edit the price numbers directly.'],
+          ['2. Excel formulas (e.g. =C5*1.05) are supported — calculated results will be imported automatically.'],
+          ['3. Entering 0 in a size matrix cell marks that Width × Projection combination as Unavailable (N/A).'],
+          ['4. In sheet "8_Fabrics", you can EDIT fabric names/categories/rates, ADD new rows at the bottom of a table (leave Fabric Key blank), or DELETE rows.'],
+          ['5. IMPORTANT: Do NOT delete or rename rows starting with "##TABLE" or the Key/Width/Projection header labels, as they map each table back to the calculator.'],
+          ['6. Save this file (Ctrl+S), then click [📤 Import Excel (.xlsx)] in ⚙️ Price Settings. (If using Supabase Cloud, click [☁️ Push Price Tables to Cloud] afterwards to sync to all dealers.)']
+        ];
+        appendSheetWithAutoCols(wb, '0_How_To_Use', guideAoa);
+
+        // 1. FAA Complete System Base Matrices
+        const faaKeys = ['titan_open', 'titan_trendy', 'family_complete', 'family_flex', 'family_basic', 'family_kompakt_c', 'millennium'];
+        const faaCompAoa = [];
+        faaKeys.forEach(k => {
+          const p = DB.products[k];
+          if (p && p.prices) {
+            pushExcelMatrixBlock(faaCompAoa, `${k}:prices`, `${p.name} — Complete System Base Matrix ($)`, p.projections, p.widths, p.prices);
+          }
+        });
+        appendSheetWithAutoCols(wb, '1_FAA_Complete', faaCompAoa);
+
+        // 2. FAA KIT & Shared Options
+        const faaOptAoa = [];
+        faaKeys.forEach(k => {
+          const p = DB.products[k];
+          if (!p) return;
+          if (p.kitPrices) {
+            pushExcelMatrixBlock(faaOptAoa, `${k}:kitPrices`, `${p.name} — KIT Only Base Matrix ($)`, p.projections, p.kitWidths || p.widths, p.kitPrices);
+          }
+          if (p.powderCoat && (p.powderCoat.standard || p.powderCoat.non_standard)) {
+            faaOptAoa.push(['##TABLE', 'WIDTH_ROWS', `FAA_PC:${k}`, `${p.name} — Powder Coat Prices by Width ($)`]);
+            faaOptAoa.push(['Key (Do Not Edit)', 'Powder Coat Tier', ...p.widths]);
+            ['standard', 'non_standard'].forEach(tKey => {
+              if (p.powderCoat[tKey]) {
+                faaOptAoa.push([tKey, p.powderCoat[tKey].name, ...p.widths.map((_, idx) => p.powderCoat[tKey].prices[idx] ?? 0)]);
+              }
+            });
+            faaOptAoa.push([]);
+          }
+          if (p.fabricTray) {
+            faaOptAoa.push(['##TABLE', 'WIDTH_ROWS', `FAA_TRAY:${k}`, `${p.name} — Fabric Tray Prices by Width ($)`]);
+            faaOptAoa.push(['Key (Do Not Edit)', 'Option', ...p.widths]);
+            faaOptAoa.push(['fabricTray', 'Fabric Tray ($)', ...p.widths.map((_, idx) => p.fabricTray[idx] ?? 0)]);
+            faaOptAoa.push([]);
+          }
+        });
+        const stdFaaWidths = DB.products.titan_open.widths;
+        faaOptAoa.push(['##TABLE', 'WIDTH_ROWS', 'FAA_MOTORS', 'Shared FAA — Motor Surcharges by Width ($)']);
+        faaOptAoa.push(['Key (Do Not Edit)', 'Motor Brand', ...stdFaaWidths]);
+        Object.entries(DB.motors).forEach(([mKey, mObj]) => {
+          faaOptAoa.push([mKey, mObj.name, ...stdFaaWidths.map((_, idx) => mObj.prices[idx] ?? 0)]);
+        });
+        faaOptAoa.push([]);
+
+        faaOptAoa.push(['##TABLE', 'WIDTH_ROWS', 'FAA_LED', 'Shared FAA — LED Lighting Prices by Width ($)']);
+        faaOptAoa.push(['Key (Do Not Edit)', 'LED & Motor Option', ...stdFaaWidths]);
+        Object.entries(DB.ledLighting).forEach(([ledKey, ledObj]) => {
+          Object.entries(ledObj.rows).forEach(([mKey, rowObj]) => {
+            faaOptAoa.push([`${ledKey}:${mKey}`, rowObj.label, ...stdFaaWidths.map((_, idx) => rowObj.prices[idx] ?? 0)]);
+          });
+        });
+        faaOptAoa.push([]);
+        appendSheetWithAutoCols(wb, '2_FAA_KIT_Options', faaOptAoa);
+
+        // 3. DROP A Models & Options
+        const dropAAoa = [];
+        Object.entries(DB.dropAModels).forEach(([grp, list]) => {
+          list.forEach(item => {
+            const k = item.key;
+            const p = DB.products[k];
+            if (!p) return;
+            if (p.prices) {
+              pushExcelMatrixBlock(dropAAoa, `${k}:prices`, `${p.name} — Manual Gear Base Matrix ($)`, p.projections, p.widths, p.prices, 'Drop \\ Width (mm)');
+            }
+            if (p.springPrices) {
+              pushExcelMatrixBlock(dropAAoa, `${k}:springPrices`, `${p.name} — Spring Operation Matrix ($)`, p.projections, p.widths, p.springPrices, 'Drop \\ Width (mm)');
+            }
+            if (p.motorisedPrices) {
+              pushExcelMatrixBlock(dropAAoa, `${k}:motorisedPrices`, `${p.name} — Motorised (ACE Included) Matrix ($)`, p.projections, p.widths, p.motorisedPrices, 'Drop \\ Width (mm)');
+            }
+            if (p.motors) {
+              dropAAoa.push(['##TABLE', 'WIDTH_ROWS', `PROD_MOTORS:${k}`, `${p.name} — Motor Prices by Width ($)`]);
+              dropAAoa.push(['Key (Do Not Edit)', 'Motor Brand', ...p.widths]);
+              Object.entries(p.motors).forEach(([mKey, mObj]) => {
+                dropAAoa.push([mKey, mObj.name, ...p.widths.map((_, idx) => mObj.prices[idx] ?? 0)]);
+              });
+              dropAAoa.push([]);
+            }
+            if (p.powderCoat) {
+              if (p.powderCoat.mode === 'multiplier' && p.powderCoat.options) {
+                dropAAoa.push(['##TABLE', 'KEY_VAL', `DROPA_PC_MULT:${k}`, `${p.name} — Powder Coat Multiplier Rates (Base × Rate)`]);
+                dropAAoa.push(['Key (Do Not Edit)', 'Option Label', 'Multiplier Rate']);
+                Object.entries(p.powderCoat.options).forEach(([optKey, optObj]) => {
+                  dropAAoa.push([optKey, optObj.label, optObj.rate]);
+                });
+                dropAAoa.push([]);
+              } else {
+                dropAAoa.push(['##TABLE', 'WIDTH_ROWS', `FAA_PC:${k}`, `${p.name} — Powder Coat Prices by Width ($)`]);
+                dropAAoa.push(['Key (Do Not Edit)', 'Powder Coat Tier', ...p.widths]);
+                ['standard', 'non_standard'].forEach(tKey => {
+                  if (p.powderCoat[tKey]) {
+                    dropAAoa.push([tKey, p.powderCoat[tKey].name, ...p.widths.map((_, idx) => p.powderCoat[tKey].prices[idx] ?? 0)]);
+                  }
+                });
+                dropAAoa.push([]);
+              }
+            }
+          });
+        });
+        appendSheetWithAutoCols(wb, '3_DROP_A', dropAAoa);
+
+        // 4 & 5. OZTECH Base Module Matrices (1Bay on Sheet 4; 2Bay, 3Bay & Rafters on Sheet 5)
+        const oz1Aoa = [];
+        const oz23Aoa = [];
+        Object.entries(DB.oztechModels).forEach(([, list]) => {
+          list.forEach(item => {
+            const k = item.key;
+            if (k === 'oztech_izi_slope_standard') return; // Shares modulePrices with oztech_izi_standard
+            const p = DB.products[k];
+            if (!p || !p.modulePrices) return;
+            const sharedNote = k === 'oztech_izi_standard' ? ' (Also shared with IZI SLOPE)' : '';
+            ['single', 'double', 'triple'].forEach(modKey => {
+              const mat = p.modulePrices[modKey];
+              if (!mat) return;
+              const modCfg = (p.moduleConfig && p.moduleConfig[modKey]) ? p.moduleConfig[modKey] : DB.oztechModules[modKey];
+              const cols = [...(modCfg.widths || []), ...(modCfg.overhangWidths || [])];
+              const targetAoa = modKey === 'single' ? oz1Aoa : oz23Aoa;
+              pushExcelMatrixBlock(targetAoa, `${k}:oz_${modKey}`, `${p.name} — ${modCfg.label}${sharedNote} ($)`, p.projections, cols, mat);
+            });
+            if (p.additionalRafter) {
+              oz23Aoa.push(['##TABLE', 'KEY_VAL', `OZTECH_RAFTER:${k}`, `${p.name} — PLAZA Additional Rafter Price by Projection ($)`]);
+              oz23Aoa.push(['Key (Projection mm)', 'Projection', 'Additional Rafter Price ($)']);
+              Object.entries(p.additionalRafter).forEach(([proj, val]) => {
+                oz23Aoa.push([Number(proj), `${Number(proj).toLocaleString()} mm`, val]);
+              });
+              oz23Aoa.push([]);
+            }
+          });
+        });
+        appendSheetWithAutoCols(wb, '4_OZTECH_1Bay', oz1Aoa);
+        appendSheetWithAutoCols(wb, '5_OZTECH_2Bay_3Bay', oz23Aoa);
+
+        // 6. OZTECH Shared Options (Powder Coat, UNILED, MAXI LED, Gutter LED)
+        const ozOptAoa = [];
+        ozOptAoa.push(['##TABLE', 'KEY_VAL', 'OZTECH_SCALARS', 'Shared OZTECH — Duratec Rate & LED Dimmer Prices']);
+        ozOptAoa.push(['Key (Do Not Edit)', 'Option Description', 'Rate / Price']);
+        ozOptAoa.push(['duratecRate', 'OZTECH Duratec Surcharge Multiplier Rate (0.128 = 12.8%)', DB.oztechFullPowderCoat.duratecRate]);
+        ozOptAoa.push(['uniledDimmer', 'Standard LED (UNILED) Remote Dimmer Price ($)', DB.oztechLedLighting.uniled.dimmerPrice]);
+        ozOptAoa.push(['maxiLedDimmer', 'MAXI LED Remote Dimmer Price ($)', DB.oztechLedLighting.maxi_led.dimmerPrice]);
+        ozOptAoa.push([]);
+
+        pushExcelMatrixBlock(ozOptAoa, 'OZTECH_FULL_PC', 'Shared OZTECH — FULL Powder Coating Price Matrix ($)', DB.oztechFullPowderCoat.projections, DB.oztechFullPowderCoat.widths, DB.oztechFullPowderCoat.prices);
+        pushExcelMatrixBlock(ozOptAoa, 'OZTECH_UNILED', 'Shared OZTECH — Standard LED (UNILED) Price Matrix ($)', DB.oztechLedLighting.projections, DB.oztechLedLighting.widths, DB.oztechLedLighting.uniled.prices);
+        pushExcelMatrixBlock(ozOptAoa, 'OZTECH_MAXI_LED', 'Shared OZTECH — MAXI LED Price Matrix ($)', DB.oztechLedLighting.projections, DB.oztechLedLighting.widths, DB.oztechLedLighting.maxi_led.prices);
+
+        ozOptAoa.push(['##TABLE', 'WIDTH_ROWS', 'OZTECH_GUTTER_LED', 'Shared OZTECH — Full Width LED Gutter Prices ($)']);
+        ozOptAoa.push(['Key (Do Not Edit)', 'Option', ...DB.oztechLedLighting.widths]);
+        ozOptAoa.push(['gutter_led', 'Full Width LED Gutter ($)', ...DB.oztechLedLighting.widths.map(w => DB.oztechLedLighting.gutter_led.pricesByWidth[w] ?? 0)]);
+        ozOptAoa.push([]);
+        appendSheetWithAutoCols(wb, '6_OZTECH_Options', ozOptAoa);
+
+        // 7. LOUVRE Models & Options
+        const louvreAoa = [];
+        ['grand_louvre', 'louvre_flex'].forEach(k => {
+          const p = DB.products[k];
+          if (!p) return;
+          if (p.prices) {
+            pushExcelMatrixBlock(louvreAoa, `${k}:prices`, `${p.name} — Louvre Base System Matrix ($)`, p.projections, p.widths, p.prices);
+          }
+          if (p.ledPrices) {
+            const lw = p.ledWidths || p.widths;
+            const lp = Object.keys(p.ledPrices).map(Number).sort((a, b) => a - b);
+            pushExcelMatrixBlock(louvreAoa, `${k}:ledPrices`, `${p.name} — Gutter LED Matrix ($)`, lp, lw, p.ledPrices);
+          }
+          if (p.motors) {
+            louvreAoa.push(['##TABLE', 'WIDTH_ROWS', `PROD_MOTORS:${k}`, `${p.name} — Motor Surcharges by Width ($)`]);
+            louvreAoa.push(['Key (Do Not Edit)', 'Motor Option', ...p.widths]);
+            Object.entries(p.motors).forEach(([mKey, mObj]) => {
+              louvreAoa.push([mKey, mObj.name, ...p.widths.map((_, idx) => mObj.prices[idx] ?? 0)]);
+            });
+            louvreAoa.push([]);
+          }
+        });
+        appendSheetWithAutoCols(wb, '7_LOUVRE', louvreAoa);
+
+        // 8. Fabrics (Editable / Addable / Deletable rows)
+        const fabAoa = [];
+        fabAoa.push(['##TABLE', 'FABRICS', 'fabrics', 'FAA & DROP A Fabrics — Edit / Add / Delete Rows (Shade Mesh & Clear PVC apply to FAA + DROP A)']);
+        fabAoa.push(['Fabric Key (Leave Blank for New)', 'Category (Shade Mesh / Clear PVC / Acrylic / Canvas)', 'Fabric Name', 'Rate ($/sqm)']);
+        Object.entries(DB.fabrics).forEach(([fKey, fObj]) => {
+          fabAoa.push([fKey, fObj.category, fObj.name, fObj.rate]);
+        });
+        fabAoa.push([]);
+
+        fabAoa.push(['##TABLE', 'FABRICS_OZTECH', 'oztechFabrics', 'OZTECH Roof Fabrics — Edit / Add / Delete Rows']);
+        fabAoa.push(['Fabric Key (Leave Blank for New)', 'Category (Translucent / Blockout)', 'Fabric Name', 'Fabric Width (mm)', 'Rate ($/sqm)']);
+        Object.entries(DB.oztechFabrics).forEach(([fKey, fObj]) => {
+          fabAoa.push([fKey, fObj.category, fObj.name, fObj.fabricWidth, fObj.rate]);
+        });
+        fabAoa.push([]);
+        appendSheetWithAutoCols(wb, '8_Fabrics', fabAoa);
+
+        // 9. Sensors, Remotes & Brackets
+        const hwAoa = [];
+        hwAoa.push(['##TABLE', 'SENSORS', 'sensorAndRemotes', 'Sensors & Remotes by Motor Brand ($)']);
+        hwAoa.push(['Motor Brand (Do Not Edit)', 'Item ID (Do Not Edit)', 'Sensor / Remote Name', 'Price ($)']);
+        Object.entries(DB.sensorAndRemotes).forEach(([brand, list]) => {
+          list.forEach(item => {
+            hwAoa.push([brand, item.id, item.name, item.price]);
+          });
+        });
+        hwAoa.push([]);
+
+        hwAoa.push(['##TABLE', 'BRACKETS', 'bracketsAndExtras', 'FAA & OZTECH Additional Brackets & Hardware Extras ($)']);
+        hwAoa.push(['Item ID (Do Not Edit)', 'Applicable Lineups', 'Bracket / Extra Name', 'Unit Price ($)']);
+        DB.bracketsAndExtras.forEach(item => {
+          const usedIn = OZTECH_BRACKET_IDS.includes(item.id) ? 'FAA + OZTECH' : 'FAA Only';
+          hwAoa.push([item.id, usedIn, item.name, item.price]);
+        });
+        hwAoa.push([]);
+
+        hwAoa.push(['##TABLE', 'GENIUS_BRACKETS', 'geniusBrackets', 'DROP A (GENIUS) Brackets ($)']);
+        hwAoa.push(['Item ID (Do Not Edit)', 'Bracket Name', 'Unit', 'Unit Price ($)']);
+        DB.geniusBrackets.forEach(item => {
+          hwAoa.push([item.id, item.name, item.unit || 'Set', item.price]);
+        });
+        hwAoa.push([]);
+        appendSheetWithAutoCols(wb, '9_Sensors_Brackets', hwAoa);
+
+        const dateTag = new Date().toISOString().slice(0, 10);
+        XLSX.writeFile(wb, `System_Price_Tables_${dateTag}.xlsx`);
+      } catch (err) {
+        console.error('Excel export failed:', err);
+        alert(`⚠️ Failed to export Excel file: ${err.message}`);
+      }
+    }
+
+    function resolveExcelMatrixTarget(targetId) {
+      if (targetId === 'OZTECH_FULL_PC') return DB.oztechFullPowderCoat.prices;
+      if (targetId === 'OZTECH_UNILED') return DB.oztechLedLighting.uniled.prices;
+      if (targetId === 'OZTECH_MAXI_LED') return DB.oztechLedLighting.maxi_led.prices;
+      const [modelKey, prop] = String(targetId || '').split(':');
+      const prod = DB.products[modelKey];
+      if (!prod || !prop) return null;
+      if (prop.startsWith('oz_')) {
+        const modKey = prop.slice(3);
+        if (!prod.modulePrices) prod.modulePrices = {};
+        if (!prod.modulePrices[modKey]) prod.modulePrices[modKey] = {};
+        return prod.modulePrices[modKey];
+      }
+      if (!prod[prop]) prod[prop] = {};
+      return prod[prop];
+    }
+
+    function applyExcelWorkbookToDb(wb) {
+      let tablesUpdated = 0;
+      let valuesUpdated = 0;
+
+      wb.SheetNames.forEach(sheetName => {
+        const ws = wb.Sheets[sheetName];
+        if (!ws) return;
+        const aoa = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' });
+
+        let i = 0;
+        while (i < aoa.length) {
+          const row = aoa[i];
+          if (!Array.isArray(row) || String(row[0] || '').trim() !== '##TABLE') {
+            i++;
+            continue;
+          }
+
+          const blockType = String(row[1] || '').trim();
+          const targetId = String(row[2] || '').trim();
+          const headerRow = aoa[i + 1] || [];
+          let rIdx = i + 2;
+          const dataRows = [];
+          while (rIdx < aoa.length) {
+            const dRow = aoa[rIdx];
+            if (!Array.isArray(dRow) || String(dRow[0] || '').trim() === '##TABLE') break;
+            const nonEmpty = dRow.some(cell => cell !== '' && cell !== null && cell !== undefined);
+            if (!nonEmpty) {
+              rIdx++;
+              break;
+            }
+            dataRows.push(dRow);
+            rIdx++;
+          }
+
+          if (blockType === 'MATRIX') {
+            const mat = resolveExcelMatrixTarget(targetId);
+            if (mat && dataRows.length > 0) {
+              const colWidths = headerRow.map(v => Number(v));
+              dataRows.forEach(dRow => {
+                const proj = Number(dRow[0]);
+                if (isNaN(proj) || proj <= 0) return;
+                if (!mat[proj]) mat[proj] = {};
+                for (let c = 1; c < colWidths.length; c++) {
+                  const w = colWidths[c];
+                  if (isNaN(w) || w <= 0) continue;
+                  const rawNum = parseFloat(dRow[c]);
+                  mat[proj][w] = isNaN(rawNum) ? 0 : rawNum;
+                  valuesUpdated++;
+                }
+              });
+              tablesUpdated++;
+            }
+          } else if (blockType === 'WIDTH_ROWS') {
+            const colWidths = headerRow.slice(2).map(v => Number(v));
+            dataRows.forEach(dRow => {
+              const rKey = String(dRow[0] || '').trim();
+              const rLabel = String(dRow[1] || '').trim();
+              if (!rKey) return;
+              const vals = colWidths.map((_, idx) => {
+                const v = parseFloat(dRow[idx + 2]);
+                return isNaN(v) ? 0 : v;
+              });
+
+              if (targetId === 'OZTECH_GUTTER_LED') {
+                colWidths.forEach((w, idx) => {
+                  if (!isNaN(w) && w > 0) {
+                    DB.oztechLedLighting.gutter_led.pricesByWidth[w] = vals[idx];
+                    valuesUpdated++;
+                  }
+                });
+              } else if (targetId === 'FAA_MOTORS') {
+                if (DB.motors[rKey]) {
+                  vals.forEach((v, idx) => {
+                    if (idx < DB.motors[rKey].prices.length) {
+                      DB.motors[rKey].prices[idx] = v;
+                      valuesUpdated++;
+                    }
+                  });
+                }
+              } else if (targetId === 'FAA_LED') {
+                const [lKey, mKey] = rKey.split(':');
+                const targetArr = DB.ledLighting[lKey]?.rows?.[mKey]?.prices;
+                if (Array.isArray(targetArr)) {
+                  vals.forEach((v, idx) => {
+                    if (idx < targetArr.length) {
+                      targetArr[idx] = v;
+                      valuesUpdated++;
+                    }
+                  });
+                }
+              } else if (targetId.startsWith('FAA_PC:')) {
+                const mKey = targetId.slice(7);
+                const targetArr = DB.products[mKey]?.powderCoat?.[rKey]?.prices;
+                if (Array.isArray(targetArr)) {
+                  vals.forEach((v, idx) => {
+                    if (idx < targetArr.length) {
+                      targetArr[idx] = v;
+                      valuesUpdated++;
+                    }
+                  });
+                }
+              } else if (targetId.startsWith('FAA_TRAY:')) {
+                const mKey = targetId.slice(9);
+                const targetArr = DB.products[mKey]?.fabricTray;
+                if (Array.isArray(targetArr)) {
+                  vals.forEach((v, idx) => {
+                    if (idx < targetArr.length) {
+                      targetArr[idx] = v;
+                      valuesUpdated++;
+                    }
+                  });
+                }
+              } else if (targetId.startsWith('PROD_MOTORS:')) {
+                const mKey = targetId.slice(12);
+                const mObj = DB.products[mKey]?.motors?.[rKey];
+                if (mObj && Array.isArray(mObj.prices)) {
+                  if (rLabel) mObj.name = rLabel;
+                  vals.forEach((v, idx) => {
+                    if (idx < mObj.prices.length) {
+                      mObj.prices[idx] = v;
+                      valuesUpdated++;
+                    }
+                  });
+                }
+              }
+            });
+            tablesUpdated++;
+          } else if (blockType === 'KEY_VAL') {
+            dataRows.forEach(dRow => {
+              const k = String(dRow[0] || '').trim();
+              const labelStr = String(dRow[1] || '').trim();
+              const numVal = parseFloat(dRow[2]);
+              if (!k || isNaN(numVal)) return;
+
+              if (targetId === 'OZTECH_SCALARS') {
+                if (k === 'duratecRate') DB.oztechFullPowderCoat.duratecRate = numVal;
+                else if (k === 'uniledDimmer') DB.oztechLedLighting.uniled.dimmerPrice = numVal;
+                else if (k === 'maxiLedDimmer') DB.oztechLedLighting.maxi_led.dimmerPrice = numVal;
+                valuesUpdated++;
+              } else if (targetId.startsWith('DROPA_PC_MULT:')) {
+                const mKey = targetId.slice(14);
+                const optObj = DB.products[mKey]?.powderCoat?.options?.[k];
+                if (optObj) {
+                  if (labelStr) optObj.label = labelStr;
+                  optObj.rate = numVal;
+                  valuesUpdated++;
+                }
+              } else if (targetId.startsWith('OZTECH_RAFTER:')) {
+                const mKey = targetId.slice(14);
+                const projNum = Number(k);
+                if (DB.products[mKey]?.additionalRafter && !isNaN(projNum)) {
+                  DB.products[mKey].additionalRafter[projNum] = numVal;
+                  valuesUpdated++;
+                }
+              }
+            });
+            tablesUpdated++;
+          } else if (blockType === 'FABRICS') {
+            const validCats = ['Shade Mesh', 'Clear PVC', 'Acrylic', 'Canvas'];
+            const nextFabrics = {};
+            dataRows.forEach(dRow => {
+              const rawKey = String(dRow[0] || '').trim();
+              const rawCat = String(dRow[1] || '').trim();
+              const rawName = String(dRow[2] || '').trim();
+              const rateNum = parseFloat(dRow[3]);
+              if (!rawName) return;
+              const matchedCat = validCats.find(c => c.toLowerCase() === rawCat.toLowerCase()) || 'Shade Mesh';
+              const slug = (rawKey || rawName).toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '') || 'custom';
+              let finalKey = slug;
+              if (nextFabrics[finalKey]) {
+                finalKey = `${slug}_${Object.keys(nextFabrics).length + 1}`;
+              }
+              nextFabrics[finalKey] = {
+                category: matchedCat,
+                name: rawName,
+                rate: isNaN(rateNum) ? 0 : rateNum
+              };
+              valuesUpdated++;
+            });
+            const hasDropACompat = Object.values(nextFabrics).some(f => f.category === 'Shade Mesh' || f.category === 'Clear PVC');
+            if (Object.keys(nextFabrics).length > 0 && hasDropACompat) {
+              DB.fabrics = nextFabrics;
+              DB.fabricsSchemaVersion = 2;
+              tablesUpdated++;
+            }
+          } else if (blockType === 'FABRICS_OZTECH') {
+            const validCats = ['Translucent', 'Blockout'];
+            const nextOzFabrics = {};
+            dataRows.forEach(dRow => {
+              const rawKey = String(dRow[0] || '').trim();
+              const rawCat = String(dRow[1] || '').trim();
+              const rawName = String(dRow[2] || '').trim();
+              const widthNum = parseInt(dRow[3], 10);
+              const rateNum = parseFloat(dRow[4]);
+              if (!rawName) return;
+              const matchedCat = validCats.find(c => c.toLowerCase() === rawCat.toLowerCase()) || 'Translucent';
+              const baseSlug = (rawKey || `oz_${rawName}`).toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '') || 'oz_custom';
+              let finalKey = baseSlug.startsWith('oz_') ? baseSlug : `oz_${baseSlug}`;
+              if (nextOzFabrics[finalKey]) {
+                finalKey = `${finalKey}_${Object.keys(nextOzFabrics).length + 1}`;
+              }
+              nextOzFabrics[finalKey] = {
+                category: matchedCat,
+                name: rawName,
+                fabricWidth: (!isNaN(widthNum) && widthNum > 0) ? widthNum : 3000,
+                rate: isNaN(rateNum) ? 0 : rateNum
+              };
+              valuesUpdated++;
+            });
+            if (Object.keys(nextOzFabrics).length > 0) {
+              DB.oztechFabrics = nextOzFabrics;
+              DB.fabricsSchemaVersion = 2;
+              tablesUpdated++;
+            }
+          } else if (blockType === 'SENSORS') {
+            dataRows.forEach(dRow => {
+              const brand = String(dRow[0] || '').trim().toLowerCase();
+              const itemId = String(dRow[1] || '').trim();
+              const itemName = String(dRow[2] || '').trim();
+              const priceNum = parseFloat(dRow[3]);
+              const list = DB.sensorAndRemotes[brand];
+              if (!Array.isArray(list) || !itemId) return;
+              const found = list.find(it => it.id === itemId);
+              if (found) {
+                if (itemName) found.name = itemName;
+                if (!isNaN(priceNum)) found.price = priceNum;
+                valuesUpdated++;
+              }
+            });
+            tablesUpdated++;
+          } else if (blockType === 'BRACKETS') {
+            dataRows.forEach(dRow => {
+              const itemId = String(dRow[0] || '').trim();
+              const itemName = String(dRow[2] || '').trim();
+              const priceNum = parseFloat(dRow[3]);
+              const found = DB.bracketsAndExtras.find(it => it.id === itemId);
+              if (found) {
+                if (itemName) found.name = itemName;
+                if (!isNaN(priceNum)) found.price = priceNum;
+                valuesUpdated++;
+              }
+            });
+            tablesUpdated++;
+          } else if (blockType === 'GENIUS_BRACKETS') {
+            dataRows.forEach(dRow => {
+              const itemId = String(dRow[0] || '').trim();
+              const itemName = String(dRow[1] || '').trim();
+              const unitStr = String(dRow[2] || '').trim();
+              const priceNum = parseFloat(dRow[3]);
+              const found = DB.geniusBrackets.find(it => it.id === itemId);
+              if (found) {
+                if (itemName) found.name = itemName;
+                if (unitStr) found.unit = unitStr;
+                if (!isNaN(priceNum)) found.price = priceNum;
+                valuesUpdated++;
+              }
+            });
+            tablesUpdated++;
+          }
+
+          i = rIdx;
+        }
+      });
+
+      return { tablesUpdated, valuesUpdated };
+    }
+
+    document.getElementById('exportExcelBtn')?.addEventListener('click', exportPriceDbToExcel);
+
+    document.getElementById('importExcelInput')?.addEventListener('change', async function(e) {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      try {
+        await ensureXlsxLibrary();
+        const arrayBuf = await file.arrayBuffer();
+        const wb = XLSX.read(arrayBuf, { type: 'array' });
+        const { tablesUpdated, valuesUpdated } = applyExcelWorkbookToDb(wb);
+        if (tablesUpdated === 0) {
+          alert('⚠️ No valid price tables were found in this Excel file.\nPlease export the template first via [📊 Export Excel (.xlsx)], edit the values, and upload it back.');
+          this.value = '';
+          return;
+        }
+        syncSharedOztechRefs();
+        saveCustomDbToStorage();
+        renderSettingsEditor();
+        refreshCalculatorFromDb();
+        alert(`✅ Excel price database imported successfully!\n• Updated Tables: ${tablesUpdated}\n• Updated Cells / Items: ${valuesUpdated.toLocaleString()}\n\n(Tip: If using Supabase Cloud DB, open [☁️ Supabase DB Setup] and click [☁️ Push Price Tables to Cloud] to share with all dealers.)`);
+      } catch (err) {
+        console.error('Excel import failed:', err);
+        alert(`⚠️ Failed to read Excel file: ${err.message}`);
+      }
+      this.value = '';
     });
 
     // Export JSON Button
@@ -9227,7 +10020,16 @@ notify pgrst, 'reload schema';</div>
           cb.checked = matchedQty !== undefined;
           cb.closest('.checkbox-item')?.classList.toggle('checked', cb.checked);
           const qInp = document.getElementById(`qty-${cb.value}`);
-          if (qInp && matchedQty !== undefined) qInp.value = matchedQty;
+          if (qInp) {
+            qInp.disabled = !cb.checked;
+            if (matchedQty !== undefined) qInp.value = matchedQty;
+          }
+          const subEl = document.getElementById(`sub-${cb.value}`);
+          const unitP = parseFloat(cb.dataset.price) || 0;
+          if (subEl) {
+            const q = matchedQty !== undefined ? (parseInt(matchedQty, 10) || 1) : 1;
+            subEl.textContent = cb.checked ? `+$${(unitP * q).toLocaleString()}` : `+$${unitP.toLocaleString()}`;
+          }
         });
       }
 
