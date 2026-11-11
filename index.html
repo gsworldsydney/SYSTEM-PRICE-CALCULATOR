@@ -3411,6 +3411,7 @@ notify pgrst, 'reload schema';</div>
         }
       },
       // Fabric Surcharge Database ($/sqm)
+      fabricsSchemaVersion: 2,
       fabrics: {
         solscape:               { category: "Acrylic",    name: "Solscape",                rate: 0 },
         docril:                 { category: "Acrylic",    name: "Docril",                  rate: 10 },
@@ -4687,21 +4688,24 @@ notify pgrst, 'reload schema';</div>
 
       if (activeCategory === 'OZTECH') {
         const categories = ['Translucent', 'Blockout'];
+        const validKeys = [];
         categories.forEach(cat => {
           const group = document.createElement('optgroup');
           group.label = cat;
           Object.entries(DB.oztechFabrics)
             .filter(([, f]) => f.category === cat)
             .forEach(([fKey, fData]) => {
+              validKeys.push(fKey);
               const opt = document.createElement('option');
               opt.value = fKey;
               opt.textContent = `${fData.name} (${fData.fabricWidth}mm • $${fData.rate}/sqm)`;
               group.appendChild(opt);
             });
-          fabricSelect.appendChild(group);
+          if (group.children.length > 0) fabricSelect.appendChild(group);
         });
-        const validKeys = Object.keys(DB.oztechFabrics);
-        fabricSelect.value = (!resetToDefault && validKeys.includes(prevVal)) ? prevVal : 'oz_solscape';
+        fabricSelect.value = (!resetToDefault && validKeys.includes(prevVal))
+          ? prevVal
+          : (validKeys.includes('oz_solscape') ? 'oz_solscape' : (validKeys[0] || ''));
       } else {
         const categories = activeCategory === 'DROP A'
           ? ['Shade Mesh', 'Clear PVC']
@@ -4719,7 +4723,7 @@ notify pgrst, 'reload schema';</div>
               opt.textContent = `${fData.name} ($${fData.rate}/sqm)`;
               group.appendChild(opt);
             });
-          fabricSelect.appendChild(group);
+          if (group.children.length > 0) fabricSelect.appendChild(group);
         });
         const defaultFabricKey = activeCategory === 'DROP A' ? 'ds_95' : 'solscape';
         fabricSelect.value = (!resetToDefault && validKeys.includes(prevVal))
@@ -7272,6 +7276,10 @@ notify pgrst, 'reload schema';</div>
         const srcVal = source[key];
         if (Array.isArray(srcVal)) {
           target[key] = JSON.parse(JSON.stringify(srcVal));
+        } else if (key === 'fabrics' || key === 'oztechFabrics') {
+          if (srcVal && typeof srcVal === 'object') {
+            target[key] = JSON.parse(JSON.stringify(srcVal));
+          }
         } else if (srcVal && typeof srcVal === 'object') {
           if (!target[key] || typeof target[key] !== 'object') {
             target[key] = {};
@@ -7290,9 +7298,6 @@ notify pgrst, 'reload schema';</div>
       if (DB.products.truscreen && (!DB.products.truscreen.motors || !DB.products.truscreen.motors.alpha)) {
         DB.products.truscreen.motors = JSON.parse(JSON.stringify(DEFAULT_DB_SNAPSHOT.products.truscreen.motors));
       }
-      if (DB.fabrics && (!DB.fabrics.ds_95 || !DB.fabrics.viewshade_fg_97 || DB.fabrics.viewshade_fg_95?.rate === 0)) {
-        DB.fabrics = JSON.parse(JSON.stringify(DEFAULT_DB_SNAPSHOT.fabrics));
-      }
     }
 
     function loadCustomDbFromStorage() {
@@ -7301,6 +7306,12 @@ notify pgrst, 'reload schema';</div>
         if (!raw) return false;
         const parsed = JSON.parse(raw);
         deepMergeDb(DB, parsed);
+        if (!parsed.fabricsSchemaVersion) {
+          if (DB.fabrics && (!DB.fabrics.ds_95 || !DB.fabrics.viewshade_fg_97 || DB.fabrics.viewshade_fg_95?.rate === 0)) {
+            DB.fabrics = JSON.parse(JSON.stringify(DEFAULT_DB_SNAPSHOT.fabrics));
+          }
+          DB.fabricsSchemaVersion = 2;
+        }
         syncSharedOztechRefs();
         const statusEl = document.getElementById('settingsStatusPill');
         if (statusEl) {
@@ -7570,9 +7581,22 @@ notify pgrst, 'reload schema';</div>
         closeSettingsPasswordModal();
       }
     });
-    document.getElementById('settingsPasswordModal')?.addEventListener('click', function(e) {
-      if (e.target === this) closeSettingsPasswordModal();
-    });
+    // Only close modal on backdrop click when BOTH pointerdown and click occurred directly on the overlay
+    function bindBackdropClose(modalEl, onClose) {
+      if (!modalEl) return;
+      let startedOnBackdrop = false;
+      modalEl.addEventListener('pointerdown', function(e) {
+        startedOnBackdrop = (e.target === modalEl);
+      });
+      modalEl.addEventListener('click', function(e) {
+        if (startedOnBackdrop && e.target === modalEl) {
+          onClose();
+        }
+        startedOnBackdrop = false;
+      });
+    }
+
+    bindBackdropClose(document.getElementById('settingsPasswordModal'), closeSettingsPasswordModal);
 
     // Change Password Modal Logic
     const changePwModal = document.getElementById('changePasswordModal');
@@ -7593,9 +7617,7 @@ notify pgrst, 'reload schema';</div>
 
     document.getElementById('openChangePwModalBtn')?.addEventListener('click', openChangePwModal);
     document.getElementById('cancelChangePwBtn')?.addEventListener('click', closeChangePwModal);
-    changePwModal?.addEventListener('click', function(e) {
-      if (e.target === this) closeChangePwModal();
-    });
+    bindBackdropClose(changePwModal, closeChangePwModal);
 
     document.getElementById('saveChangePwBtn')?.addEventListener('click', async function() {
       const curPw = document.getElementById('currentPwInput').value;
@@ -7665,9 +7687,7 @@ notify pgrst, 'reload schema';</div>
 
     document.getElementById('openDealerManagerModalBtn')?.addEventListener('click', openDealerManagerModal);
     document.getElementById('closeDealerManagerBtn')?.addEventListener('click', closeDealerManagerModal);
-    document.getElementById('dealerManagerModal')?.addEventListener('click', function(e) {
-      if (e.target === this) closeDealerManagerModal();
-    });
+    bindBackdropClose(document.getElementById('dealerManagerModal'), closeDealerManagerModal);
 
     document.getElementById('dmAddDealerBtn')?.addEventListener('click', async function() {
       const nameInp = document.getElementById('dmDealerNameInput');
@@ -7785,6 +7805,7 @@ notify pgrst, 'reload schema';</div>
         }
         options.push({ value: 'faaMotors', label: '5. Shared FAA Motor Prices (ACE / Alpha / Becker / Somfy)' });
         options.push({ value: 'faaLed', label: '6. Shared FAA LED Prices (ARM LED / Maxi LED)' });
+        options.push({ value: 'fabrics', label: '7. Shared FAA / DROP A Fabrics — Add / Edit / Delete ($/sqm)' });
       } else if (activeSettingsCategory === 'DROP A') {
         options.push({ value: 'prices', label: '1. Manual Gear Base Matrix (Drop × Width)' });
         if (product && product.springPrices) {
@@ -7799,6 +7820,7 @@ notify pgrst, 'reload schema';</div>
         if (product && product.powderCoat) {
           options.push({ value: 'dropAPowderCoat', label: '5. Powder Coat Prices / Multiplier Rates' });
         }
+        options.push({ value: 'fabrics', label: '6. Shared DROP A / FAA Fabrics — Add / Edit / Delete ($/sqm)' });
       } else if (activeSettingsCategory === 'OZTECH') {
         options.push({ value: 'single', label: '1. SINGLE MODULE (1BAY) Matrix (Projection × Width)' });
         options.push({ value: 'double', label: '2. DOUBLE MODULE (2BAY) Matrix (Projection × Width)' });
@@ -7810,14 +7832,15 @@ notify pgrst, 'reload schema';</div>
         options.push({ value: 'oztechUniled', label: '6. Shared OZTECH Standard LED (UNILED) Matrix & Dimmer' });
         options.push({ value: 'oztechMaxiLed', label: '7. Shared OZTECH MAXI LED Matrix & Dimmer' });
         options.push({ value: 'oztechGutterLed', label: '8. Shared OZTECH Full Width LED Gutter Prices' });
+        options.push({ value: 'oztechFabrics', label: '9. Shared OZTECH Roof Fabrics — Add / Edit / Delete ($/sqm & mm)' });
       } else if (activeSettingsCategory === 'LOUVRE') {
         options.push({ value: 'prices', label: '1. Louvre Base System Matrix (Projection × Width)' });
         options.push({ value: 'ledPrices', label: '2. Gutter LED Matrix (Projection × Width)' });
         options.push({ value: 'louvreMotors', label: '3. Louvre Motor Surcharges' });
       } else if (activeSettingsCategory === 'COMMON') {
         options = [
-          { value: 'fabrics', label: '1. FAA / DROP A Fabric Rates ($/sqm)' },
-          { value: 'oztechFabrics', label: '2. OZTECH Roof Fabric Rates & Widths ($/sqm & mm)' },
+          { value: 'fabrics', label: '1. FAA / DROP A Fabrics — Add / Edit / Delete ($/sqm)' },
+          { value: 'oztechFabrics', label: '2. OZTECH Roof Fabrics — Add / Edit / Delete ($/sqm & mm)' },
           { value: 'sensorAndRemotes', label: '3. Sensors & Remotes by Motor Brand' },
           { value: 'bracketsAndExtras', label: '4. FAA Brackets & Hardware Extras' },
           { value: 'geniusBrackets', label: '5. DROP A (GENIUS) Brackets' }
@@ -7865,11 +7888,222 @@ notify pgrst, 'reload schema';</div>
       return html;
     }
 
+    function renderFabricManagerEditor(isOztech) {
+      const container = document.getElementById('settingsEditorContainer');
+      const targetDb = isOztech ? DB.oztechFabrics : DB.fabrics;
+      const categories = isOztech
+        ? ['Translucent', 'Blockout']
+        : ['Shade Mesh', 'Clear PVC', 'Acrylic', 'Canvas'];
+      const defaultNewCat = (!isOztech && activeSettingsCategory === 'DROP A') ? 'Shade Mesh' : categories[0];
+
+      document.getElementById('settingsActiveTableTitle').textContent = isOztech
+        ? `🧵 OZTECH — Roof Fabrics (Add / Edit / Delete)`
+        : `🧵 FAA / DROP A — Fabrics (Add / Edit / Delete)`;
+      document.getElementById('settingsActiveTableMeta').textContent = isOztech
+        ? `${Object.keys(targetDb).length} fabrics • Edit category, name, width (mm), rate ($/sqm), or add/delete`
+        : `${Object.keys(targetDb).length} fabrics • Shade Mesh & Clear PVC apply to FAA + DROP A | Acrylic & Canvas apply to FAA`;
+
+      const catOptionsHtml = categories.map(c =>
+        `<option value="${c}" ${c === defaultNewCat ? 'selected' : ''}>${c}</option>`
+      ).join('');
+
+      let html = `
+        <div style="display:flex; flex-wrap:wrap; gap:0.65rem; align-items:flex-end; padding:0.9rem 1rem; margin-bottom:0.85rem; background:#f8fafc; border:1px solid #cbd5e1; border-radius:10px;">
+          <div style="display:flex; flex-direction:column; gap:0.25rem; min-width:140px;">
+            <label style="font-size:0.72rem; font-weight:700; color:#475569;">Category</label>
+            <select id="newFabricCategorySelect" style="padding:0.45rem 0.6rem; border:1px solid #cbd5e1; border-radius:7px; font-size:0.82rem; font-weight:600; background:#fff;">
+              ${catOptionsHtml}
+            </select>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:0.25rem; flex:1 1 220px; min-width:180px;">
+            <label style="font-size:0.72rem; font-weight:700; color:#475569;">New Fabric Name</label>
+            <input type="text" id="newFabricNameInput" placeholder="e.g. Soltis 92 / Custom Mesh" style="padding:0.45rem 0.65rem; border:1px solid #cbd5e1; border-radius:7px; font-size:0.82rem; font-weight:600; background:#fff;">
+          </div>
+          ${isOztech ? `
+          <div style="display:flex; flex-direction:column; gap:0.25rem; width:135px;">
+            <label style="font-size:0.72rem; font-weight:700; color:#475569;">Fabric Width (mm)</label>
+            <input type="number" id="newFabricWidthInput" step="1" min="100" value="3000" style="padding:0.45rem 0.6rem; border:1px solid #cbd5e1; border-radius:7px; font-size:0.82rem; font-weight:600; background:#fff;">
+          </div>` : ''}
+          <div style="display:flex; flex-direction:column; gap:0.25rem; width:125px;">
+            <label style="font-size:0.72rem; font-weight:700; color:#475569;">Rate ($/sqm)</label>
+            <input type="number" id="newFabricRateInput" step="any" value="0" style="padding:0.45rem 0.6rem; border:1px solid #cbd5e1; border-radius:7px; font-size:0.82rem; font-weight:600; background:#fff;">
+          </div>
+          <button type="button" id="addNewFabricBtn" class="settings-action-btn primary" style="padding:0.48rem 0.95rem; font-size:0.82rem; height:36px;">➕ Add Fabric</button>
+        </div>
+        <table class="editable-matrix-table">
+          <thead>
+            <tr>
+              <th style="width:160px;">Category</th>
+              <th style="text-align:left;">Fabric Name</th>
+              ${isOztech ? '<th style="width:150px;">Fabric Width (mm)</th>' : ''}
+              <th style="width:140px;">Rate ($/sqm)</th>
+              <th style="width:95px;">Action</th>
+            </tr>
+          </thead>
+          <tbody>`;
+
+      Object.entries(targetDb).forEach(([fKey, fObj]) => {
+        const rowCatOpts = categories.map(c =>
+          `<option value="${c}" ${fObj.category === c ? 'selected' : ''}>${c}</option>`
+        ).join('');
+        html += `<tr>
+          <td style="padding:0.35rem 0.5rem;">
+            <select class="fabric-cat-edit" data-fkey="${escapeHtml(fKey)}" style="width:100%; padding:0.36rem 0.45rem; border:1px solid #cbd5e1; border-radius:6px; font-size:0.8rem; font-weight:600; background:#f8fafc;">
+              ${rowCatOpts}
+            </select>
+          </td>
+          <td style="padding:0.35rem 0.5rem; text-align:left;">
+            <input type="text" class="fabric-name-edit" data-fkey="${escapeHtml(fKey)}" value="${escapeHtml(fObj.name)}" style="width:100%; padding:0.38rem 0.6rem; border:1px solid #cbd5e1; border-radius:6px; font-size:0.83rem; font-weight:600; text-align:left;">
+          </td>
+          ${isOztech ? `<td><input type="number" step="1" class="price-cell-input" data-fkey="${escapeHtml(fKey)}" data-field="fabricWidth" value="${fObj.fabricWidth}"></td>` : ''}
+          <td><input type="number" step="any" class="price-cell-input" data-fkey="${escapeHtml(fKey)}" data-field="rate" value="${fObj.rate}"></td>
+          <td style="text-align:center; padding:0.35rem 0.5rem;">
+            <button type="button" class="settings-action-btn danger fabric-delete-btn" data-fkey="${escapeHtml(fKey)}" style="padding:0.3rem 0.55rem; font-size:0.74rem;">🗑️ Delete</button>
+          </td>
+        </tr>`;
+      });
+
+      html += `</tbody></table>`;
+      container.innerHTML = html;
+
+      const handleAddFabric = () => {
+        const cat = document.getElementById('newFabricCategorySelect').value;
+        const rawName = document.getElementById('newFabricNameInput').value.trim();
+        const rateVal = parseFloat(document.getElementById('newFabricRateInput').value);
+        const cleanRate = isNaN(rateVal) ? 0 : rateVal;
+        if (!rawName) {
+          alert('Please enter a fabric name.');
+          document.getElementById('newFabricNameInput').focus();
+          return;
+        }
+        const duplicate = Object.values(targetDb).some(f => f.name.trim().toLowerCase() === rawName.toLowerCase());
+        if (duplicate) {
+          alert(`A fabric named "${rawName}" already exists in this list.`);
+          return;
+        }
+        const slug = rawName.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '') || 'custom';
+        let newKey = isOztech ? `oz_${slug}` : slug;
+        if (targetDb[newKey]) {
+          newKey = `${newKey}_${Date.now().toString(36).slice(-4)}`;
+        }
+        if (isOztech) {
+          const wVal = parseInt(document.getElementById('newFabricWidthInput').value, 10);
+          targetDb[newKey] = {
+            category: cat,
+            name: rawName,
+            fabricWidth: (!isNaN(wVal) && wVal > 0) ? wVal : 3000,
+            rate: cleanRate
+          };
+        } else {
+          targetDb[newKey] = {
+            category: cat,
+            name: rawName,
+            rate: cleanRate
+          };
+        }
+        saveCustomDbToStorage();
+        refreshCalculatorFromDb();
+        renderSettingsEditor();
+      };
+
+      document.getElementById('addNewFabricBtn').addEventListener('click', handleAddFabric);
+      document.getElementById('newFabricNameInput').addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          handleAddFabric();
+        }
+      });
+
+      container.querySelectorAll('.fabric-cat-edit').forEach(sel => {
+        sel.addEventListener('change', function() {
+          const fKey = this.dataset.fkey;
+          const nextCat = this.value;
+          const prevCat = targetDb[fKey].category;
+          if (!isOztech && (prevCat === 'Shade Mesh' || prevCat === 'Clear PVC') && nextCat !== 'Shade Mesh' && nextCat !== 'Clear PVC') {
+            const remainingDropACompat = Object.entries(targetDb).filter(([k, f]) => k !== fKey && (f.category === 'Shade Mesh' || f.category === 'Clear PVC')).length;
+            if (remainingDropACompat === 0) {
+              alert('At least one Shade Mesh or Clear PVC fabric must remain available for DROP A products.');
+              this.value = prevCat;
+              return;
+            }
+          }
+          targetDb[fKey].category = nextCat;
+          this.style.borderColor = '#2563eb';
+          this.style.backgroundColor = '#eff6ff';
+          saveCustomDbToStorage();
+          refreshCalculatorFromDb();
+        });
+      });
+
+      container.querySelectorAll('.fabric-name-edit').forEach(inp => {
+        inp.addEventListener('input', function() {
+          const fKey = this.dataset.fkey;
+          const trimmed = this.value.trim();
+          if (!trimmed) return;
+          targetDb[fKey].name = trimmed;
+          this.style.borderColor = '#2563eb';
+          this.style.backgroundColor = '#eff6ff';
+          saveCustomDbToStorage();
+          refreshCalculatorFromDb();
+        });
+        inp.addEventListener('blur', function() {
+          const fKey = this.dataset.fkey;
+          if (!this.value.trim()) {
+            this.value = targetDb[fKey].name;
+          }
+        });
+      });
+
+      container.querySelectorAll('.price-cell-input').forEach(inp => {
+        inp.addEventListener('input', function() {
+          const fKey = this.dataset.fkey;
+          const field = this.dataset.field || 'rate';
+          targetDb[fKey][field] = parseFloat(this.value) || 0;
+          this.classList.add('is-modified');
+          saveCustomDbToStorage();
+          refreshCalculatorFromDb();
+        });
+      });
+
+      container.querySelectorAll('.fabric-delete-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const fKey = this.dataset.fkey;
+          const fObj = targetDb[fKey];
+          if (!fObj) return;
+          if (Object.keys(targetDb).length <= 1) {
+            alert('Cannot delete the last remaining fabric in this list.');
+            return;
+          }
+          if (!isOztech && (fObj.category === 'Shade Mesh' || fObj.category === 'Clear PVC')) {
+            const remainingDropACompat = Object.entries(targetDb).filter(([k, f]) => k !== fKey && (f.category === 'Shade Mesh' || f.category === 'Clear PVC')).length;
+            if (remainingDropACompat === 0) {
+              alert('Cannot delete the last remaining Shade Mesh / Clear PVC fabric needed for DROP A products.');
+              return;
+            }
+          }
+          if (!confirm(`Delete fabric "${fObj.name}" (${fObj.category})?`)) return;
+          delete targetDb[fKey];
+          saveCustomDbToStorage();
+          refreshCalculatorFromDb();
+          renderSettingsEditor();
+        });
+      });
+    }
+
     function renderSettingsEditor() {
       const container = document.getElementById('settingsEditorContainer');
       const modelKey = document.getElementById('settingsModelSelect').value;
       const tableType = document.getElementById('settingsTableTypeSelect').value;
       const product = DB.products[modelKey];
+
+      if (tableType === 'fabrics') {
+        renderFabricManagerEditor(false);
+        return;
+      }
+      if (tableType === 'oztechFabrics') {
+        renderFabricManagerEditor(true);
+        return;
+      }
 
       if (activeSettingsCategory === 'FAA' && product) {
         if (tableType === 'complete') {
@@ -8284,55 +8518,6 @@ notify pgrst, 'reload schema';</div>
       }
 
       if (activeSettingsCategory === 'COMMON') {
-        if (tableType === 'fabrics') {
-          document.getElementById('settingsActiveTableTitle').textContent = `🧵 FAA / DROP A — Fabric Rates ($/sqm)`;
-          document.getElementById('settingsActiveTableMeta').textContent = 'Unit: $/sqm';
-          let html = `<table class="editable-matrix-table"><thead><tr><th>Category</th><th>Fabric Name</th><th>Rate ($/sqm)</th></tr></thead><tbody>`;
-          Object.entries(DB.fabrics).forEach(([fKey, fObj]) => {
-            html += `<tr>
-              <td class="row-label-cell">${fObj.category}</td>
-              <td style="text-align:left; padding:0.4rem 0.75rem; font-weight:600;">${fObj.name}</td>
-              <td><input type="number" step="any" class="price-cell-input" data-fkey="${fKey}" value="${fObj.rate}"></td>
-            </tr>`;
-          });
-          html += `</tbody></table>`;
-          container.innerHTML = html;
-          container.querySelectorAll('.price-cell-input').forEach(inp => {
-            inp.addEventListener('input', function() {
-              DB.fabrics[this.dataset.fkey].rate = parseFloat(this.value) || 0;
-              this.classList.add('is-modified');
-              saveCustomDbToStorage();
-              refreshCalculatorFromDb();
-            });
-          });
-          return;
-        }
-        if (tableType === 'oztechFabrics') {
-          document.getElementById('settingsActiveTableTitle').textContent = `🧵 OZTECH — Roof Fabric Rates & Widths`;
-          document.getElementById('settingsActiveTableMeta').textContent = 'Unit: Fabric Width (mm) & Rate ($/sqm)';
-          let html = `<table class="editable-matrix-table"><thead><tr><th>Category</th><th>Fabric Name</th><th>Fabric Width (mm)</th><th>Rate ($/sqm)</th></tr></thead><tbody>`;
-          Object.entries(DB.oztechFabrics).forEach(([fKey, fObj]) => {
-            html += `<tr>
-              <td class="row-label-cell">${fObj.category}</td>
-              <td style="text-align:left; padding:0.4rem 0.75rem; font-weight:600;">${fObj.name}</td>
-              <td><input type="number" step="1" class="price-cell-input" data-fkey="${fKey}" data-field="fabricWidth" value="${fObj.fabricWidth}"></td>
-              <td><input type="number" step="any" class="price-cell-input" data-fkey="${fKey}" data-field="rate" value="${fObj.rate}"></td>
-            </tr>`;
-          });
-          html += `</tbody></table>`;
-          container.innerHTML = html;
-          container.querySelectorAll('.price-cell-input').forEach(inp => {
-            inp.addEventListener('input', function() {
-              const fKey = this.dataset.fkey;
-              const field = this.dataset.field;
-              DB.oztechFabrics[fKey][field] = parseFloat(this.value) || 0;
-              this.classList.add('is-modified');
-              saveCustomDbToStorage();
-              refreshCalculatorFromDb();
-            });
-          });
-          return;
-        }
         if (tableType === 'sensorAndRemotes') {
           document.getElementById('settingsActiveTableTitle').textContent = `📡 Sensors & Remotes by Motor Brand`;
           document.getElementById('settingsActiveTableMeta').textContent = 'Unit: AUD ($)';
@@ -8984,7 +9169,12 @@ notify pgrst, 'reload schema';</div>
 
       // 5. Repopulate dynamic dropdowns for current model, then set values
       populateFabricOptions(false);
-      if (st.fabricSelect) document.getElementById('fabricSelect').value = st.fabricSelect;
+      if (st.fabricSelect) {
+        const fabSel = document.getElementById('fabricSelect');
+        if (Array.from(fabSel.options).some(o => o.value === st.fabricSelect)) {
+          fabSel.value = st.fabricSelect;
+        }
+      }
 
       populateOperationOptions(false);
       if (st.operationSelect) document.getElementById('operationSelect').value = st.operationSelect;
@@ -9793,9 +9983,7 @@ notify pgrst, 'reload schema';</div>
     document.getElementById('cancelSaveQuoteBtn')?.addEventListener('click', closeSaveQuoteModal);
     document.getElementById('confirmSaveQuoteBtn')?.addEventListener('click', () => handleSaveQuoteSubmit(false));
     document.getElementById('updateExistingQuoteBtn')?.addEventListener('click', () => handleSaveQuoteSubmit(true));
-    document.getElementById('saveQuoteModal')?.addEventListener('click', function(e) {
-      if (e.target === this) closeSaveQuoteModal();
-    });
+    bindBackdropClose(document.getElementById('saveQuoteModal'), closeSaveQuoteModal);
 
     document.getElementById('copyQuoteTextBtn')?.addEventListener('click', function() {
       const txt = buildQuotePlainText(null);
@@ -9811,8 +9999,8 @@ notify pgrst, 'reload schema';</div>
     document.getElementById('closeQuoteDetailBtn')?.addEventListener('click', () => {
       document.getElementById('quoteDetailModal')?.classList.remove('open');
     });
-    document.getElementById('quoteDetailModal')?.addEventListener('click', function(e) {
-      if (e.target === this) this.classList.remove('open');
+    bindBackdropClose(document.getElementById('quoteDetailModal'), () => {
+      document.getElementById('quoteDetailModal')?.classList.remove('open');
     });
     document.getElementById('copyDetailQuoteTextBtn')?.addEventListener('click', function() {
       const q = savedQuotes.find(item => item.id === currentDetailModalQuoteId);
@@ -9952,9 +10140,7 @@ notify pgrst, 'reload schema';</div>
     document.getElementById('openSupabaseFromSettingsBtn')?.addEventListener('click', openSupabaseConfigModal);
     document.getElementById('cloudDbStatusPill')?.addEventListener('click', openSupabaseConfigModal);
     document.getElementById('closeSupabaseConfigBtn')?.addEventListener('click', closeSupabaseConfigModal);
-    document.getElementById('supabaseConfigModal')?.addEventListener('click', function(e) {
-      if (e.target === this) closeSupabaseConfigModal();
-    });
+    bindBackdropClose(document.getElementById('supabaseConfigModal'), closeSupabaseConfigModal);
 
     document.getElementById('copySupabaseSqlBtn')?.addEventListener('click', function() {
       const sql = document.getElementById('supabaseSetupSqlBox')?.textContent || '';
