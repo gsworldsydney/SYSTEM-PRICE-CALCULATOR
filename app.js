@@ -3685,6 +3685,14 @@
           }
           DB.fabricsSchemaVersion = 2;
         }
+        if (!parsed.truscreenMotorSchemaVersion) {
+          if (DB.products?.truscreen && DEFAULT_DB_SNAPSHOT.products?.truscreen?.motors) {
+            DB.products.truscreen.motors = JSON.parse(JSON.stringify(DEFAULT_DB_SNAPSHOT.products.truscreen.motors));
+          }
+          DB.truscreenMotorSchemaVersion = 2;
+          syncSharedOztechRefs();
+          localStorage.setItem(CUSTOM_DB_STORAGE_KEY, JSON.stringify(DB));
+        }
         syncSharedOztechRefs();
         const statusEl = document.getElementById('settingsStatusPill');
         if (statusEl) {

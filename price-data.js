@@ -553,9 +553,9 @@
           },
           motors: {
             ace:    { name: "ACE Obstacle Detection Motor (Included)",         shortName: "ACE",    subDesc: "Included (+$0)", prices: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
-            alpha:  { name: "Change Motor to Alpha (Including 1 Channel Remote)",  shortName: "Alpha",  subDesc: "+$150 Extra",    prices: [150, 150, 150, 150, 150, 150, 150, 150, 150, 150, 150, 150, 150, 150, 150, 150] },
-            becker: { name: "Change Motor to Becker (Including 1 Channel Remote)", shortName: "Becker", subDesc: "+$350 Extra",    prices: [350, 350, 350, 350, 350, 350, 350, 350, 350, 350, 350, 350, 350, 350, 350, 350] },
-            somfy:  { name: "Change Motor to Somfy (Including 1 Channel Remote)",  shortName: "Somfy",  subDesc: "+$650 Extra",    prices: [650, 650, 650, 650, 650, 650, 650, 650, 650, 650, 650, 650, 650, 650, 650, 650] }
+            alpha:  { name: "Change Motor to Alpha (Including 1 Channel Remote)",  shortName: "Alpha",  subDesc: "+$112 Extra",    prices: [112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112] },
+            becker: { name: "Change Motor to Becker (Including 1 Channel Remote)", shortName: "Becker", subDesc: "+$330 Extra",    prices: [330, 330, 330, 330, 330, 330, 330, 330, 330, 330, 330, 330, 330, 330, 330, 330] },
+            somfy:  { name: "Change Motor to Somfy (Including 1 Channel Remote)",  shortName: "Somfy",  subDesc: "+$540 Extra",    prices: [540, 540, 540, 540, 540, 540, 540, 540, 540, 540, 540, 540, 540, 540, 540, 540] }
           },
           standardColours: ["Black", "White", "Monument", "Woodland Grey", "Cream", "Paperbark"],
           powderCoat: {
@@ -2122,6 +2122,7 @@
       },
       // Fabric Surcharge Database ($/sqm)
       fabricsSchemaVersion: 2,
+      truscreenMotorSchemaVersion: 2,
       fabrics: {
         solscape:               { category: "Acrylic",    name: "Solscape",                rate: 0 },
         docril:                 { category: "Acrylic",    name: "Docril",                  rate: 10 },
