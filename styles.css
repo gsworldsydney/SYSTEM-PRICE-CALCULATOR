@@ -1144,6 +1144,12 @@ th.selected-col {
   gap: 1rem;
 }
 
+.ref-grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
 .ref-grid-2 {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -1151,13 +1157,13 @@ th.selected-col {
 }
 
 @media (max-width: 960px) {
-  .ref-grid-4, .ref-grid-2 {
+  .ref-grid-4, .ref-grid-3, .ref-grid-2 {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
 @media (max-width: 560px) {
-  .ref-grid-4, .ref-grid-2 {
+  .ref-grid-4, .ref-grid-3, .ref-grid-2 {
     grid-template-columns: 1fr;
   }
 }

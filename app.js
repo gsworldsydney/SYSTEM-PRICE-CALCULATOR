@@ -213,7 +213,46 @@
       return product.prices;
     }
 
+    function isOztechLargeMotorTier(rawProjOverride) {
+      const modKey = document.getElementById('oztechModuleSelect')?.value || 'single';
+      const rawP = rawProjOverride !== undefined
+        ? rawProjOverride
+        : parseFloat(document.getElementById('projInput')?.value);
+      return modKey === 'triple' || (!isNaN(rawP) && rawP > 8000);
+    }
+
+    function getOztechMotorPrice(motorKey, rawProjOverride) {
+      const mObj = DB.oztechMotors?.[motorKey];
+      if (!mObj) return 0;
+      return isOztechLargeMotorTier(rawProjOverride)
+        ? (Number(mObj.largePrice) || 0)
+        : (Number(mObj.basePrice) || 0);
+    }
+
+    function formatOztechMotorSubDesc(motorKey, rawProjOverride) {
+      const mPrice = getOztechMotorPrice(motorKey, rawProjOverride);
+      return mPrice === 0 ? 'Included (+$0)' : `+$${mPrice.toLocaleString()}`;
+    }
+
+    function updateOztechMotorButtonPrices(rawProjOverride) {
+      if (activeCategory !== 'OZTECH') return;
+      document.querySelectorAll('#oztechMotorTabs .oztech-motor-btn').forEach(btn => {
+        const mKey = btn.dataset.motor;
+        if (!mKey) return;
+        let subEl = btn.querySelector('.sub-type-desc');
+        if (!subEl) {
+          subEl = document.createElement('span');
+          subEl.className = 'sub-type-desc';
+          btn.appendChild(subEl);
+        }
+        subEl.textContent = formatOztechMotorSubDesc(mKey, rawProjOverride);
+      });
+    }
+
     function getActiveMotors(product) {
+      if (activeCategory === 'OZTECH') {
+        return DB.oztechMotors;
+      }
       if (product && product.motors) {
         return product.motors;
       }
@@ -305,7 +344,9 @@
           btn.className = 'sub-type-btn oztech-motor-btn';
           btn.dataset.motor = mKey;
           const btnTitle = mData.shortName || mData.name;
-          const btnSub = activeCategory === 'OZTECH' ? '' : (mData.subDesc || '');
+          const btnSub = activeCategory === 'OZTECH'
+            ? formatOztechMotorSubDesc(mKey)
+            : (mData.subDesc || '');
           btn.innerHTML = btnSub
             ? `<span>${btnTitle}</span><span class="sub-type-desc">${btnSub}</span>`
             : `<span>${btnTitle}</span>`;
@@ -1149,6 +1190,7 @@
         populatePowderCoatOptions();
         renderBracketOptions();
         renderBracketReference();
+        renderSensorReference();
         renderFabricReference();
         renderSensorOptions();
         updateInputHints();
@@ -1396,7 +1438,7 @@
 
       const activeMotors = getActiveMotors(product);
       const motorName = (activeMotors && activeMotors[motorKey])
-        ? activeMotors[motorKey].name
+        ? (activeMotors[motorKey].shortName || activeMotors[motorKey].name)
         : (DB.motors[motorKey]?.name || motorKey.toUpperCase());
       const isGrandLouvre = getCurrentProductKey() === 'grand_louvre';
       sensorGroupLabel.textContent = activeCategory === 'LOUVRE'
@@ -1404,7 +1446,9 @@
         : `Sensor & Remote (${motorName})`;
 
       let options = [];
-      if (product && product.sensorAndRemotes) {
+      if (activeCategory === 'OZTECH') {
+        options = [...(DB.oztechSensorAndRemotes?.[motorKey] || [])];
+      } else if (product && product.sensorAndRemotes) {
         options = product.sensorAndRemotes;
       } else {
         options = [...(DB.sensorAndRemotes[motorKey] || [])];
@@ -1639,14 +1683,16 @@
         tbody.appendChild(tr);
       }
 
-      // 2. Section Divider for Motors (By Width Tier)
+      // 2. Section Divider for Motors (By Width Tier or OZTECH System Spec)
       const activeMotors = getActiveMotors(product);
       if (activeMotors) {
         const motorDividerTr = document.createElement('tr');
         motorDividerTr.className = 'section-divider';
         const motorDividerTh = document.createElement('th');
         motorDividerTh.colSpan = totalCols;
-        motorDividerTh.textContent = '⚡ Motorised Additional Cost (By Width Tier)';
+        motorDividerTh.textContent = activeCategory === 'OZTECH'
+          ? '⚡ Motorised Options (ACE Included • Over 8M Projection or Triple Module Applies Large System Rate)'
+          : '⚡ Motorised Additional Cost (By Width Tier)';
         motorDividerTr.appendChild(motorDividerTh);
         tbody.appendChild(motorDividerTr);
 
@@ -1658,19 +1704,32 @@
           rowHeader.innerHTML = `${motorData.name} <span class="motor-star">★</span>`;
           tr.appendChild(rowHeader);
 
-          if (hasPostCol) {
-            const emptyPostTd = document.createElement('td');
-            emptyPostTd.textContent = '-';
-            tr.appendChild(emptyPostTd);
-          }
-
-          widths.forEach((w, idx) => {
+          if (activeCategory === 'OZTECH') {
             const td = document.createElement('td');
-            td.id = `cell-m-${motorKey}-${w}`;
-            const mPrice = motorData.prices[idx];
-            td.textContent = (mPrice === 0 && (product.motorisedPrices || activeCategory === 'LOUVRE')) ? 'Included (+$0)' : '+$' + mPrice.toLocaleString();
+            td.id = `cell-m-${motorKey}`;
+            td.colSpan = totalCols - 1;
+            td.style.fontWeight = '700';
+            if ((Number(motorData.basePrice) || 0) === 0 && (Number(motorData.largePrice) || 0) === 0) {
+              td.textContent = 'Included (+$0)';
+            } else {
+              td.textContent = `Standard (1~2 Bay & Proj ≤ 8.0M): +$${Number(motorData.basePrice).toLocaleString()}   |   Over 8.0M Projection or Triple Module (3Bay): +$${Number(motorData.largePrice).toLocaleString()}`;
+            }
             tr.appendChild(td);
-          });
+          } else {
+            if (hasPostCol) {
+              const emptyPostTd = document.createElement('td');
+              emptyPostTd.textContent = '-';
+              tr.appendChild(emptyPostTd);
+            }
+
+            widths.forEach((w, idx) => {
+              const td = document.createElement('td');
+              td.id = `cell-m-${motorKey}-${w}`;
+              const mPrice = motorData.prices[idx];
+              td.textContent = (mPrice === 0 && (product.motorisedPrices || activeCategory === 'LOUVRE')) ? 'Included (+$0)' : '+$' + mPrice.toLocaleString();
+              tr.appendChild(td);
+            });
+          }
 
           tbody.appendChild(tr);
         });
@@ -2099,8 +2158,32 @@
       const grid = document.getElementById('sensorRefGrid');
       grid.innerHTML = '';
 
+      if (activeCategory === 'OZTECH' && DB.oztechSensorAndRemotes) {
+        grid.className = 'ref-grid-3';
+        Object.entries(DB.oztechSensorAndRemotes).forEach(([motorKey, items]) => {
+          const mObj = DB.oztechMotors?.[motorKey] || DB.motors?.[motorKey];
+          const motorName = mObj ? (mObj.shortName || mObj.name) : motorKey.toUpperCase();
+          const tbl = document.createElement('table');
+          const thead = document.createElement('thead');
+          thead.innerHTML = `<tr><th colspan="2">${motorName} Motor</th></tr>`;
+          tbl.appendChild(thead);
+
+          const tbody = document.createElement('tbody');
+          items.forEach(item => {
+            const tr = document.createElement('tr');
+            tr.id = `tr-sen-${item.id}`;
+            tr.innerHTML = `<td style="text-align:left; padding-left:0.65rem;">${item.name}</td><td>+$${item.price}</td>`;
+            tbody.appendChild(tr);
+          });
+          tbl.appendChild(tbody);
+          grid.appendChild(tbl);
+        });
+        return;
+      }
+
+      grid.className = 'ref-grid-4';
       Object.entries(DB.sensorAndRemotes).forEach(([motorKey, items]) => {
-        const motorName = DB.motors[motorKey].name;
+        const motorName = DB.motors[motorKey]?.name || motorKey.toUpperCase();
         const tbl = document.createElement('table');
         const thead = document.createElement('thead');
         thead.innerHTML = `<tr><th colspan="2">${motorName} Motor</th></tr>`;
@@ -2229,6 +2312,9 @@
       const rawProj = activeCategory === 'FAA'
         ? parseFloat(document.getElementById('projSelect').value)
         : parseFloat(document.getElementById('projInput').value);
+      if (activeCategory === 'OZTECH') {
+        updateOztechMotorButtonPrices(rawProj);
+      }
       const rawDiscountVal = parseFloat(document.getElementById('discountInput').value);
       const discountRate = isNaN(rawDiscountVal) ? 0 : Math.max(0, Math.min(100, rawDiscountVal));
       const fabricKey = document.getElementById('fabricSelect').value;
@@ -2683,7 +2769,25 @@
       if (operation === 'motorised') {
         const activeMotors = getActiveMotors(product);
         const motorObj = (activeMotors && activeMotors[motorKey]) ? activeMotors[motorKey] : DB.motors[motorKey];
-        if (activeMotors && activeMotors[motorKey]) {
+        if (activeCategory === 'OZTECH' && activeMotors && activeMotors[motorKey]) {
+          const ozModKey = document.getElementById('oztechModuleSelect')?.value || 'single';
+          const isLargeOzMotor = ozModKey === 'triple' || rawProj > 8000;
+          motorCost = getOztechMotorPrice(motorKey, rawProj);
+          document.getElementById(`tr-m-${motorKey}`)?.classList.add('selected-motor-row');
+          document.getElementById(`cell-m-${motorKey}`)?.classList.add('selected-motor-cell');
+          if (motorCost === 0) {
+            motorLabelText.textContent = `Motor (${motorObj.shortName || motorObj.name} • Included)`;
+            motorPriceText.textContent = 'Included (+$0)';
+          } else {
+            const tierNote = isLargeOzMotor
+              ? (ozModKey === 'triple' && rawProj > 8000
+                  ? 'Triple Module & >8M Proj.'
+                  : (ozModKey === 'triple' ? 'Triple Module' : 'Over 8M Proj.'))
+              : 'Incl. 1ch Remote';
+            motorLabelText.textContent = `Motor (${motorObj.shortName || motorObj.name} • ${tierNote})`;
+            motorPriceText.textContent = `+$${motorCost.toLocaleString()}`;
+          }
+        } else if (activeMotors && activeMotors[motorKey]) {
           motorCost = motorObj.prices[widthIndex] || 0;
           document.getElementById(`tr-m-${motorKey}`)?.classList.add('selected-motor-row');
           document.getElementById(`cell-m-${motorKey}-${matchedWidth}`)?.classList.add('selected-motor-cell');
@@ -2693,9 +2797,7 @@
             : `+$${motorCost.toLocaleString()}`;
         } else {
           motorCost = 0;
-          motorLabelText.textContent = activeCategory === 'OZTECH'
-            ? `Motor (${motorObj.name} • System Standard)`
-            : `Motor (${motorObj.name} • Motor Table Pending)`;
+          motorLabelText.textContent = `Motor (${motorObj.name} • Motor Table Pending)`;
           motorPriceText.textContent = '+$0';
         }
 
@@ -3063,7 +3165,7 @@
 
       const activeMotors = getActiveMotors(product);
       const motorNameForBadge = (activeMotors && activeMotors[motorKey])
-        ? activeMotors[motorKey].name
+        ? (activeCategory === 'OZTECH' ? (activeMotors[motorKey].shortName || activeMotors[motorKey].name) : activeMotors[motorKey].name)
         : (DB.motors[motorKey]?.name || motorKey);
       const opDesc = operation === 'motorised'
         ? `Motorised (${motorNameForBadge})`
@@ -3649,6 +3751,12 @@
       if (DB.products.truscreen && (!DB.products.truscreen.motors || !DB.products.truscreen.motors.alpha)) {
         DB.products.truscreen.motors = JSON.parse(JSON.stringify(DEFAULT_DB_SNAPSHOT.products.truscreen.motors));
       }
+      if (!DB.oztechMotors || DB.oztechMotors.alpha) {
+        DB.oztechMotors = JSON.parse(JSON.stringify(DEFAULT_DB_SNAPSHOT.oztechMotors));
+      }
+      if (!DB.oztechSensorAndRemotes) {
+        DB.oztechSensorAndRemotes = JSON.parse(JSON.stringify(DEFAULT_DB_SNAPSHOT.oztechSensorAndRemotes));
+      }
       // Keep motor button subDesc badges in sync with updated prices
       const refreshMotorSubDesc = (motorsObj, hasIncludedBase = false) => {
         if (!motorsObj || typeof motorsObj !== 'object') return;
@@ -3690,6 +3798,13 @@
             DB.products.truscreen.motors = JSON.parse(JSON.stringify(DEFAULT_DB_SNAPSHOT.products.truscreen.motors));
           }
           DB.truscreenMotorSchemaVersion = 2;
+          syncSharedOztechRefs();
+          localStorage.setItem(CUSTOM_DB_STORAGE_KEY, JSON.stringify(DB));
+        }
+        if (!parsed.oztechMotorSchemaVersion) {
+          DB.oztechMotors = JSON.parse(JSON.stringify(DEFAULT_DB_SNAPSHOT.oztechMotors));
+          DB.oztechSensorAndRemotes = JSON.parse(JSON.stringify(DEFAULT_DB_SNAPSHOT.oztechSensorAndRemotes));
+          DB.oztechMotorSchemaVersion = 2;
           syncSharedOztechRefs();
           localStorage.setItem(CUSTOM_DB_STORAGE_KEY, JSON.stringify(DB));
         }
@@ -4340,12 +4455,14 @@
         if (product && product.additionalRafter) {
           options.push({ value: 'additionalRafter', label: '4. PLAZA Additional Rafter Prices (by Projection)' });
         }
-        options.push({ value: 'oztechFullPc', label: '5. Shared OZTECH FULL Powder Coat Matrix & Duratec Rate' });
-        options.push({ value: 'oztechUniled', label: '6. Shared OZTECH Standard LED (UNILED) Matrix & Dimmer' });
-        options.push({ value: 'oztechMaxiLed', label: '7. Shared OZTECH MAXI LED Matrix & Dimmer' });
-        options.push({ value: 'oztechGutterLed', label: '8. Shared OZTECH Full Width LED Gutter Prices' });
-        options.push({ value: 'oztechFabrics', label: '9. Shared OZTECH Roof Fabrics — Add / Edit / Delete ($/sqm & mm)' });
-        options.push({ value: 'oztechBrackets', label: '10. Shared OZTECH / FAA Rafter Brackets (10° / 22° / Roof Tile Set)' });
+        options.push({ value: 'oztechMotors', label: '5. Shared OZTECH Motor Prices (ACE / Becker / Somfy — Base & >8M/3Bay)' });
+        options.push({ value: 'oztechSensors', label: '6. Shared OZTECH Sensors & Remotes (ACE / Becker / Somfy)' });
+        options.push({ value: 'oztechFullPc', label: '7. Shared OZTECH FULL Powder Coat Matrix & Duratec Rate' });
+        options.push({ value: 'oztechUniled', label: '8. Shared OZTECH Standard LED (UNILED) Matrix & Dimmer' });
+        options.push({ value: 'oztechMaxiLed', label: '9. Shared OZTECH MAXI LED Matrix & Dimmer' });
+        options.push({ value: 'oztechGutterLed', label: '10. Shared OZTECH Full Width LED Gutter Prices' });
+        options.push({ value: 'oztechFabrics', label: '11. Shared OZTECH Roof Fabrics — Add / Edit / Delete ($/sqm & mm)' });
+        options.push({ value: 'oztechBrackets', label: '12. Shared OZTECH / FAA Rafter Brackets (10° / 22° / Roof Tile Set)' });
       } else if (activeSettingsCategory === 'LOUVRE') {
         options.push({ value: 'prices', label: '1. Louvre Base System Matrix (Projection × Width)' });
         options.push({ value: 'ledPrices', label: '2. Gutter LED Matrix (Projection × Width)' });
@@ -4354,9 +4471,10 @@
         options = [
           { value: 'fabrics', label: '1. FAA / DROP A Fabrics — Add / Edit / Delete ($/sqm)' },
           { value: 'oztechFabrics', label: '2. OZTECH Roof Fabrics — Add / Edit / Delete ($/sqm & mm)' },
-          { value: 'sensorAndRemotes', label: '3. Sensors & Remotes by Motor Brand' },
-          { value: 'bracketsAndExtras', label: '4. FAA / OZTECH Brackets & Hardware Extras' },
-          { value: 'geniusBrackets', label: '5. DROP A (GENIUS) Brackets' }
+          { value: 'sensorAndRemotes', label: '3. FAA / DROP A / LOUVRE Sensors & Remotes by Motor Brand' },
+          { value: 'oztechSensors', label: '4. OZTECH Sensors & Remotes (ACE / Becker / Somfy)' },
+          { value: 'bracketsAndExtras', label: '5. FAA / OZTECH Brackets & Hardware Extras' },
+          { value: 'geniusBrackets', label: '6. DROP A (GENIUS) Brackets' }
         ];
       }
 
@@ -4974,6 +5092,56 @@
           });
           return;
         }
+        if (tableType === 'oztechMotors') {
+          document.getElementById('settingsActiveTableTitle').textContent = `⚙️ Shared OZTECH — Motor Prices (ACE / Becker / Somfy)`;
+          document.getElementById('settingsActiveTableMeta').textContent = 'Standard rate vs. Large System rate (Projection > 8,000 mm or Triple Module 3Bay) • Unit: AUD ($)';
+          let html = `<table class="editable-matrix-table"><thead><tr><th>Motor Brand</th><th>Standard Price ($)<br><span style="font-size:0.68rem; font-weight:500;">(1~2 Bay & Proj ≤ 8.0M)</span></th><th>Large System Price ($)<br><span style="font-size:0.68rem; font-weight:500;">(Over 8.0M Proj. or Triple Module)</span></th></tr></thead><tbody>`;
+          Object.entries(DB.oztechMotors).forEach(([mKey, mObj]) => {
+            html += `<tr>
+              <td class="row-label-cell">${mObj.name}</td>
+              <td><input type="number" step="any" class="price-cell-input" data-mkey="${mKey}" data-field="basePrice" value="${mObj.basePrice ?? 0}"></td>
+              <td><input type="number" step="any" class="price-cell-input" data-mkey="${mKey}" data-field="largePrice" value="${mObj.largePrice ?? 0}"></td>
+            </tr>`;
+          });
+          html += `</tbody></table>`;
+          container.innerHTML = html;
+          container.querySelectorAll('.price-cell-input').forEach(inp => {
+            inp.addEventListener('input', function() {
+              const mKey = this.dataset.mkey;
+              const field = this.dataset.field;
+              DB.oztechMotors[mKey][field] = parseFloat(this.value) || 0;
+              this.classList.add('is-modified');
+              saveCustomDbToStorage();
+              refreshCalculatorFromDb();
+            });
+          });
+          return;
+        }
+        if (tableType === 'oztechSensors') {
+          document.getElementById('settingsActiveTableTitle').textContent = `📡 Shared OZTECH — Sensors & Remotes (ACE / Becker / Somfy)`;
+          document.getElementById('settingsActiveTableMeta').textContent = 'Unit: AUD ($)';
+          let html = `<table class="editable-matrix-table"><thead><tr><th>Motor Brand</th><th>Item Name</th><th>Price ($)</th></tr></thead><tbody>`;
+          Object.entries(DB.oztechSensorAndRemotes).forEach(([brand, list]) => {
+            list.forEach((item, idx) => {
+              html += `<tr>
+                <td class="row-label-cell">${brand.toUpperCase()}</td>
+                <td style="text-align:left; padding:0.4rem 0.75rem; font-weight:600;">${item.name}</td>
+                <td><input type="number" step="any" class="price-cell-input" data-brand="${brand}" data-idx="${idx}" value="${item.price}"></td>
+              </tr>`;
+            });
+          });
+          html += `</tbody></table>`;
+          container.innerHTML = html;
+          container.querySelectorAll('.price-cell-input').forEach(inp => {
+            inp.addEventListener('input', function() {
+              DB.oztechSensorAndRemotes[this.dataset.brand][parseInt(this.dataset.idx, 10)].price = parseFloat(this.value) || 0;
+              this.classList.add('is-modified');
+              saveCustomDbToStorage();
+              refreshCalculatorFromDb();
+            });
+          });
+          return;
+        }
         if (tableType === 'oztechBrackets') {
           document.getElementById('settingsActiveTableTitle').textContent = `🔩 OZTECH — Additional Rafter Brackets & Sets`;
           document.getElementById('settingsActiveTableMeta').textContent = 'Shared with FAA Brackets & Hardware Extras • Unit: AUD ($)';
@@ -5057,6 +5225,31 @@
       }
 
       if (activeSettingsCategory === 'COMMON') {
+        if (tableType === 'oztechSensors') {
+          document.getElementById('settingsActiveTableTitle').textContent = `📡 OZTECH — Sensors & Remotes (ACE / Becker / Somfy)`;
+          document.getElementById('settingsActiveTableMeta').textContent = 'Unit: AUD ($)';
+          let html = `<table class="editable-matrix-table"><thead><tr><th>Motor Brand</th><th>Item Name</th><th>Price ($)</th></tr></thead><tbody>`;
+          Object.entries(DB.oztechSensorAndRemotes).forEach(([brand, list]) => {
+            list.forEach((item, idx) => {
+              html += `<tr>
+                <td class="row-label-cell">${brand.toUpperCase()}</td>
+                <td style="text-align:left; padding:0.4rem 0.75rem; font-weight:600;">${item.name}</td>
+                <td><input type="number" step="any" class="price-cell-input" data-brand="${brand}" data-idx="${idx}" value="${item.price}"></td>
+              </tr>`;
+            });
+          });
+          html += `</tbody></table>`;
+          container.innerHTML = html;
+          container.querySelectorAll('.price-cell-input').forEach(inp => {
+            inp.addEventListener('input', function() {
+              DB.oztechSensorAndRemotes[this.dataset.brand][parseInt(this.dataset.idx, 10)].price = parseFloat(this.value) || 0;
+              this.classList.add('is-modified');
+              saveCustomDbToStorage();
+              refreshCalculatorFromDb();
+            });
+          });
+          return;
+        }
         if (tableType === 'sensorAndRemotes') {
           document.getElementById('settingsActiveTableTitle').textContent = `📡 Sensors & Remotes by Motor Brand`;
           document.getElementById('settingsActiveTableMeta').textContent = 'Unit: AUD ($)';
@@ -5388,6 +5581,22 @@
         pushExcelMatrixBlock(ozOptAoa, 'OZTECH_UNILED', 'Shared OZTECH — Standard LED (UNILED) Price Matrix ($)', DB.oztechLedLighting.projections, DB.oztechLedLighting.widths, DB.oztechLedLighting.uniled.prices);
         pushExcelMatrixBlock(ozOptAoa, 'OZTECH_MAXI_LED', 'Shared OZTECH — MAXI LED Price Matrix ($)', DB.oztechLedLighting.projections, DB.oztechLedLighting.widths, DB.oztechLedLighting.maxi_led.prices);
 
+        ozOptAoa.push(['##TABLE', 'OZTECH_MOTORS', 'oztechMotors', 'Shared OZTECH — Motor Prices (ACE / Becker / Somfy) ($)']);
+        ozOptAoa.push(['Key (Do Not Edit)', 'Motor Option', 'Standard Price ($) (1~2 Bay & Proj <= 8M)', 'Over 8M Proj. or Triple Module Price ($)']);
+        Object.entries(DB.oztechMotors).forEach(([mKey, mObj]) => {
+          ozOptAoa.push([mKey, mObj.name, mObj.basePrice ?? 0, mObj.largePrice ?? 0]);
+        });
+        ozOptAoa.push([]);
+
+        ozOptAoa.push(['##TABLE', 'OZTECH_SENSORS', 'oztechSensorAndRemotes', 'Shared OZTECH — Sensors & Remotes by Motor Brand ($)']);
+        ozOptAoa.push(['Motor Brand (Do Not Edit)', 'Item ID (Do Not Edit)', 'Sensor / Remote Name', 'Price ($)']);
+        Object.entries(DB.oztechSensorAndRemotes).forEach(([brand, list]) => {
+          list.forEach(item => {
+            ozOptAoa.push([brand, item.id, item.name, item.price]);
+          });
+        });
+        ozOptAoa.push([]);
+
         ozOptAoa.push(['##TABLE', 'WIDTH_ROWS', 'OZTECH_GUTTER_LED', 'Shared OZTECH — Full Width LED Gutter Prices ($)']);
         ozOptAoa.push(['Key (Do Not Edit)', 'Option', ...DB.oztechLedLighting.widths]);
         ozOptAoa.push(['gutter_led', 'Full Width LED Gutter ($)', ...DB.oztechLedLighting.widths.map(w => DB.oztechLedLighting.gutter_led.pricesByWidth[w] ?? 0)]);
@@ -5701,6 +5910,39 @@
               DB.fabricsSchemaVersion = 2;
               tablesUpdated++;
             }
+          } else if (blockType === 'OZTECH_MOTORS') {
+            dataRows.forEach(dRow => {
+              const mKey = String(dRow[0] || '').trim().toLowerCase();
+              const mLabel = String(dRow[1] || '').trim();
+              const baseNum = parseFloat(dRow[2]);
+              const largeNum = parseFloat(dRow[3]);
+              const targetMotor = DB.oztechMotors?.[mKey];
+              if (targetMotor) {
+                if (mLabel) targetMotor.name = mLabel;
+                if (!isNaN(baseNum)) targetMotor.basePrice = baseNum;
+                if (!isNaN(largeNum)) targetMotor.largePrice = largeNum;
+                valuesUpdated++;
+              }
+            });
+            DB.oztechMotorSchemaVersion = 2;
+            tablesUpdated++;
+          } else if (blockType === 'OZTECH_SENSORS') {
+            dataRows.forEach(dRow => {
+              const brand = String(dRow[0] || '').trim().toLowerCase();
+              const itemId = String(dRow[1] || '').trim();
+              const itemName = String(dRow[2] || '').trim();
+              const priceNum = parseFloat(dRow[3]);
+              const list = DB.oztechSensorAndRemotes?.[brand];
+              if (!Array.isArray(list) || !itemId) return;
+              const found = list.find(it => it.id === itemId);
+              if (found) {
+                if (itemName) found.name = itemName;
+                if (!isNaN(priceNum)) found.price = priceNum;
+                valuesUpdated++;
+              }
+            });
+            DB.oztechMotorSchemaVersion = 2;
+            tablesUpdated++;
           } else if (blockType === 'SENSORS') {
             dataRows.forEach(dRow => {
               const brand = String(dRow[0] || '').trim().toLowerCase();
@@ -6318,7 +6560,11 @@
       populateMotorOptions(false);
       if (st.motorSelect) {
         const motorSel = document.getElementById('motorSelect');
-        motorSel.value = st.motorSelect;
+        if (Array.from(motorSel.options).some(o => o.value === st.motorSelect)) {
+          motorSel.value = st.motorSelect;
+        } else if (motorSel.options.length > 0) {
+          motorSel.value = motorSel.options[0].value;
+        }
       }
       document.getElementById('motorSelect').disabled = document.getElementById('operationSelect').value !== 'motorised';
       updateMotorButtonsUI();

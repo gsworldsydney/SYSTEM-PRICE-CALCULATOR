@@ -2123,6 +2123,7 @@
       // Fabric Surcharge Database ($/sqm)
       fabricsSchemaVersion: 2,
       truscreenMotorSchemaVersion: 2,
+      oztechMotorSchemaVersion: 2,
       fabrics: {
         solscape:               { category: "Acrylic",    name: "Solscape",                rate: 0 },
         docril:                 { category: "Acrylic",    name: "Docril",                  rate: 10 },
@@ -2232,6 +2233,48 @@
           { id: "somfy_motion", name: "Somfy Motion Sensor", price: 280 },
           { id: "somfy_wind", name: "Wireless Wind Sensor", price: 280 },
           { id: "somfy_sun_wind", name: "Wireless Sun & Wind Sensor", price: 344 }
+        ]
+      },
+      // OZTECH Motor Surcharge Configuration (ACE Included; Becker & Somfy scale when Projection > 8000mm or Triple Module)
+      oztechMotors: {
+        ace: {
+          name: "ACE (Included)",
+          shortName: "ACE",
+          basePrice: 0,
+          largePrice: 0
+        },
+        becker: {
+          name: "Change to Becker (Including 1ch Remote)",
+          shortName: "Becker",
+          basePrice: 300,
+          largePrice: 600
+        },
+        somfy: {
+          name: "Change to Somfy (Including 1ch Remote)",
+          shortName: "Somfy",
+          basePrice: 450,
+          largePrice: 900
+        }
+      },
+      // OZTECH Sensor and Remote Options by Motor Brand
+      oztechSensorAndRemotes: {
+        ace: [
+          { id: "oz_ace_add_1ch", name: "Additional Single Channel Remote", price: 42 },
+          { id: "oz_ace_chg_15ch", name: "Change Single Channel to 15 Channel Remote", price: 45 },
+          { id: "oz_ace_solar_sun_wind", name: "Solar Powered Sun & Wind Sensor", price: 100 }
+        ],
+        becker: [
+          { id: "oz_becker_add_1ch", name: "Additional Single Channel Remote", price: 72 },
+          { id: "oz_becker_chg_5ch", name: "Change Single Channel to 5 Channel Remote", price: 61 },
+          { id: "oz_becker_wind_sun", name: "Wireless Wind & Sun Sensor", price: 280 },
+          { id: "oz_becker_sun_wind_rain", name: "Wireless Sun, Wind & Rain Sensor", price: 400 }
+        ],
+        somfy: [
+          { id: "oz_somfy_add_1ch", name: "Additional Single Channel Remote", price: 72 },
+          { id: "oz_somfy_chg_5ch", name: "Change Single Channel to 5 Channel Remote", price: 61 },
+          { id: "oz_somfy_wind", name: "Wireless Wind Sensor", price: 280 },
+          { id: "oz_somfy_sun_wind", name: "Wireless Sun & Wind Sensor", price: 344 },
+          { id: "oz_somfy_rain", name: "Rain Sensor", price: 900 }
         ]
       },
       // Brackets & Hardware Extras (Multi-select + Quantity)
